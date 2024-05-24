@@ -8,4 +8,5 @@ public enum CoreExceptionCode
     Conflict = 409,
 
     InvalidEmail = 400_1,
+    InvalidStringLength = 400_2,
 }
