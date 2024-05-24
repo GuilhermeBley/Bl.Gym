@@ -1,0 +1,226 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Bl.Gym.TrainingApi.Domain.Primitive
+{
+    /// <summary>
+    /// Manages a creation of <see cref="Result"/>
+    /// </summary>
+    public class ResultBuilder
+    {
+        protected internal List<ICoreException> _errors = new();
+        public IEnumerable<ICoreException> Errors => _errors;
+        public bool HasError => _errors.Any();
+
+        public ResultBuilder()
+        {
+        }
+
+        public ResultBuilder(Result result)
+            : this(result.Errors)
+        {
+        }
+
+        public ResultBuilder(IEnumerable<ICoreException> errors)
+        {
+            _errors.AddRange(errors);
+        }
+
+        public override string ToString()
+            => string.Concat("Errors: ", _errors.Count);
+
+        /// <summary>
+        /// Add error to result if enumerable is empty
+        /// </summary>
+        public bool AddIfIsEmpty(System.Collections.IEnumerable toCheck, string message, CoreExceptionCode code = Result.DEFAULT_STATUS_ERROR)
+        {
+            foreach (var _ in toCheck)
+            {
+                _errors.Add(new Result.Error(message, code));
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Add error to result if string is null or white space
+        /// </summary>
+        public bool AddIfIsNullOrWhiteSpace(string? toCheck, string message, CoreExceptionCode code = Result.DEFAULT_STATUS_ERROR)
+            => AddIfInternal(string.IsNullOrWhiteSpace(toCheck), message, code);
+
+        /// <summary>
+        /// Add error to result if string is null or empty
+        /// </summary>
+        public bool AddIfIsNullOrEmpty(string? toCheck, string message, CoreExceptionCode code = Result.DEFAULT_STATUS_ERROR)
+            => AddIfInternal(string.IsNullOrEmpty(toCheck), message, code);
+
+        /// <summary>
+        /// Add error to result if object is null
+        /// </summary>
+        public bool AddIfIsNull(object? toCheck, string message, CoreExceptionCode code = Result.DEFAULT_STATUS_ERROR)
+            => AddIfInternal(toCheck is null, message, code);
+
+        /// <summary>
+        /// Add error to result if condition is true
+        /// </summary>
+        public void AddIf(bool condition, string message, CoreExceptionCode code = Result.DEFAULT_STATUS_ERROR)
+        {
+            if (condition)
+                _errors.Add(new Result.Error(message, code));
+        }
+
+        private bool AddIfInternal(bool condition, string message, CoreExceptionCode code)
+        {
+            if (condition)
+                _errors.Add(new Result.Error(message, code));
+            return condition;
+        }
+
+        /// <summary>
+        /// Add error to result
+        /// </summary>
+        public void Add(string error, CoreExceptionCode code = Result.DEFAULT_STATUS_ERROR)
+                => _errors.Add(new Result.Error(error, code));
+
+        /// <summary>
+        /// Add range of errors to result
+        /// </summary>
+        public void AddRange(params string[] errors)
+            => _errors.AddRange(errors.Select(e => new Result.Error(e, Result.DEFAULT_STATUS_ERROR)));
+
+        /// <summary>
+        /// Add range of errors to result
+        /// </summary>
+        public void AddRange(IEnumerable<string> errors)
+            => _errors.AddRange(errors.Select(e => new Result.Error(e, Result.DEFAULT_STATUS_ERROR)));
+
+        /// <summary>
+        /// Add range of errors to result
+        /// </summary>
+        public void AddRange(params ICoreException[] errors)
+            => _errors.AddRange(errors);
+
+        /// <summary>
+        /// Add range of errors to result
+        /// </summary>
+        public void AddRange(IEnumerable<ICoreException> errors)
+            => _errors.AddRange(errors);
+
+        /// <summary>
+        /// Add range of errors to result
+        /// </summary>
+        internal void Add(Result.Error error)
+            => _errors.Add(error);
+
+        /// <summary>
+        /// Add range of errors to result
+        /// </summary>
+        internal void AddRange(params Result.Error[] errors)
+            => _errors.AddRange(errors);
+
+        /// <summary>
+        /// Add range of errors to result
+        /// </summary>
+        internal void AddRange(IEnumerable<Result.Error> errors)
+            => _errors.AddRange(errors);
+
+        /// <summary>
+        /// Try get failed result
+        /// </summary>
+        public bool TryFailed([NotNullWhen(true)] out Result? resultT)
+        {
+            if (HasError)
+            {
+                resultT = Failed();
+                return true;
+            }
+
+            resultT = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Failed result, needs errors
+        /// </summary>
+        /// <exception cref="ArgumentException"></exception>
+        public Result Failed()
+        {
+            if (!HasError)
+                throw new InvalidOperationException("There aren't errors registered.");
+
+            return Result.Failed(_errors.AsReadOnly());
+        }
+
+        /// <summary>
+        /// Success result, needs return obj
+        /// </summary>
+        /// <exception cref="ArgumentException"></exception>
+        public Result Success()
+            => Result.Success(true);
+    }
+
+
+    /// <summary>
+    /// Manages a creation of <see cref="Result{TResult}"/>
+    /// </summary>
+    public sealed class ResultBuilder<TResult> : ResultBuilder
+    {
+        public ResultBuilder()
+        {
+        }
+
+        public ResultBuilder(Result result)
+            : base(result.Errors)
+        {
+        }
+
+        public ResultBuilder(ResultBuilder<TResult> resultBuilder)
+            : base(resultBuilder._errors)
+        {
+        }
+
+        public ResultBuilder(IEnumerable<ICoreException> errors)
+        {
+            _errors.AddRange(errors);
+        }
+
+        /// <summary>
+        /// Try get failed result
+        /// </summary>
+        public bool TryFailed([NotNullWhen(true)] out Result<TResult>? resultT)
+        {
+            if (HasError)
+            {
+                resultT = Failed();
+                return true;
+            }
+
+            resultT = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Failed result, needs errors
+        /// </summary>
+        /// <exception cref="ArgumentException"></exception>
+        public new Result<TResult> Failed()
+        {
+            if (!HasError)
+                throw new InvalidOperationException("There aren't errors registered.");
+
+            return Result<TResult>.Failed(_errors.AsReadOnly());
+        }
+
+        /// <summary>
+        /// Success result, needs return obj
+        /// </summary>
+        /// <exception cref="ArgumentException"></exception>
+        public Result<TResult> Success(TResult result)
+            => Result<TResult>.Success(result);
+    }
+}
