@@ -7,6 +7,7 @@
 public class GymExercise
     : Entity
 {
+    public Guid Id { get; private set; }
     public string Title { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
     public DateTimeOffset CreatedAt { get; private set; }
@@ -27,6 +28,7 @@ public class GymExercise
     }
 
     public static Result<GymExercise> Create(
+        Guid id,
         string title,
         string description,
         DateTimeOffset createdAt)
@@ -43,6 +45,7 @@ public class GymExercise
         return builder.CreateResult(() =>
             new()
             {
+                Id = id,
                 CreatedAt = createdAt,
                 Title = title,
                 Description = description,
