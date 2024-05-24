@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{181A5575-517B-465B-A0E4-8F1A7B967C5D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "training-api", "training-api", "{4D2DAF58-E557-43D0-89F8-51C49B9710B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bl.Gym.TrainingApi.Domain", "src\training-api\Bl.Gym.TrainingApi.Domain\Bl.Gym.TrainingApi.Domain.csproj", "{70759F9B-1CF3-478C-9605-B4E1DCF03514}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{70759F9B-1CF3-478C-9605-B4E1DCF03514}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70759F9B-1CF3-478C-9605-B4E1DCF03514}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70759F9B-1CF3-478C-9605-B4E1DCF03514}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70759F9B-1CF3-478C-9605-B4E1DCF03514}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4D2DAF58-E557-43D0-89F8-51C49B9710B6} = {181A5575-517B-465B-A0E4-8F1A7B967C5D}
+		{70759F9B-1CF3-478C-9605-B4E1DCF03514} = {4D2DAF58-E557-43D0-89F8-51C49B9710B6}
+	EndGlobalSection
+EndGlobal
