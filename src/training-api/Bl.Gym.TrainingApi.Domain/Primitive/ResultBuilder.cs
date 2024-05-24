@@ -68,6 +68,15 @@ namespace Bl.Gym.TrainingApi.Domain.Primitive
         /// <summary>
         /// Add error to result if condition is true
         /// </summary>
+        public void AddIf(bool condition, CoreExceptionCode code)
+        {
+            if (condition)
+                _errors.Add(new Result.Error(string.Empty, code));
+        }
+
+        /// <summary>
+        /// Add error to result if condition is true
+        /// </summary>
         public void AddIf(bool condition, string message, CoreExceptionCode code = Result.DEFAULT_STATUS_ERROR)
         {
             if (condition)
@@ -162,6 +171,30 @@ namespace Bl.Gym.TrainingApi.Domain.Primitive
         /// <exception cref="ArgumentException"></exception>
         public Result Success()
             => Result.Success(true);
+
+        /// <summary>
+        /// Create a failed or successful result.
+        /// </summary>
+        /// <param name="ifSuccess">Function that the result will be contained if success.</param>
+        public Result CreateResult(Action ifSuccess)
+        {
+            if (_errors.Any())
+            {
+                return Result.Failed(_errors);
+            }
+
+            try
+            {
+                ifSuccess();
+            }
+            catch
+            {
+                return Result.Failed(
+                    new[] { new CommonCoreException("Failed to get result.") });
+            }
+
+            return Result.Success();
+        }
     }
 
 
@@ -222,5 +255,30 @@ namespace Bl.Gym.TrainingApi.Domain.Primitive
         /// <exception cref="ArgumentException"></exception>
         public Result<TResult> Success(TResult result)
             => Result<TResult>.Success(result);
+
+        /// <summary>
+        /// Create a failed or successful result.
+        /// </summary>
+        /// <typeparam name="TResult">The returned type</typeparam>
+        /// <param name="ifSuccess">Function that the result will be contained if success.</param>
+        public Result<TResult> CreateResult(Func<TResult> ifSuccess)
+        {
+            if (_errors.Any())
+            {
+                return Result<TResult>.Failed(_errors);
+            }
+
+            TResult? validResult;
+            try
+            {
+                validResult = ifSuccess();
+            }
+            catch
+            {
+                return Result<TResult>.Failed(new CommonCoreException("Failed to get result."));
+            }
+
+            return Result<TResult>.Success(validResult);
+        }
     }
 }

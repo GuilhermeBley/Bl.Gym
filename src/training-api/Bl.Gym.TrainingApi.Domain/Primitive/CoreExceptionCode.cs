@@ -5,5 +5,7 @@ public enum CoreExceptionCode
     Unauthorized = 401,
     Forbbiden = 403,
     BadRequest = 400,
-    Conflict = 409
+    Conflict = 409,
+
+    InvalidEmail = 400_1,
 }

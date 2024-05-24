@@ -53,6 +53,9 @@ public class Result
             false,
             errors?.ToList().AsReadOnly() ?? throw new ArgumentNullException("errors"));
 
+    public static Result Success()
+        => new Result(true, Enumerable.Empty<ICoreException>());
+
     internal record Error(string Message, CoreExceptionCode StatusCode) : ICoreException;
 }
 
