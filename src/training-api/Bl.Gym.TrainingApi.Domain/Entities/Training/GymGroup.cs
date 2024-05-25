@@ -19,7 +19,7 @@ public class GymGroup
     /// A range of user ID's that are students in this group
     /// </summary>
     public HashSet<Guid> StudentIds { get; } = new();
-    public DateTimeOffset? CreatedAt { get; private set; }
+    public DateTimeOffset CreatedAt { get; private set; }
 
     public static Result<GymGroup> Create(
         Guid id,

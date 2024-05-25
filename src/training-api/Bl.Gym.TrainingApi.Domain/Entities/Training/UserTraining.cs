@@ -3,9 +3,10 @@
 /// <summary>
 /// A relationship between users and their exercises.
 /// </summary>
-public class Training
+public class UserTraining
     : Entity
 {
+    public Guid Id { get; private set; }
     public Guid StudentId { get; private set; }
     /// <summary>
     /// The gym group that gives this training.
@@ -19,8 +20,9 @@ public class Training
 
     public override bool Equals(object? obj)
     {
-        return obj is Training training &&
+        return obj is UserTraining training &&
                base.Equals(obj) &&
+               Id.Equals(training.Id) &&
                EntityId.Equals(training.EntityId) &&
                StudentId.Equals(training.StudentId) &&
                GymId.Equals(training.GymId) &&
@@ -29,20 +31,21 @@ public class Training
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(base.GetHashCode(), EntityId, StudentId, GymId, ExerciseIds);
+        return HashCode.Combine(base.GetHashCode(), Id, EntityId, StudentId, GymId, ExerciseIds);
     }
 
-    public static Result<Training> Create(
+    public static Result<UserTraining> Create(
         Guid id,
         Guid studentId,
         Guid gymId,
         DateTimeOffset createdAt)
     {
-        ResultBuilder<Training> builder = new();
+        ResultBuilder<UserTraining> builder = new();
 
         return builder.CreateResult(() =>
             new()
             {
+                Id = id,
                 CreatedAt = createdAt,
                 GymId = gymId,
                 StudentId = studentId,
