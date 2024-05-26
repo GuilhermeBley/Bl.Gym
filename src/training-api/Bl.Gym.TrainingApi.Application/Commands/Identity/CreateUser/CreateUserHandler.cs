@@ -11,6 +11,12 @@ public class CreateUserHandler
     private readonly TrainingContext _context;
     private readonly ILogger<CreateUserHandler> _logger;
 
+    public CreateUserHandler(TrainingContext context, ILogger<CreateUserHandler> logger)
+    {
+        _context = context;
+        _logger = logger;
+    }
+
     public async Task<CreateUserResponse> Handle(
         CreateUserRequest request, 
         CancellationToken cancellationToken)
@@ -35,6 +41,16 @@ public class CreateUserHandler
             throw AggregateCoreException.Create(CoreExceptionCode.Conflict);
         }
 
+        await using var transaction
+            = await _context.Database.BeginTransactionAsync(cancellationToken);
 
+        var entityAddedResult
+            = await _context.Users.AddAsync(
+                Model.Identity.UserModel.MapFromEntity(entityToAdd));
+
+        await transaction.CommitAsync();
+        await _context.SaveChangesAsync();
+
+        return new(entityAddedResult.Entity.Id);
     }
 }
