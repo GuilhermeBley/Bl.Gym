@@ -38,4 +38,16 @@ public class AggregateCoreException : CoreException, ICoreException
     {
         _errors = errors.ToImmutableArray();
     }
+
+    public static AggregateCoreException Create(
+        CoreExceptionCode code)
+    {
+        var errors =
+            new[]
+            {
+                new CoreExceptionError(CoreExceptionCode.Conflict)
+            };
+
+        return new(errors);
+    }
 }

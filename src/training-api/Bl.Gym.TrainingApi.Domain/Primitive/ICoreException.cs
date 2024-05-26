@@ -10,5 +10,5 @@ public interface ICoreException
     /// <summary>
     /// Message
     /// </summary>
-    string Message { get; }
+    string? Message { get; }
 }

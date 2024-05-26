@@ -15,6 +15,7 @@ public class User
     public string NormalizedEmail { get; private set; } = string.Empty;
     public bool EmailConfirmed { get; private set; }
     public string PasswordHash { get; private set; } = string.Empty;
+    public string PasswordSalt { get; private set; } = string.Empty;
     public Guid? SecurityStamp { get; private set; }
     public Guid? ConcurrencyStamp { get; private set; }
     public string? PhoneNumber { get; private set; }
@@ -33,6 +34,7 @@ public class User
                FirstName == user.FirstName &&
                LastName == user.LastName &&
                UserName == user.UserName &&
+               PasswordSalt == user.PasswordSalt &&
                NormalizedUserName == user.NormalizedUserName &&
                Email == user.Email &&
                NormalizedEmail == user.NormalizedEmail &&
@@ -69,8 +71,37 @@ public class User
         hash.Add(TwoFactorEnabled);
         hash.Add(LockoutEnd);
         hash.Add(LockoutEnabled);
+        hash.Add(PasswordSalt);
         hash.Add(AccessFailedCount);
         return hash.ToHashCode();
+    }
+
+    public static Result<User> CreateWithHashedPassowrd(
+        Guid id,
+        string firstName,
+        string lastName,
+        string email,
+        string password,
+        string? phoneNumber)
+    {
+        var hashResult = Security.Sha256Convert.CreateHashedPassword(password);
+
+        return Create(
+            id: id,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            emailConfirmed: false,
+            passwordHash: hashResult.HashBase64,
+            passwordSalt: hashResult.Salt,
+            securityStamp: Guid.NewGuid(),
+            concurrencyStamp: Guid.NewGuid(),
+            phoneNumber: phoneNumber,
+            phoneNumberConfirmed: false,
+            twoFactorEnabled: false,
+            lockoutEnd: null,
+            lockoutEnabled: false,
+            accessFailedCount: 0);
     }
 
     public static Result<User> Create(
@@ -80,8 +111,9 @@ public class User
         string email,
         bool emailConfirmed,
         string passwordHash,
+        string passwordSalt,
         Guid? securityStamp,
-        Guid? concurrencyStamp, 
+        Guid? concurrencyStamp,
         string? phoneNumber,
         bool phoneNumberConfirmed,
         bool twoFactorEnabled,
@@ -117,6 +149,7 @@ public class User
                 SecurityStamp = securityStamp,
                 TwoFactorEnabled = twoFactorEnabled,
                 UserName = email,
+                PasswordSalt = passwordSalt,
             });
     }
 }
