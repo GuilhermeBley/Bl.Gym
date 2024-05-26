@@ -10,6 +10,7 @@ public static class UserClaim
     public const string DEFAULT_USER_EMAIL = "emailaddress";
     public static Claim SeeTraining => new(DEFAULT_ROLE, "SeeTraining");
     public static Claim ManageTraining => new(DEFAULT_ROLE, "ManageTraining");
+    public static Claim ManageGymGroup => new(DEFAULT_ROLE, "ManageGymGroup");
 
     public static Claim CreateUserNameClaim(string userName)
         => new(DEFAULT_USER_NAME, userName);

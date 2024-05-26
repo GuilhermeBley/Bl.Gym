@@ -24,6 +24,16 @@ public class UserClaimDefaultGroup
             }
         );
 
+    public static UserClaimDefaultGroup GymGroupOwner
+        => new(
+            new[]
+            {
+                UserClaim.ManageTraining,
+                UserClaim.SeeTraining,
+                UserClaim.ManageGymGroup
+            }
+        );
+
     private readonly ImmutableArray<Claim> _claims;
 
     private UserClaimDefaultGroup(IEnumerable<Claim> claims)
