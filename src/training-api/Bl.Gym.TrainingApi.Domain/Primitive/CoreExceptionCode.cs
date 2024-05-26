@@ -9,4 +9,5 @@ public enum CoreExceptionCode
 
     InvalidEmail = 400_1,
     InvalidStringLength = 400_2,
+    InvalidPassword = 400_3,
 }

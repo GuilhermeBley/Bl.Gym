@@ -84,9 +84,20 @@ public class User
         string password,
         string? phoneNumber)
     {
+        var builder = new ResultBuilder<User>();
+
+        var isValidPassword =
+            password.Length >= 8 &&
+            password.Length <= 64 &&
+            password.Any(char.IsUpper) &&
+            password.Any(char.IsNumber) &&
+            password.Any(char.IsSymbol);
+
+        builder.AddIf(!isValidPassword, CoreExceptionCode.InvalidPassword);
+
         var hashResult = Security.Sha256Convert.CreateHashedPassword(password);
 
-        return Create(
+        var userResult = Create(
             id: id,
             firstName: firstName,
             lastName: lastName,
@@ -102,6 +113,10 @@ public class User
             lockoutEnd: null,
             lockoutEnabled: false,
             accessFailedCount: 0);
+
+        builder.AddRange(userResult.Errors);
+
+        return builder.CreateResult(() => userResult.RequiredResult);
     }
 
     public static Result<User> Create(
@@ -126,8 +141,16 @@ public class User
         email = email?.Trim() ?? string.Empty;
         firstName = firstName?.Trim() ?? string.Empty;
         lastName = lastName?.Trim() ?? string.Empty;
+        phoneNumber = string.IsNullOrEmpty(phoneNumber) ? 
+            null :
+            string.Concat(phoneNumber.Where(char.IsNumber));
 
         builder.AddIf(EmailValidation.IsInvalidEmail(email), CoreExceptionCode.InvalidEmail);
+
+        builder.AddIf(firstName.Length > 50 || firstName.Length < 2, CoreExceptionCode.InvalidStringLength);
+        builder.AddIf(lastName.Length > 255 || firstName.Length < 2, CoreExceptionCode.InvalidStringLength);
+        if (phoneNumber is not null)
+            builder.AddIf(phoneNumber.Length > 11 || phoneNumber.Length < 8, CoreExceptionCode.InvalidStringLength);
 
         return builder.CreateResult(() =>
             new()
