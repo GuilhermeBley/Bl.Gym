@@ -15,7 +15,7 @@ public class UserClaimDefaultGroup
             }
         );
 
-    public static UserClaimDefaultGroup Teacher
+    public static UserClaimDefaultGroup Instructor
         => new(
             new[]
             {

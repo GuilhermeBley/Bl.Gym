@@ -8,8 +8,18 @@ public static class UserClaim
     public const string DEFAULT_USER_NAME = "name";
     public const string DEFAULT_USER_ID = "nameidentifier";
     public const string DEFAULT_USER_EMAIL = "emailaddress";
+
+    /// <summary>
+    /// Student that can see its own training sheets.
+    /// </summary>
     public static Claim SeeTraining => new(DEFAULT_ROLE, "SeeTraining");
+    /// <summary>
+    /// Gym instructor that can manage the user's training sheets.
+    /// </summary>
     public static Claim ManageTraining => new(DEFAULT_ROLE, "ManageTraining");
+    /// <summary>
+    /// Gym owner, it can manage it.
+    /// </summary>
     public static Claim ManageGymGroup => new(DEFAULT_ROLE, "ManageGymGroup");
 
     public static Claim CreateUserNameClaim(string userName)

@@ -1,4 +1,4 @@
 ﻿namespace Bl.Gym.TrainingApi.Application.Commands.Training.CreateUserTraining;
 
-public record CreateTrainingToUserResponse(
+public record CreateTrainingToStudentResponse(
     Guid Id);
