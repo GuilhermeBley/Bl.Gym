@@ -147,10 +147,10 @@ public class User
 
         builder.AddIf(EmailValidation.IsInvalidEmail(email), CoreExceptionCode.InvalidEmail);
 
-        builder.AddIf(firstName.Length > 50 || firstName.Length < 2, CoreExceptionCode.InvalidStringLength);
-        builder.AddIf(lastName.Length > 255 || firstName.Length < 2, CoreExceptionCode.InvalidStringLength);
+        builder.AddIf(firstName.Length > 50 || firstName.Length < 2, CoreExceptionCode.InvalidFirstName);
+        builder.AddIf(lastName.Length > 255 || firstName.Length < 2, CoreExceptionCode.InvalidLastName);
         if (phoneNumber is not null)
-            builder.AddIf(phoneNumber.Length > 11 || phoneNumber.Length < 8, CoreExceptionCode.InvalidStringLength);
+            builder.AddIf(phoneNumber.Length > 11 || phoneNumber.Length < 8, CoreExceptionCode.InvalidPhoneNumber);
 
         return builder.CreateResult(() =>
             new()
