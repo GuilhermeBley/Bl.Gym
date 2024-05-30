@@ -33,4 +33,18 @@ public abstract class CoreException : Exception, ICoreException
     {
         return $"{StatusCode}|{base.Message}";
     }
+
+    public static CoreException CreateByCode(CoreExceptionCode code)
+        => new InternalCoreException(code);
+
+    private class InternalCoreException : CoreException
+    {
+        private readonly CoreExceptionCode _statusCode;
+        public override CoreExceptionCode StatusCode => _statusCode;
+
+        public InternalCoreException(CoreExceptionCode statusCode)
+        {
+            _statusCode = statusCode;
+        }
+    }
 }

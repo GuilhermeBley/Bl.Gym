@@ -13,4 +13,5 @@ public enum CoreExceptionCode
     InvalidFirstName = 400_4,
     InvalidLastName = 400_5,
     InvalidPhoneNumber = 400_6,
+    UserIsntMemberOfThisGym = 400_7,
 }

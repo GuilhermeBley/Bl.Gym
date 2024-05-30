@@ -1,6 +1,6 @@
 ﻿namespace Bl.Gym.TrainingApi.Application.Model.Identity;
 
-public class RoleClaim
+public class RoleClaimModel
 {
     public Guid Id { get; set; }
     public Guid RoleId { get; set; }
