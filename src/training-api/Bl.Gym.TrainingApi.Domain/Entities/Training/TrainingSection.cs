@@ -1,19 +1,16 @@
 ﻿using Bl.Gym.TrainingApi.Domain.Enum;
+using System.Text.RegularExpressions;
 
 namespace Bl.Gym.TrainingApi.Domain.Entities.Training;
 
 /// <summary>
 /// A relationship between users and their exercises.
 /// </summary>
-public class UserTraining
+public class TrainingSection
     : Entity
 {
     public Guid Id { get; private set; }
-    public Guid StudentId { get; private set; }
-    /// <summary>
-    /// The gym group that gives this training.
-    /// </summary>
-    public Guid GymId { get; private set; }
+    public string Name { get; private set; } = string.Empty;
     /// <summary>
     /// The exercises from this training.
     /// </summary>
@@ -24,14 +21,13 @@ public class UserTraining
 
     public override bool Equals(object? obj)
     {
-        return obj is UserTraining training &&
+        return obj is TrainingSection training &&
                base.Equals(obj) &&
                EntityId.Equals(training.EntityId) &&
                Id.Equals(training.Id) &&
-               StudentId.Equals(training.StudentId) &&
-               GymId.Equals(training.GymId) &&
                EqualityComparer<HashSet<Guid>>.Default.Equals(ExerciseIds, training.ExerciseIds) &&
                Status == training.Status &&
+               Name == training.Name &&
                ConcurrencyStamp.Equals(training.ConcurrencyStamp) &&
                CreatedAt.Equals(training.CreatedAt);
     }
@@ -42,44 +38,46 @@ public class UserTraining
         hash.Add(base.GetHashCode());
         hash.Add(EntityId);
         hash.Add(Id);
-        hash.Add(StudentId);
-        hash.Add(GymId);
         hash.Add(ExerciseIds);
         hash.Add(Status);
         hash.Add(ConcurrencyStamp);
         hash.Add(CreatedAt);
+        hash.Add(Name);
         return hash.ToHashCode();
     }
 
-    public static Result<UserTraining> CreateNew(
+    public static Result<TrainingSection> CreateNew(
         Guid id,
-        Guid studentId,
-        Guid gymId)
+        string name)
         => Create(
             id: id,
-            studentId: studentId,
-            gymId: gymId,
+            name: name,
             status: UserTrainingStatus.ToStart,
             concurrencyStamp: Guid.NewGuid(),
             createdAt: DateTimeOffset.UtcNow);
 
-    public static Result<UserTraining> Create(
+    public static Result<TrainingSection> Create(
         Guid id,
-        Guid studentId,
-        Guid gymId,
+        string name,
         UserTrainingStatus status,
         Guid concurrencyStamp,
         DateTimeOffset createdAt)
     {
-        ResultBuilder<UserTraining> builder = new();
+        ResultBuilder<TrainingSection> builder = new();
+
+        name = name?.Trim(' ', '\n') 
+            ?? string.Empty;
+
+        builder.AddIf(
+            !Regex.IsMatch(name, @"^[a-z0-9 ]{1,45}$", RegexOptions.Singleline | RegexOptions.IgnoreCase),
+            CoreExceptionCode.InvalidTrainingSectionName);
 
         return builder.CreateResult(() =>
             new()
             {
                 Id = id,
+                Name = name,
                 CreatedAt = createdAt,
-                GymId = gymId,
-                StudentId = studentId,
                 ConcurrencyStamp = concurrencyStamp,
                 Status = status
             });

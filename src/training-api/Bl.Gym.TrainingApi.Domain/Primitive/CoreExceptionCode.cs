@@ -3,7 +3,10 @@
 public enum CoreExceptionCode
 {
     Unauthorized = 401,
+
     Forbbiden = 403,
+    UserIsntMemberOfThisGym = 403_1,
+
     Conflict = 409,
 
     BadRequest = 400,
@@ -13,5 +16,5 @@ public enum CoreExceptionCode
     InvalidFirstName = 400_4,
     InvalidLastName = 400_5,
     InvalidPhoneNumber = 400_6,
-    UserIsntMemberOfThisGym = 400_7,
+    InvalidTrainingSectionName = 400_7,
 }
