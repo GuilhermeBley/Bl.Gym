@@ -13,7 +13,7 @@ public class UserTrainingSheet
     /// <summary>
     /// A range composed of the training section and its group name.
     /// </summary>
-    private readonly Dictionary<string, TrainingSection> _sections = new();
+    private readonly Dictionary<string, TrainingSection> _sections = new(StringComparer.OrdinalIgnoreCase);
 
 
     public Guid Id { get; private set; }
@@ -23,7 +23,8 @@ public class UserTrainingSheet
     /// </summary>
     public Guid GymId { get; private set; }
     public IReadOnlyCollection<TrainingSection> Sections => _sections.Values;
-
+    public DateTime UpdatedAt { get; private set; }
+    public DateTime CreatedAt { get; private set; }
     private UserTrainingSheet() { }
 
     public override bool Equals(object? obj)
@@ -43,8 +44,49 @@ public class UserTrainingSheet
         return HashCode.Combine(base.GetHashCode(), EntityId, _sections, Id, StudentId, GymId, Sections);
     }
 
-    public static Result<UserTrainingSheet> Create()
+    public static Result<UserTrainingSheet> Create(
+        Guid id,
+        Guid studentId,
+        Guid gymId,
+        DateTime updatedAt,
+        DateTime createdAt,
+        IEnumerable<TrainingSection> sections)
     {
+        ResultBuilder<UserTrainingSheet> builder = new();
 
+        builder.AddIf(
+            !IsTrainingValid(sections),
+            CoreExceptionCode.InvalidSetOfTrainingSections);
+
+        return builder.CreateResult(() =>
+        {
+            var result = new UserTrainingSheet()
+            {
+                CreatedAt = createdAt,
+                GymId = gymId,
+                Id = id,
+                StudentId = studentId,
+                UpdatedAt = updatedAt,
+            };
+
+            foreach (var s in sections)
+                result._sections.Add(s.Name, s);
+
+            return result;
+        });
+    }
+
+    private static bool IsTrainingValid(
+        IEnumerable<TrainingSection> sections)
+    {
+        var sectionCount = sections.Count();
+
+        var set = new HashSet<string>(
+            sections
+            .Where(s => s is not null)
+            .Select(s => s.Name),
+            StringComparer.OrdinalIgnoreCase);
+
+        return set.Count == sectionCount;
     }
 }
