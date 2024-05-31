@@ -2,5 +2,11 @@
 
 public record CreateTrainingToStudentRequest(
     Guid GymId,
-    Guid StudentId)
+    Guid StudentId,
+    IEnumerable<CreateTrainingToStudentSet> Sets)
     : IRequest<CreateTrainingToStudentResponse>;
+
+
+public record CreateTrainingToStudentSet(
+    string Set,
+    Guid ExerciseId);

@@ -1,6 +1,6 @@
 ﻿namespace Bl.Gym.TrainingApi.Application.Model.Training;
 
-public class UserTrainingModel
+public class UserTrainingSheetModel
 {
     public Guid Id { get; set; }
     public Guid StudentId { get; set; }

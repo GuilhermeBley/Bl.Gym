@@ -31,6 +31,17 @@ public class CreateTrainingToStudentHandler
         if (!await _gymChecker.UserIsInTheGymAsync(request.StudentId, request.GymId, cancellationToken))
             throw CommonCoreException.CreateByCode(CoreExceptionCode.UserIsntMemberOfThisGym);
 
+        var userAlreadyContainsAnActiveTrainingInThisGym
+            = await _trainingContext
+            .UserTrainings
+            .AsNoTracking()
+            .Where(u => u.StudentId == request.StudentId
+                && u.GymId == request.GymId)
+            .AnyAsync(cancellationToken);
+
+
+        if ()
+
         //
         // Add gym training
         //
