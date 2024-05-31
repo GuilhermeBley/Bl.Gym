@@ -12,6 +12,8 @@ public class GymExercise
     public string Description { get; private set; } = string.Empty;
     public DateTimeOffset CreatedAt { get; private set; }
 
+    private GymExercise() { }
+
     public override bool Equals(object? obj)
     {
         return obj is GymExercise plan &&

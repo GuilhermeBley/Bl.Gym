@@ -18,4 +18,5 @@ public enum CoreExceptionCode
     InvalidPhoneNumber = 400_6,
     InvalidTrainingSectionName = 400_7,
     InvalidSetOfTrainingSections = 400_8,
+    InvalidSetValue = 400_9,
 }

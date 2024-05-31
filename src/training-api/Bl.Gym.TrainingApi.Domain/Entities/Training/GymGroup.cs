@@ -21,6 +21,8 @@ public class GymGroup
     public HashSet<Guid> StudentIds { get; } = new();
     public DateTimeOffset CreatedAt { get; private set; }
 
+    private GymGroup() { }
+
     public static Result<GymGroup> Create(
         Guid id,
         string name,

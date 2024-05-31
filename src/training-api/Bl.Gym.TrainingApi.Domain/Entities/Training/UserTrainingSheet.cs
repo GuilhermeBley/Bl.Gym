@@ -15,7 +15,6 @@ public class UserTrainingSheet
     /// </summary>
     private readonly Dictionary<string, TrainingSection> _sections = new(StringComparer.OrdinalIgnoreCase);
 
-
     public Guid Id { get; private set; }
     public Guid StudentId { get; private set; }
     /// <summary>

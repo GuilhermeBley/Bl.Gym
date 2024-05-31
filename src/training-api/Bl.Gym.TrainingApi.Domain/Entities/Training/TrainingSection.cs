@@ -1,4 +1,5 @@
 ﻿using Bl.Gym.TrainingApi.Domain.Enum;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace Bl.Gym.TrainingApi.Domain.Entities.Training;
@@ -13,11 +14,14 @@ public class TrainingSection
     public string Name { get; private set; } = string.Empty;
     /// <summary>
     /// The exercises from this training.
+    /// It isn't allowed duplicate exercises in a section.
     /// </summary>
-    public HashSet<Guid> ExerciseIds { get; private set; } = new();
+    public HashSet<ExerciseSet> ExerciseIds { get; private set; } = new(ExerciseSetComparer.Default);
     public UserTrainingStatus Status { get; private set; }
     public Guid ConcurrencyStamp { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
+
+    private TrainingSection() { }
 
     public override bool Equals(object? obj)
     {
@@ -25,7 +29,7 @@ public class TrainingSection
                base.Equals(obj) &&
                EntityId.Equals(training.EntityId) &&
                Id.Equals(training.Id) &&
-               EqualityComparer<HashSet<Guid>>.Default.Equals(ExerciseIds, training.ExerciseIds) &&
+               EqualityComparer<HashSet<ExerciseSet>>.Default.Equals(ExerciseIds, training.ExerciseIds) &&
                Status == training.Status &&
                Name == training.Name &&
                ConcurrencyStamp.Equals(training.ConcurrencyStamp) &&
@@ -81,5 +85,28 @@ public class TrainingSection
                 ConcurrencyStamp = concurrencyStamp,
                 Status = status
             });
+    }
+
+    /// <summary>
+    /// Comparer ensures non duplicated exercises.
+    /// </summary>
+    private class ExerciseSetComparer
+        : IEqualityComparer<ExerciseSet>
+    {
+        public readonly static ExerciseSetComparer Default = new();
+        private ExerciseSetComparer() { }
+
+        public bool Equals(ExerciseSet? x, ExerciseSet? y)
+        {
+            if (x is null || y is null)
+                return false;
+
+            return x.ExerciseId == y.ExerciseId;
+        }
+
+        public int GetHashCode([DisallowNull] ExerciseSet obj)
+        {
+            return obj.ExerciseId.GetHashCode();
+        }
     }
 }
