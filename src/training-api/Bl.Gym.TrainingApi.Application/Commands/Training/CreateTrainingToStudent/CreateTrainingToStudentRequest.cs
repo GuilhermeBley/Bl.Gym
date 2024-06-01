@@ -3,9 +3,12 @@
 public record CreateTrainingToStudentRequest(
     Guid GymId,
     Guid StudentId,
-    IEnumerable<CreateTrainingToStudentSet> Sets)
+    IEnumerable<CreateTrainingToStudentSection> Sets)
     : IRequest<CreateTrainingToStudentResponse>;
 
+public record CreateTrainingToStudentSection(
+    string MuscularGroup,
+    IEnumerable<CreateTrainingToStudentSet> Sets);
 
 public record CreateTrainingToStudentSet(
     string Set,

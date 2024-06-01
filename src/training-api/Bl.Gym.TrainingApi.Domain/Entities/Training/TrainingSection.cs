@@ -22,7 +22,7 @@ public class TrainingSection
     /// The exercises from this training.
     /// It isn't allowed duplicate exercises in a section.
     /// </summary>
-    public HashSet<ExerciseSet> ExerciseIds { get; private set; } = new(ExerciseSetComparer.Default);
+    public HashSet<ExerciseSet> Sets { get; private set; } = new(ExerciseSetComparer.Default);
     public Guid ConcurrencyStamp { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
 
@@ -34,7 +34,7 @@ public class TrainingSection
                base.Equals(obj) &&
                EntityId.Equals(training.EntityId) &&
                Id.Equals(training.Id) &&
-               EqualityComparer<HashSet<ExerciseSet>>.Default.Equals(ExerciseIds, training.ExerciseIds) &&
+               EqualityComparer<HashSet<ExerciseSet>>.Default.Equals(Sets, training.Sets) &&
                MuscularGroup == training.MuscularGroup &&
                ConcurrencyStamp.Equals(training.ConcurrencyStamp) &&
                CreatedAt.Equals(training.CreatedAt);
@@ -46,7 +46,7 @@ public class TrainingSection
         hash.Add(base.GetHashCode());
         hash.Add(EntityId);
         hash.Add(Id);
-        hash.Add(ExerciseIds);
+        hash.Add(Sets);
         hash.Add(ConcurrencyStamp);
         hash.Add(CreatedAt);
         hash.Add(MuscularGroup);
@@ -55,33 +55,33 @@ public class TrainingSection
 
     public static Result<TrainingSection> CreateNew(
         Guid id,
-        string name,
-        IEnumerable<Guid> exercisesId)
+        string muscularGroup,
+        IEnumerable<ExerciseSet> sets)
         => Create(
             id: id,
-            name: name,
-            exercisesId: exercisesId,
+            muscularGroup: muscularGroup,
+            sets: sets,
             concurrencyStamp: Guid.NewGuid(),
             createdAt: DateTimeOffset.UtcNow);
 
     public static Result<TrainingSection> Create(
         Guid id,
-        string name,
-        IEnumerable<Guid> exercisesId,
+        string muscularGroup,
+        IEnumerable<ExerciseSet> sets,
         Guid concurrencyStamp,
         DateTimeOffset createdAt)
     {
         ResultBuilder<TrainingSection> builder = new();
 
-        name = name?.Trim(' ', '\n') 
+        muscularGroup = muscularGroup?.Trim(' ', '\n') 
             ?? string.Empty;
 
         builder.AddIf(
-            !Regex.IsMatch(name, @"^[a-z0-9 ]{1,45}$", RegexOptions.Singleline | RegexOptions.IgnoreCase),
+            !Regex.IsMatch(muscularGroup, @"^[a-z0-9 ]{1,45}$", RegexOptions.Singleline | RegexOptions.IgnoreCase),
             CoreExceptionCode.InvalidTrainingSectionName);
 
         builder.AddIf(
-            !exercisesId.Any(),
+            !sets.Where(set => set is not null).Any(),
             CoreExceptionCode.ItsRequiredAtLeastOneExerciseForSection);
 
         return builder.CreateResult(() =>
@@ -89,14 +89,15 @@ public class TrainingSection
             TrainingSection section = new()
             {
                 Id = id,
-                MuscularGroup = name,
+                MuscularGroup = muscularGroup,
                 CreatedAt = createdAt,
                 ConcurrencyStamp = concurrencyStamp,
             };
-            
 
-            section.ExerciseIds.Add()
+            foreach (var set in sets)
+                section.Sets.Add(set);
 
+            return section;
         });
     }
 

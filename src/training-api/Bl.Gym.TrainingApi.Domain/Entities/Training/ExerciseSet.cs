@@ -33,6 +33,14 @@ public class ExerciseSet
         return HashCode.Combine(base.GetHashCode(), EntityId, Id, Set, ExerciseId);
     }
 
+    public static Result<ExerciseSet> CreateNew(
+        string set,
+        Guid exerciseId)
+        => Create(
+            Guid.NewGuid(),
+            set,
+            exerciseId);
+
     public static Result<ExerciseSet> Create(
         Guid id,
         string set,

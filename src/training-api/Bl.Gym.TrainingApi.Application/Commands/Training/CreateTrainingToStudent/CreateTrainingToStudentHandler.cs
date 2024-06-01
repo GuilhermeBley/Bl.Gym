@@ -44,19 +44,22 @@ public class CreateTrainingToStudentHandler
         if (userAlreadyContainsAnActiveTrainingInThisGym)
             throw CoreException.CreateByCode(CoreExceptionCode.UserAlreadyHasATrainingInProgressInThisGym);
 
-        UserTrainingSheet.CreateNow(
+        var studentSheet = UserTrainingSheet.CreateNow(
             request.StudentId,
             request.GymId,
-            request.Sets.Select(set =>
+            request.Sets.Select(section =>
             {
                 var setEntity = TrainingSection.CreateNew(
                     Guid.NewGuid(),
-                    set.Set)
+                    section.MuscularGroup,
+                    section.Sets.Select(set =>
+                        ExerciseSet.CreateNew(set.Set, set.ExerciseId).RequiredResult))
                 .RequiredResult;
 
-                setEntity.ExerciseIds.add
-
                 return setEntity;
-            }));
+            }))
+            .RequiredResult;
+
+
     }
 }
