@@ -15,7 +15,7 @@ public class CreateTrainingToStudentHandler
     : IRequestHandler<CreateTrainingToStudentRequest, CreateTrainingToStudentResponse>
 {
     private readonly IIdentityProvider _identityProvider;
-    private readonly TrainingContext _trainingContext;
+    private readonly TrainingContext _context;
     private readonly GymRoleCheckerService _gymChecker;
     private readonly ILogger<CreateTrainingToStudentHandler> _logger;
 
@@ -33,7 +33,7 @@ public class CreateTrainingToStudentHandler
             throw CommonCoreException.CreateByCode(CoreExceptionCode.UserIsntMemberOfThisGym);
 
         var userAlreadyContainsAnActiveTrainingInThisGym
-            = await _trainingContext
+            = await _context
             .UserTrainings
             .AsNoTracking()
             .Where(u => u.StudentId == request.StudentId
@@ -60,6 +60,20 @@ public class CreateTrainingToStudentHandler
             }))
             .RequiredResult;
 
+        using var transaction =
+            await _context.Database.BeginTransactionAsync(cancellationToken);
 
+        await _context.TrainingSections.AddRangeAsync();
+
+        await _context.ExerciseSets.AddRangeAsync();
+        
+        var createdSheetResult = await _context
+            .UserTrainings
+            .AddAsync();
+
+        await transaction.CommitAsync();
+        await _context.SaveChangesAsync();
+
+        return new(createdSheetResult.Entity.Id);
     }
 }

@@ -110,6 +110,7 @@ public class UserTrainingSheet
             .Select(s => s.MuscularGroup),
             StringComparer.OrdinalIgnoreCase);
 
-        return set.Count == sectionCount;
+        return set.Count > 0 &&
+            set.Count == sectionCount;
     }
 }

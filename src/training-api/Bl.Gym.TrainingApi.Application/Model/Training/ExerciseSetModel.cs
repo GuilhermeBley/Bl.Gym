@@ -3,6 +3,7 @@
 public class ExerciseSetModel
 {
     public Guid Id { get; set; }
+    public Guid TrainingSectionId { get; set; }
     public string Set { get; set; } = string.Empty;
     public Guid ExerciseId { get; set; }
 }
