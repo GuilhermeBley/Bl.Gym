@@ -51,7 +51,8 @@ public class UserTrainingSheet
 
     public static Result<UserTrainingSheet> CreateNow(
         Guid studentId,
-        Guid gymId)
+        Guid gymId,
+        IEnumerable<TrainingSection> sections)
         => Create(
             id: Guid.NewGuid(),
             studentId: studentId,
@@ -60,7 +61,7 @@ public class UserTrainingSheet
             concurrencyStamp: Guid.NewGuid(),
             createdAt: DateTime.UtcNow,
             updatedAt: DateTime.UtcNow,
-            sections: Enumerable.Empty<TrainingSection>());
+            sections: sections);
 
     public static Result<UserTrainingSheet> Create(
         Guid id,
@@ -92,7 +93,7 @@ public class UserTrainingSheet
             };
 
             foreach (var s in sections)
-                result._sections.Add(s.Name, s);
+                result._sections.Add(s.MuscularGroup, s);
 
             return result;
         });
@@ -106,7 +107,7 @@ public class UserTrainingSheet
         var set = new HashSet<string>(
             sections
             .Where(s => s is not null)
-            .Select(s => s.Name),
+            .Select(s => s.MuscularGroup),
             StringComparer.OrdinalIgnoreCase);
 
         return set.Count == sectionCount;

@@ -1,6 +1,7 @@
 ﻿using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
 using Bl.Gym.TrainingApi.Application.Services;
+using Bl.Gym.TrainingApi.Domain.Entities.Training;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Training.CreateUserTraining;
 
@@ -43,10 +44,19 @@ public class CreateTrainingToStudentHandler
         if (userAlreadyContainsAnActiveTrainingInThisGym)
             throw CoreException.CreateByCode(CoreExceptionCode.UserAlreadyHasATrainingInProgressInThisGym);
 
-        //
-        // Add gym training
-        //
+        UserTrainingSheet.CreateNow(
+            request.StudentId,
+            request.GymId,
+            request.Sets.Select(set =>
+            {
+                var setEntity = TrainingSection.CreateNew(
+                    Guid.NewGuid(),
+                    set.Set)
+                .RequiredResult;
 
-        throw new NotImplementedException();
+                setEntity.ExerciseIds.add
+
+                return setEntity;
+            }));
     }
 }

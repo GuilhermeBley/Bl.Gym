@@ -11,7 +11,13 @@ public class TrainingSection
     : Entity
 {
     public Guid Id { get; private set; }
-    public string Name { get; private set; } = string.Empty;
+    /// <summary>
+    /// This field works like a name for the section. 
+    /// Usually it takes the following names: A, B, C,
+    /// D, etc. It represents the muscular group that 
+    /// will be worked out.
+    /// </summary>
+    public string MuscularGroup { get; private set; } = string.Empty;
     /// <summary>
     /// The exercises from this training.
     /// It isn't allowed duplicate exercises in a section.
@@ -29,7 +35,7 @@ public class TrainingSection
                EntityId.Equals(training.EntityId) &&
                Id.Equals(training.Id) &&
                EqualityComparer<HashSet<ExerciseSet>>.Default.Equals(ExerciseIds, training.ExerciseIds) &&
-               Name == training.Name &&
+               MuscularGroup == training.MuscularGroup &&
                ConcurrencyStamp.Equals(training.ConcurrencyStamp) &&
                CreatedAt.Equals(training.CreatedAt);
     }
@@ -43,22 +49,25 @@ public class TrainingSection
         hash.Add(ExerciseIds);
         hash.Add(ConcurrencyStamp);
         hash.Add(CreatedAt);
-        hash.Add(Name);
+        hash.Add(MuscularGroup);
         return hash.ToHashCode();
     }
 
     public static Result<TrainingSection> CreateNew(
         Guid id,
-        string name)
+        string name,
+        IEnumerable<Guid> exercisesId)
         => Create(
             id: id,
             name: name,
+            exercisesId: exercisesId,
             concurrencyStamp: Guid.NewGuid(),
             createdAt: DateTimeOffset.UtcNow);
 
     public static Result<TrainingSection> Create(
         Guid id,
         string name,
+        IEnumerable<Guid> exercisesId,
         Guid concurrencyStamp,
         DateTimeOffset createdAt)
     {
@@ -71,14 +80,24 @@ public class TrainingSection
             !Regex.IsMatch(name, @"^[a-z0-9 ]{1,45}$", RegexOptions.Singleline | RegexOptions.IgnoreCase),
             CoreExceptionCode.InvalidTrainingSectionName);
 
+        builder.AddIf(
+            !exercisesId.Any(),
+            CoreExceptionCode.ItsRequiredAtLeastOneExerciseForSection);
+
         return builder.CreateResult(() =>
-            new()
+        {
+            TrainingSection section = new()
             {
                 Id = id,
-                Name = name,
+                MuscularGroup = name,
                 CreatedAt = createdAt,
                 ConcurrencyStamp = concurrencyStamp,
-            });
+            };
+            
+
+            section.ExerciseIds.Add()
+
+        });
     }
 
     /// <summary>
