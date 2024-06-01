@@ -1,4 +1,7 @@
-﻿namespace Bl.Gym.TrainingApi.Domain.Entities.Training;
+﻿using Bl.Gym.TrainingApi.Domain.Enum;
+using static System.Collections.Specialized.BitVector32;
+
+namespace Bl.Gym.TrainingApi.Domain.Entities.Training;
 
 /// <summary>
 /// A user training sheet can store a group of exercises. 
@@ -22,8 +25,11 @@ public class UserTrainingSheet
     /// </summary>
     public Guid GymId { get; private set; }
     public IReadOnlyCollection<TrainingSection> Sections => _sections.Values;
+    public UserTrainingStatus Status { get; private set; }
+    public Guid ConcurrencyStamp { get; private set; }
     public DateTime UpdatedAt { get; private set; }
     public DateTime CreatedAt { get; private set; }
+
     private UserTrainingSheet() { }
 
     public override bool Equals(object? obj)
@@ -43,10 +49,25 @@ public class UserTrainingSheet
         return HashCode.Combine(base.GetHashCode(), EntityId, _sections, Id, StudentId, GymId, Sections);
     }
 
+    public static Result<UserTrainingSheet> CreateNow(
+        Guid studentId,
+        Guid gymId)
+        => Create(
+            id: Guid.NewGuid(),
+            studentId: studentId,
+            gymId: gymId,
+            status: UserTrainingStatus.InProgress,
+            concurrencyStamp: Guid.NewGuid(),
+            createdAt: DateTime.UtcNow,
+            updatedAt: DateTime.UtcNow,
+            sections: Enumerable.Empty<TrainingSection>());
+
     public static Result<UserTrainingSheet> Create(
         Guid id,
         Guid studentId,
         Guid gymId,
+        UserTrainingStatus status,
+        Guid concurrencyStamp,
         DateTime updatedAt,
         DateTime createdAt,
         IEnumerable<TrainingSection> sections)
@@ -66,6 +87,8 @@ public class UserTrainingSheet
                 Id = id,
                 StudentId = studentId,
                 UpdatedAt = updatedAt,
+                Status = status,
+                ConcurrencyStamp = concurrencyStamp,
             };
 
             foreach (var s in sections)

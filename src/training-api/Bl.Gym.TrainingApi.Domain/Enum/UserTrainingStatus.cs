@@ -3,10 +3,6 @@
 public enum UserTrainingStatus
 {
     /// <summary>
-    /// Training to start
-    /// </summary>
-    ToStart = 0,
-    /// <summary>
     /// Training in progress
     /// </summary>
     InProgress = 1,

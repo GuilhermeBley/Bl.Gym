@@ -36,11 +36,12 @@ public class CreateTrainingToStudentHandler
             .UserTrainings
             .AsNoTracking()
             .Where(u => u.StudentId == request.StudentId
-                && u.GymId == request.GymId)
+                && u.GymId == request.GymId
+                && u.Status == Domain.Enum.UserTrainingStatus.InProgress)
             .AnyAsync(cancellationToken);
 
-
-        if ()
+        if (userAlreadyContainsAnActiveTrainingInThisGym)
+            throw CoreException.CreateByCode(CoreExceptionCode.UserAlreadyHasATrainingInProgressInThisGym);
 
         //
         // Add gym training

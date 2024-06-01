@@ -17,7 +17,6 @@ public class TrainingSection
     /// It isn't allowed duplicate exercises in a section.
     /// </summary>
     public HashSet<ExerciseSet> ExerciseIds { get; private set; } = new(ExerciseSetComparer.Default);
-    public UserTrainingStatus Status { get; private set; }
     public Guid ConcurrencyStamp { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
 
@@ -30,7 +29,6 @@ public class TrainingSection
                EntityId.Equals(training.EntityId) &&
                Id.Equals(training.Id) &&
                EqualityComparer<HashSet<ExerciseSet>>.Default.Equals(ExerciseIds, training.ExerciseIds) &&
-               Status == training.Status &&
                Name == training.Name &&
                ConcurrencyStamp.Equals(training.ConcurrencyStamp) &&
                CreatedAt.Equals(training.CreatedAt);
@@ -43,7 +41,6 @@ public class TrainingSection
         hash.Add(EntityId);
         hash.Add(Id);
         hash.Add(ExerciseIds);
-        hash.Add(Status);
         hash.Add(ConcurrencyStamp);
         hash.Add(CreatedAt);
         hash.Add(Name);
@@ -56,14 +53,12 @@ public class TrainingSection
         => Create(
             id: id,
             name: name,
-            status: UserTrainingStatus.ToStart,
             concurrencyStamp: Guid.NewGuid(),
             createdAt: DateTimeOffset.UtcNow);
 
     public static Result<TrainingSection> Create(
         Guid id,
         string name,
-        UserTrainingStatus status,
         Guid concurrencyStamp,
         DateTimeOffset createdAt)
     {
@@ -83,7 +78,6 @@ public class TrainingSection
                 Name = name,
                 CreatedAt = createdAt,
                 ConcurrencyStamp = concurrencyStamp,
-                Status = status
             });
     }
 

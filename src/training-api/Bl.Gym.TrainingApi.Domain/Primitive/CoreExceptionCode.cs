@@ -8,6 +8,7 @@ public enum CoreExceptionCode
     UserIsntMemberOfThisGym = 403_1,
 
     Conflict = 409,
+    UserAlreadyHasATrainingInProgressInThisGym = 409_1,
 
     BadRequest = 400,
     InvalidEmail = 400_1,
