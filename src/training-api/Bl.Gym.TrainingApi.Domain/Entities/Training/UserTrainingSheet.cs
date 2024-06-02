@@ -49,6 +49,14 @@ public class UserTrainingSheet
         return HashCode.Combine(base.GetHashCode(), EntityId, _sections, Id, StudentId, GymId, Sections);
     }
 
+    public TrainingSection GetSection(string muscularGroupName)
+    {
+        _sections.TryGetValue(muscularGroupName, out var section);
+
+        return section 
+            ?? throw CoreException.CreateByCode(CoreExceptionCode.NotFound);
+    }
+
     public static Result<UserTrainingSheet> CreateNow(
         Guid studentId,
         Guid gymId,

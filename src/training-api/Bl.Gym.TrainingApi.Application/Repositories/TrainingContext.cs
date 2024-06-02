@@ -14,6 +14,5 @@ public abstract class TrainingContext
     public DbSet<Model.Training.ExerciseSetModel> ExerciseSets { get; set; }
     public DbSet<Model.Training.GymExerciseModel> Exercises { get; set; }
     public DbSet<Model.Training.GymGroupModel> GymGroups { get; set; }
-    public DbSet<Model.Training.UserTrainingWithSetsModel> UserTrainingWithSets { get; set; }
-    public DbSet<Model.Training.UserTrainingSheetModel> UserTrainings { get; set; }   
+    public DbSet<Model.Training.UserTrainingSheetModel> UserTrainingSheets { get; set; }   
 }

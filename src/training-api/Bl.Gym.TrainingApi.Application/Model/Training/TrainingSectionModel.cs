@@ -9,4 +9,18 @@ public class TrainingSectionModel
     public string MuscularGroup { get; set; } = string.Empty;
     public Guid ConcurrencyStamp { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+    
+    public static TrainingSectionModel MapFromEntity(
+        TrainingSection entity,
+        Guid userTrainingSheetId)
+    {
+        return new()
+        {
+            ConcurrencyStamp = entity.ConcurrencyStamp,
+            CreatedAt = entity.CreatedAt,
+            Id = entity.Id,
+            MuscularGroup = entity.MuscularGroup,
+            UserTrainingSheetId = userTrainingSheetId
+        };
+    }
 }

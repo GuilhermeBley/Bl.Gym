@@ -7,6 +7,8 @@ public enum CoreExceptionCode
     Forbbiden = 403,
     UserIsntMemberOfThisGym = 403_1,
 
+    NotFound = 404,
+
     Conflict = 409,
     UserAlreadyHasATrainingInProgressInThisGym = 409_1,
 

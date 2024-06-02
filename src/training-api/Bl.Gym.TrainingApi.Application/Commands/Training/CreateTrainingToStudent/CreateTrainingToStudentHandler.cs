@@ -1,4 +1,5 @@
-﻿using Bl.Gym.TrainingApi.Application.Providers;
+﻿using Bl.Gym.TrainingApi.Application.Model.Training;
+using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
 using Bl.Gym.TrainingApi.Application.Services;
 using Bl.Gym.TrainingApi.Domain.Entities.Training;
@@ -19,6 +20,14 @@ public class CreateTrainingToStudentHandler
     private readonly GymRoleCheckerService _gymChecker;
     private readonly ILogger<CreateTrainingToStudentHandler> _logger;
 
+    public CreateTrainingToStudentHandler(IIdentityProvider identityProvider, TrainingContext context, GymRoleCheckerService gymChecker, ILogger<CreateTrainingToStudentHandler> logger)
+    {
+        _identityProvider = identityProvider;
+        _context = context;
+        _gymChecker = gymChecker;
+        _logger = logger;
+    }
+
     public async Task<CreateTrainingToStudentResponse> Handle(
         CreateTrainingToStudentRequest request,
         CancellationToken cancellationToken)
@@ -34,7 +43,7 @@ public class CreateTrainingToStudentHandler
 
         var userAlreadyContainsAnActiveTrainingInThisGym
             = await _context
-            .UserTrainings
+            .UserTrainingSheets
             .AsNoTracking()
             .Where(u => u.StudentId == request.StudentId
                 && u.GymId == request.GymId
@@ -63,13 +72,27 @@ public class CreateTrainingToStudentHandler
         using var transaction =
             await _context.Database.BeginTransactionAsync(cancellationToken);
 
-        await _context.TrainingSections.AddRangeAsync();
-
-        await _context.ExerciseSets.AddRangeAsync();
-        
         var createdSheetResult = await _context
-            .UserTrainings
-            .AddAsync();
+            .UserTrainingSheets
+            .AddAsync(UserTrainingSheetModel.MapFromEntity(studentSheet));
+
+        List<TrainingSectionModel> sectionsCreated = new();
+        foreach (var section in studentSheet.Sections)
+        {
+            var sectionResult = await _context.TrainingSections.AddAsync(
+                TrainingSectionModel.MapFromEntity(section, createdSheetResult.Entity.Id));
+
+            sectionsCreated.Add(sectionResult.Entity);
+        }
+
+        foreach (var sectionCreated in sectionsCreated)
+        {
+            var sectionEntity = studentSheet.GetSection(sectionCreated.MuscularGroup);
+
+            await _context.ExerciseSets.AddRangeAsync(
+                sectionEntity.Sets.Select(set => ExerciseSetModel.MapFromEntity(set, sectionCreated.Id)));
+
+        }
 
         await transaction.CommitAsync();
         await _context.SaveChangesAsync();
