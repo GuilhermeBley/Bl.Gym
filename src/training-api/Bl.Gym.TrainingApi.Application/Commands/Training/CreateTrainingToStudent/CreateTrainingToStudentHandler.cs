@@ -20,7 +20,11 @@ public class CreateTrainingToStudentHandler
     private readonly GymRoleCheckerService _gymChecker;
     private readonly ILogger<CreateTrainingToStudentHandler> _logger;
 
-    public CreateTrainingToStudentHandler(IIdentityProvider identityProvider, TrainingContext context, GymRoleCheckerService gymChecker, ILogger<CreateTrainingToStudentHandler> logger)
+    public CreateTrainingToStudentHandler(
+        IIdentityProvider identityProvider, 
+        TrainingContext context, 
+        GymRoleCheckerService gymChecker, 
+        ILogger<CreateTrainingToStudentHandler> logger)
     {
         _identityProvider = identityProvider;
         _context = context;
