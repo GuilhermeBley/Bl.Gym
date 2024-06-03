@@ -41,6 +41,9 @@ public class ExerciseSet
             set,
             exerciseId);
 
+    public static IReadOnlyList<ExerciseSet> CreateEmptyRange()
+        => new[] { new ExerciseSet() };
+
     public static Result<ExerciseSet> Create(
         Guid id,
         string set,

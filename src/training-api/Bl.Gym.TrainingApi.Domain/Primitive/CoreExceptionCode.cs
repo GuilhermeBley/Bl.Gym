@@ -11,6 +11,7 @@ public enum CoreExceptionCode
 
     Conflict = 409,
     UserAlreadyHasATrainingInProgressInThisGym = 409_1,
+    ThisEntityWasAlreadyUpdateByAnotherSource = 409_2,
 
     BadRequest = 400,
     InvalidEmail = 400_1,
@@ -24,4 +25,5 @@ public enum CoreExceptionCode
     InvalidSetValue = 400_9,
     ItsRequiredAtLeastOneExerciseForSection = 400_10,
     InvalidDaysCount = 400_11,
+    ThisUserSheetIsntStarted = 400_12,
 }

@@ -7,9 +7,23 @@ public class TrainingSectionModel
     public Guid Id { get; set; }
     public Guid UserTrainingSheetId { get; set; }
     public string MuscularGroup { get; set; } = string.Empty;
+    public int TargetDaysCount { get; private set; }
+    public int CurrentDaysCount { get; private set; }
     public Guid ConcurrencyStamp { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     
+    public TrainingSection MapToEntity()
+    {
+        return TrainingSection.Create(
+            id: this.Id,
+            muscularGroup: this.MuscularGroup,
+            targetDaysCount: this.TargetDaysCount,
+            currentDaysCount: this.CurrentDaysCount,
+            sets: ExerciseSet.CreateEmptyRange(),
+            concurrencyStamp: this.ConcurrencyStamp,
+            createdAt: this.CreatedAt)
+            .RequiredResult;
+    }
     public static TrainingSectionModel MapFromEntity(
         TrainingSection entity,
         Guid userTrainingSheetId)
@@ -20,7 +34,9 @@ public class TrainingSectionModel
             CreatedAt = entity.CreatedAt,
             Id = entity.Id,
             MuscularGroup = entity.MuscularGroup,
-            UserTrainingSheetId = userTrainingSheetId
+            UserTrainingSheetId = userTrainingSheetId,
+            CurrentDaysCount = entity.CurrentDaysCount,
+            TargetDaysCount = entity.TargetDaysCount
         };
     }
 }
