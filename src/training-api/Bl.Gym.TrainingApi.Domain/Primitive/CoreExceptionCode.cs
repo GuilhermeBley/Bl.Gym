@@ -23,4 +23,5 @@ public enum CoreExceptionCode
     InvalidSetOfTrainingSections = 400_8,
     InvalidSetValue = 400_9,
     ItsRequiredAtLeastOneExerciseForSection = 400_10,
+    InvalidDaysCount = 400_11,
 }

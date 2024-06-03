@@ -23,6 +23,14 @@ public class TrainingSection
     /// It isn't allowed duplicate exercises in a section.
     /// </summary>
     public HashSet<ExerciseSet> Sets { get; private set; } = new(ExerciseSetComparer.Default);
+    /// <summary>
+    /// Quantity goal of days that these exercises should be practiced.
+    /// </summary>
+    public int TargetDaysCount { get; private set; } = 10;
+    /// <summary>
+    /// Current quantity of days practiced.
+    /// </summary>
+    public int CurrentDaysCount { get; private set; } = 0;
     public Guid ConcurrencyStamp { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
 
@@ -53,6 +61,21 @@ public class TrainingSection
         return hash.ToHashCode();
     }
 
+    public Result UpdateCurrentDaysCount(int currentDaysCount)
+    {
+        var builder = new ResultBuilder();
+
+        builder.AddIf(
+            currentDaysCount < 0 ||
+            currentDaysCount < TargetDaysCount,
+            CoreExceptionCode.InvalidDaysCount);
+
+        return builder.CreateResult(() =>
+        {
+            CurrentDaysCount = currentDaysCount;
+        });
+    }
+
     public static Result<TrainingSection> CreateNew(
         Guid id,
         string muscularGroup,
@@ -61,12 +84,16 @@ public class TrainingSection
             id: id,
             muscularGroup: muscularGroup,
             sets: sets,
+            currentDaysCount: 0,
+            targetDaysCount: 10,
             concurrencyStamp: Guid.NewGuid(),
             createdAt: DateTimeOffset.UtcNow);
 
     public static Result<TrainingSection> Create(
         Guid id,
         string muscularGroup,
+        int targetDaysCount,
+        int currentDaysCount,
         IEnumerable<ExerciseSet> sets,
         Guid concurrencyStamp,
         DateTimeOffset createdAt)
@@ -83,6 +110,12 @@ public class TrainingSection
         builder.AddIf(
             !sets.Where(set => set is not null).Any(),
             CoreExceptionCode.ItsRequiredAtLeastOneExerciseForSection);
+
+        builder.AddIf(
+            targetDaysCount <= 0 ||
+            currentDaysCount < 0 ||
+            currentDaysCount < targetDaysCount,
+            CoreExceptionCode.InvalidDaysCount);
 
         return builder.CreateResult(() =>
         {
