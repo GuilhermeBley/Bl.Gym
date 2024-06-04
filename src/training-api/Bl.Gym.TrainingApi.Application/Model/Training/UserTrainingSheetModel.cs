@@ -9,7 +9,7 @@ public class UserTrainingSheetModel
     public Guid StudentId { get; set; }
     public Guid GymId { get; set; }
     public UserTrainingStatus Status { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public static UserTrainingSheetModel MapFromEntity(
         UserTrainingSheet entity)
