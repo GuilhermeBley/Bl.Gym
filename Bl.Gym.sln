@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bl.Gym.TrainingApi.Domain",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bl.Gym.TrainingApi.Application", "src\training-api\Bl.Gym.TrainingApi.Application\Bl.Gym.TrainingApi.Application.csproj", "{7391080C-5348-4418-9B96-9F6D524875FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bl.Gym.TrainingApi.Infrastructure", "src\training-api\Bl.Gym.TrainingApi.Infrastructure\Bl.Gym.TrainingApi.Infrastructure.csproj", "{4C1A028A-1126-4B23-AB49-D9E1CD5D246D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,10 +30,15 @@ Global
 		{7391080C-5348-4418-9B96-9F6D524875FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7391080C-5348-4418-9B96-9F6D524875FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7391080C-5348-4418-9B96-9F6D524875FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C1A028A-1126-4B23-AB49-D9E1CD5D246D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C1A028A-1126-4B23-AB49-D9E1CD5D246D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C1A028A-1126-4B23-AB49-D9E1CD5D246D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C1A028A-1126-4B23-AB49-D9E1CD5D246D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4D2DAF58-E557-43D0-89F8-51C49B9710B6} = {181A5575-517B-465B-A0E4-8F1A7B967C5D}
 		{70759F9B-1CF3-478C-9605-B4E1DCF03514} = {4D2DAF58-E557-43D0-89F8-51C49B9710B6}
 		{7391080C-5348-4418-9B96-9F6D524875FF} = {4D2DAF58-E557-43D0-89F8-51C49B9710B6}
+		{4C1A028A-1126-4B23-AB49-D9E1CD5D246D} = {4D2DAF58-E557-43D0-89F8-51C49B9710B6}
 	EndGlobalSection
 EndGlobal
