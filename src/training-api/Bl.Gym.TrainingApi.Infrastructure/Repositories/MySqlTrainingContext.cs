@@ -10,6 +10,11 @@ internal class MySqlTrainingContext
 {
     private readonly IOptions<MySqlOption> _options;
 
+    public MySqlTrainingContext(IOptions<MySqlOption> options)
+    {
+        _options = options;
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
@@ -48,6 +53,8 @@ internal class MySqlTrainingContext
             b.Property(p => p.Id).ValueGeneratedOnAdd();
 
             b.HasIndex(p => p.NormalizedUserName).IsUnique();
+
+            b.Property(p => p.LockoutEnd).HasConversion(ConversionUtils.DateTimeToUtcDateTimeConversion);
         });
 
         modelBuilder.Entity<Application.Model.Identity.UserRoleTrainingModel>(b =>
@@ -77,6 +84,8 @@ internal class MySqlTrainingContext
             b.Property(p => p.Id).ValueGeneratedOnAdd();
 
             b.Property(p => p.Title).HasMaxLength(255);
+
+            b.Property(p => p.CreatedAt).HasConversion(ConversionUtils.DateTimeToUtcDateTimeConversion);
         });
 
         modelBuilder.Entity<Application.Model.Training.GymGroupModel>(b =>
@@ -85,6 +94,8 @@ internal class MySqlTrainingContext
             b.Property(p => p.Id).ValueGeneratedOnAdd();
 
             b.Property(p => p.Name).HasMaxLength(255);
+
+            b.Property(p => p.CreatedAt).HasConversion(ConversionUtils.DateoffSetToUtcDateoffSetConversion);
         });
 
         modelBuilder.Entity<Application.Model.Training.TrainingSectionModel>(b =>
@@ -95,12 +106,16 @@ internal class MySqlTrainingContext
             b.HasOne<Application.Model.Training.UserTrainingSheetModel>().WithMany().HasForeignKey(p => p.UserTrainingSheetId);
 
             b.Property(p => p.MuscularGroup).HasMaxLength(45);
+
+            b.Property(p => p.CreatedAt).HasConversion(ConversionUtils.DateoffSetToUtcDateoffSetConversion);
         });
 
         modelBuilder.Entity<Application.Model.Training.UserTrainingSheetModel>(b =>
         {
             b.HasKey(p => p.Id);
             b.Property(p => p.Id).ValueGeneratedOnAdd();
+
+            b.Property(p => p.CreatedAt).HasConversion(ConversionUtils.DateoffSetToUtcDateoffSetConversion);
 
             b.HasOne<Application.Model.Training.GymGroupModel>().WithMany().HasForeignKey(p => p.GymId);
             b.HasOne<Application.Model.Identity.UserModel>().WithMany().HasForeignKey(p => p.StudentId);
