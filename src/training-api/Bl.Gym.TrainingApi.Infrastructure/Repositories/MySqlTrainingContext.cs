@@ -22,7 +22,7 @@ internal class MySqlTrainingContext
         optionsBuilder
             .UseMySql(
                 _options.Value.ConnectionString,
-                ServerVersion.Create(new Version(8, 7, 2), Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MySql));
+                ServerVersion.Create(new Version(8, 0, 36), Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MySql));
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
