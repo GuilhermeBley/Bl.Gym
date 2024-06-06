@@ -5,5 +5,5 @@ public record GetAllTrainingsByCurrentUserResponse(
     Guid GymId,
     string GymName,
     string GymDescription,
-    DateTime TrainingCreatedAt,
+    DateTimeOffset TrainingCreatedAt,
     int SectionsCount);
