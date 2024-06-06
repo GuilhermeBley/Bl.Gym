@@ -49,6 +49,7 @@ public class GetAllTrainingsByCurrentUserHandler
                  gym.Description,
                  trainingSheet.CreatedAt,
                  _context.TrainingSections.AsNoTracking().Count(e => e.UserTrainingSheetId == trainingSheet.Id)))
+            .OrderByDescending(p => p.TrainingCreatedAt)
             .ToListAsync(cancellationToken);
     }
 }
