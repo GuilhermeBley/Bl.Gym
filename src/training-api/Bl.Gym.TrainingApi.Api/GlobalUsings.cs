@@ -1,0 +1,1 @@
+﻿global using Bl.Gym.TrainingApi.Application.Extensions;
