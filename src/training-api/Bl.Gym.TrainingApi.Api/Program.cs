@@ -1,4 +1,3 @@
-using Bl.Gym.TrainingApi.Api.Middleware;
 using Bl.Gym.TrainingApi.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,7 +25,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<IdentityMiddleware>();
+app.UseMiddleware<Bl.Gym.TrainingApi.Api.Middleware.IdentityMiddleware>();
 
 #pragma warning disable ASP0014
 app.UseEndpoints(Bl.Gym.TrainingApi.Api.Endpoints.TrainingEndpoint.MapEndpoints);
