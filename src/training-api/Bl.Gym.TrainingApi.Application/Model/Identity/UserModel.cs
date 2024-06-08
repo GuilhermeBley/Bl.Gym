@@ -13,6 +13,7 @@ public class UserModel
     public string NormalizedEmail { get; set; } = string.Empty;
     public bool EmailConfirmed { get; set; }
     public string PasswordHash { get; set; } = string.Empty;
+    public string PasswordSalt { get; set; } = string.Empty;
     public Guid? SecurityStamp { get; set; }
     public Guid? ConcurrencyStamp { get; set; }
     public string? PhoneNumber { get; set; }
@@ -44,6 +45,7 @@ public class UserModel
             PhoneNumberConfirmed = entity.PhoneNumberConfirmed,
             SecurityStamp = entity.SecurityStamp,
             UserName = entity.UserName,
+            PasswordSalt = entity.PasswordSalt
         };
     }
 }
