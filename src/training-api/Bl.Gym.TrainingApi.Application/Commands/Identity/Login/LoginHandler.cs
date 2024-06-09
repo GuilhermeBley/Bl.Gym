@@ -1,6 +1,7 @@
 ﻿
 using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
+using System.Security.Claims;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Identity.Login;
 
@@ -68,16 +69,14 @@ public class LoginHandler
                     setter => setter.SetProperty(p => p.AccessFailedCount, 0));
         }
 
-        var userRoles = await
-            (from userRole in _context.UserTrainingRoles.AsNoTracking()
-             join claim in _context.RoleClaims.AsNoTracking()
-                on userRole.RoleId equals claim.RoleId
-             where userRole.Id == userFound.Id
-             select new
-             {
-                 claim.RoleId,
+        var token
+            = await _tokenProvider
+            .GetTokenAsync(());
 
-             })
-             .ToListAsync(cancellationToken);
+        return new(
+            Username: userFound.UserName,
+            Email: userFound.Email,
+            Claims: null,
+            Token: );
     }
 }

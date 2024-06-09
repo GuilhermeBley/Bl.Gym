@@ -3,5 +3,5 @@
 public record LoginResponse(
     string Username,
     string Email,
-    IEnumerable<(string ClaimType, string ClaimValue)> Claims,
-    string Token);
+    string Token,
+    IEnumerable<(string ClaimType, string ClaimValue)>? Claims);
