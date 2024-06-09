@@ -26,4 +26,5 @@ public enum CoreExceptionCode
     ItsRequiredAtLeastOneExerciseForSection = 400_10,
     InvalidDaysCount = 400_11,
     ThisUserSheetIsntStarted = 400_12,
+    UserIsLocked = 400_13,
 }
