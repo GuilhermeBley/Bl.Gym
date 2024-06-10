@@ -12,6 +12,13 @@ public class LoginHandler
     private readonly TrainingContext _context;
     private readonly ITokenProvider _tokenProvider;
 
+    public LoginHandler(ILogger<LoginHandler> logger, TrainingContext context, ITokenProvider tokenProvider)
+    {
+        _logger = logger;
+        _context = context;
+        _tokenProvider = tokenProvider;
+    }
+
     public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
     {
         var userFound = await _context
@@ -71,12 +78,16 @@ public class LoginHandler
 
         var token
             = await _tokenProvider
-            .GetTokenAsync(());
+            .GetTokenAsync(
+                new[] {
+                    Domain.Security.UserClaim.CreateUserEmailClaim(userFound.Email),
+                    Domain.Security.UserClaim.CreateUserIdClaim(userFound.Id),
+                    Domain.Security.UserClaim.CreateUserNameClaim(userFound.UserName),
+                });
 
         return new(
             Username: userFound.UserName,
             Email: userFound.Email,
-            Claims: null,
-            Token: );
+            Token: token);
     }
 }

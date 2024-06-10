@@ -24,8 +24,8 @@ public static class UserClaim
 
     public static Claim CreateUserNameClaim(string userName)
         => new(DEFAULT_USER_NAME, userName);
-    public static Claim CreateUserIdClaim(string userId)
-        => new(DEFAULT_USER_ID, userId);
+    public static Claim CreateUserIdClaim(Guid userId)
+        => new(DEFAULT_USER_ID, userId.ToString());
     public static Claim CreateUserEmailClaim(string email)
         => new(DEFAULT_USER_EMAIL, email);
 }
