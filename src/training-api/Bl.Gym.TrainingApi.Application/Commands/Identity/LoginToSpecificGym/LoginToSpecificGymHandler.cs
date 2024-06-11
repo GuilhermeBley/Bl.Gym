@@ -5,17 +5,12 @@ using System.Security.Claims;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Identity.LoginToSpecificGym;
 
+/// <summary>
+/// Login to Gym
+/// </summary>
 public class LoginToSpecificGymHandler
     : IRequestHandler<LoginToSpecificGymRequest, LoginToSpecificGymResponse>
 {
-    private static readonly string[] _userClaimTypes
-        = new[]
-        {
-            Domain.Security.UserClaim.DEFAULT_USER_EMAIL,
-            Domain.Security.UserClaim.DEFAULT_USER_NAME,
-            Domain.Security.UserClaim.DEFAULT_USER_ID,
-        };
-
     private readonly ILogger<LoginToSpecificGymHandler> _logger;
     private readonly TrainingContext _context;
     private readonly ITokenProvider _tokenProvider;
@@ -75,22 +70,12 @@ public class LoginToSpecificGymHandler
         
         var token = await _tokenProvider.CreateTokenAsync(
             gymSecurityClaims
-                .Concat(GetRequiredClaimsFromUser(user)));
+                .Concat(user.Claims));
 
         return new LoginToSpecificGymResponse(
             user.RequiredUserName(),
             user.RequiredUserEmail(),
             request.GymId,
             token);
-    }
-
-    private static Claim[] GetRequiredClaimsFromUser(ClaimsPrincipal identity)
-    {
-        return
-            identity.Claims
-            .Where(userClaim =>
-                _userClaimTypes.Any(requiredType => userClaim.ValueType.Equals(requiredType, StringComparison.OrdinalIgnoreCase)))
-            .Select(c => c.Clone())
-            .ToArray();
     }
 }
