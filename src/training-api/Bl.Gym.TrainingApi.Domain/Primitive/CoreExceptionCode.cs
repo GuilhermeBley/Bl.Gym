@@ -27,4 +27,5 @@ public enum CoreExceptionCode
     InvalidDaysCount = 400_11,
     ThisUserSheetIsntStarted = 400_12,
     UserIsLocked = 400_13,
+    UserAlreadyLoggedInGym = 400_14,
 }

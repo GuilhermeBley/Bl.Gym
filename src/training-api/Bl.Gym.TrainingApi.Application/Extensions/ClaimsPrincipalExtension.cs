@@ -30,10 +30,35 @@ public static class ClaimsPrincipalExtension
     }
 
     /// <summary>
+    /// Get the gym ID, if null, it throws an exception.
+    /// </summary>
+    /// <exception cref="UnauthorizedAccessException"></exception>
+    /// <exception cref="ForbbidenCoreException"></exception>
+    public static Guid RequiredGymId(this ClaimsPrincipal principal)
+        => GetGymId(principal)
+        ?? throw new ForbbidenCoreException();
+
+    /// <summary>
+    /// Get the gym ID or null.
+    /// </summary>
+    public static Guid? GetGymId(this ClaimsPrincipal principal)
+    {
+        var claim = principal
+            .Claims
+            .FirstOrDefault(claim => claim.ValueType == Domain.Security.UserClaim.DEFAULT_GYM_ID);
+
+        if (claim is null ||
+            !Guid.TryParse(claim.Value, out var id))
+            return null;
+
+        return id;
+    }
+
+    /// <summary>
     /// Get the user email, if null, it throws an exception.
     /// </summary>
     /// <exception cref="UnauthorizedAccessException"></exception>
-    public static string? RequiredUserEmail(this ClaimsPrincipal principal)
+    public static string RequiredUserEmail(this ClaimsPrincipal principal)
         => GetUserEmail(principal)
         ?? throw new UnauthorizedAccessException();
 
@@ -57,7 +82,7 @@ public static class ClaimsPrincipalExtension
     /// Get the user name, if null, it throws an exception.
     /// </summary>
     /// <exception cref="UnauthorizedAccessException"></exception>
-    public static string? RequiredUserName(this ClaimsPrincipal principal)
+    public static string RequiredUserName(this ClaimsPrincipal principal)
         => GetUserName(principal)
         ?? throw new UnauthorizedAccessException();
 

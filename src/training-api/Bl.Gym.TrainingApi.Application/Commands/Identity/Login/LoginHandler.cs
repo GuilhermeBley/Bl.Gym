@@ -78,7 +78,7 @@ public class LoginHandler
 
         var token
             = await _tokenProvider
-            .GetTokenAsync(
+            .CreateTokenAsync(
                 new[] {
                     Domain.Security.UserClaim.CreateUserEmailClaim(userFound.Email),
                     Domain.Security.UserClaim.CreateUserIdClaim(userFound.Id),
