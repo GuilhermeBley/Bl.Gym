@@ -25,6 +25,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<Bl.Gym.TrainingApi.Api.Middleware.CoreExceptionHandlingMiddleware>();
 app.UseMiddleware<Bl.Gym.TrainingApi.Api.Middleware.IdentityMiddleware>();
 
 #pragma warning disable ASP0014
