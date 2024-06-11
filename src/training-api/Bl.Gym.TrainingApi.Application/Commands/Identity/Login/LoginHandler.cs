@@ -1,7 +1,5 @@
-﻿
-using Bl.Gym.TrainingApi.Application.Providers;
-using Bl.Gym.TrainingApi.Application.Repositories;
-using System.Security.Claims;
+﻿using Bl.Gym.TrainingApi.Application.Repositories;
+using System.Collections.Immutable;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Identity.Login;
 
@@ -10,13 +8,11 @@ public class LoginHandler
 {
     private readonly ILogger<LoginHandler> _logger;
     private readonly TrainingContext _context;
-    private readonly ITokenProvider _tokenProvider;
 
-    public LoginHandler(ILogger<LoginHandler> logger, TrainingContext context, ITokenProvider tokenProvider)
+    public LoginHandler(ILogger<LoginHandler> logger, TrainingContext context)
     {
         _logger = logger;
         _context = context;
-        _tokenProvider = tokenProvider;
     }
 
     public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
@@ -76,18 +72,16 @@ public class LoginHandler
                     setter => setter.SetProperty(p => p.AccessFailedCount, 0));
         }
 
-        var token
-            = await _tokenProvider
-            .CreateTokenAsync(
-                new[] {
-                    Domain.Security.UserClaim.CreateUserEmailClaim(userFound.Email),
-                    Domain.Security.UserClaim.CreateUserIdClaim(userFound.Id),
-                    Domain.Security.UserClaim.CreateUserNameClaim(userFound.UserName),
-                });
+        var claims =
+            new[] {
+                Domain.Security.UserClaim.CreateUserEmailClaim(userFound.Email),
+                Domain.Security.UserClaim.CreateUserIdClaim(userFound.Id),
+                Domain.Security.UserClaim.CreateUserNameClaim(userFound.UserName),
+            };
 
         return new(
             Username: userFound.UserName,
             Email: userFound.Email,
-            Token: token);
+            Claims: claims.ToImmutableArray());
     }
 }

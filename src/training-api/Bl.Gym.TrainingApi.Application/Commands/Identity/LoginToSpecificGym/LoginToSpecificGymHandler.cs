@@ -1,5 +1,6 @@
 ﻿using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Security.Claims;
 
@@ -13,18 +14,15 @@ public class LoginToSpecificGymHandler
 {
     private readonly ILogger<LoginToSpecificGymHandler> _logger;
     private readonly TrainingContext _context;
-    private readonly ITokenProvider _tokenProvider;
     private readonly IIdentityProvider _identityProvider;
 
     public LoginToSpecificGymHandler(
         ILogger<LoginToSpecificGymHandler> logger, 
         TrainingContext context, 
-        ITokenProvider tokenProvider,
         IIdentityProvider identityProvider)
     {
         _logger = logger;
         _context = context;
-        _tokenProvider = tokenProvider;
         _identityProvider = identityProvider;
     }
 
@@ -65,17 +63,16 @@ public class LoginToSpecificGymHandler
             .ToArray()
             .Concat(new[] 
             { 
-                Domain.Security.UserClaim.CreateGymClaim(request.GymId)
+                Domain.Security.UserClaim.CreateGymClaim(request.GymId),
+                Domain.Security.UserClaim.CreateUserNameClaim(user.RequiredUserName()),
+                Domain.Security.UserClaim.CreateUserEmailClaim(user.RequiredUserEmail()),
+                Domain.Security.UserClaim.CreateUserIdClaim(user.RequiredUserId()),
             });
-        
-        var token = await _tokenProvider.CreateTokenAsync(
-            gymSecurityClaims
-                .Concat(user.Claims));
 
         return new LoginToSpecificGymResponse(
             user.RequiredUserName(),
             user.RequiredUserEmail(),
             request.GymId,
-            token);
+            gymSecurityClaims.ToImmutableArray());
     }
 }
