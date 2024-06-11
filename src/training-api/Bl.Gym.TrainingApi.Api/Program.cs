@@ -30,6 +30,7 @@ app.UseMiddleware<Bl.Gym.TrainingApi.Api.Middleware.IdentityMiddleware>();
 
 #pragma warning disable ASP0014
 app.UseEndpoints(Bl.Gym.TrainingApi.Api.Endpoints.TrainingEndpoint.MapEndpoints);
+app.UseEndpoints(Bl.Gym.TrainingApi.Api.Endpoints.UserEndpoint.MapEndpoints);
 #pragma warning restore ASP0014
 
 app.Run();
