@@ -1,6 +1,6 @@
 ﻿namespace Bl.Gym.TrainingApi.Infrastructure.Options;
 
-internal class PostgreSqlOption
+public class PostgreSqlOption
 {
     public const string SECTION = "PostgreSqlOption";
 

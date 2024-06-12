@@ -14,6 +14,9 @@ builder.Services.AddScoped<Bl.Gym.TrainingApi.Application.Providers.IIdentityPro
 
 builder.Services.AddInfrastructure();
 
+builder.Services.Configure<Bl.Gym.TrainingApi.Infrastructure.Options.PostgreSqlOption>(
+    builder.Configuration.GetSection(Bl.Gym.TrainingApi.Infrastructure.Options.PostgreSqlOption.SECTION));
+
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
