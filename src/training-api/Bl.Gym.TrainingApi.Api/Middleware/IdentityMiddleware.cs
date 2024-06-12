@@ -6,23 +6,21 @@ namespace Bl.Gym.TrainingApi.Api.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<IdentityMiddleware> _logger;
-        private readonly ContextIdentityProvider _identityProvider;
 
         public IdentityMiddleware(
             RequestDelegate next,
-            ILogger<IdentityMiddleware> logger,
-            Providers.ContextIdentityProvider identityProvider)
+            ILogger<IdentityMiddleware> logger)
         {
             _next = next;
             _logger = logger;
-            _identityProvider = identityProvider;
         }
 
         public Task InvokeAsync(HttpContext context)
         {
             _logger.LogTrace("Authenticating the user...");
 
-            _identityProvider.ClaimPrincipal = context.User;
+            var identityProvider = context.RequestServices.GetRequiredService<Providers.ContextIdentityProvider>();
+            identityProvider.ClaimPrincipal = context.User;
 
             return _next(context);
         }

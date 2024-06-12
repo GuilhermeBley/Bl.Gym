@@ -14,6 +14,9 @@ builder.Services.AddScoped<Bl.Gym.TrainingApi.Application.Providers.IIdentityPro
 
 builder.Services.AddInfrastructure();
 
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,6 +27,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseAuthorization();
+app.UseAuthentication();
 
 app.UseMiddleware<Bl.Gym.TrainingApi.Api.Middleware.CoreExceptionHandlingMiddleware>();
 app.UseMiddleware<Bl.Gym.TrainingApi.Api.Middleware.IdentityMiddleware>();
