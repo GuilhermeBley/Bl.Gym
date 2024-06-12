@@ -8,9 +8,9 @@ namespace Bl.Gym.TrainingApi.Infrastructure.Repositories;
 internal class MySqlTrainingContext 
     : TrainingContext
 {
-    private readonly IOptions<MySqlOption> _options;
+    private readonly IOptions<PostgreSqlOption> _options;
 
-    public MySqlTrainingContext(IOptions<MySqlOption> options)
+    public MySqlTrainingContext(IOptions<PostgreSqlOption> options)
     {
         _options = options;
     }
@@ -20,9 +20,7 @@ internal class MySqlTrainingContext
         base.OnConfiguring(optionsBuilder);
 
         optionsBuilder
-            .UseMySql(
-                _options.Value.ConnectionString,
-                ServerVersion.Create(new Version(8, 0, 36), Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MySql));
+            .UseNpgsql(_options.Value.ConnectionString);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,8 +1,8 @@
 ﻿namespace Bl.Gym.TrainingApi.Infrastructure.Options;
 
-internal class MySqlOption
+internal class PostgreSqlOption
 {
-    public const string SECTION = "MySqlOption";
+    public const string SECTION = "PostgreSqlOption";
 
     public string ConnectionString { get; set; } = string.Empty;
 }
