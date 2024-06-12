@@ -34,11 +34,20 @@ public class CoreExceptionHandlingMiddleware
         var response = context.Response;
         response.ContentType = "application/json";
 
-        var result = JsonSerializer.Serialize(
-            new {
-                Code = (int)exception.StatusCode,
-                Message = "An error occurred. Please try again later." 
-            });
+        string result = string.Empty;
+        if (exception is AggregateCoreException aggregate)
+            result = JsonSerializer.Serialize(
+                aggregate.InnerExceptions.Select(innerException =>
+                    new {
+                        Code = (int)innerException.StatusCode,
+                        Message = innerException.Message
+                    }));
+        else
+            result = JsonSerializer.Serialize(
+                ErrorResult.CreateRange(
+                    code: (int)exception.StatusCode,
+                    message: exception.Message
+                ));
 
         try
         {
@@ -52,5 +61,18 @@ public class CoreExceptionHandlingMiddleware
         catch { }
 
         return response.WriteAsync(result);
+    }
+
+    private record ErrorResult(
+        int Code,
+        string Message)
+    {
+        public static ErrorResult[] CreateRange(
+            int code,
+            string message)
+            => new ErrorResult[]
+            {
+                new(code, message)
+            };
     }
 }

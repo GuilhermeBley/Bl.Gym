@@ -43,6 +43,7 @@ public abstract class CoreException : Exception, ICoreException
         public override CoreExceptionCode StatusCode => _statusCode;
 
         public InternalCoreException(CoreExceptionCode statusCode)
+            : base(statusCode.ToString())
         {
             _statusCode = statusCode;
         }

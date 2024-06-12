@@ -71,7 +71,7 @@ namespace Bl.Gym.TrainingApi.Domain.Primitive
         public void AddIf(bool condition, CoreExceptionCode code)
         {
             if (condition)
-                _errors.Add(new Result.Error(string.Empty, code));
+                _errors.Add(new Result.Error(code.ToString(), code));
         }
 
         /// <summary>

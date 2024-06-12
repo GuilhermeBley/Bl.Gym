@@ -91,7 +91,9 @@ public class User
             password.Length <= 64 &&
             password.Any(char.IsUpper) &&
             password.Any(char.IsNumber) &&
-            password.Any(char.IsSymbol);
+            (password.Any(char.IsSeparator) ||
+            password.Any(char.IsSymbol) ||
+            password.Any(char.IsPunctuation));
 
         builder.AddIf(!isValidPassword, CoreExceptionCode.InvalidPassword);
 
