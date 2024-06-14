@@ -1,28 +1,15 @@
 ﻿using Bl.Gym.TrainingApi.Application.Repositories;
-using Bl.Gym.TrainingApi.Infrastructure.Options;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Bl.Gym.TrainingApi.Infrastructure.Repositories;
 
 public class MySqlTrainingContext 
     : TrainingContext
 {
-
-    public override DbSet<Application.Model.Identity.RoleModel> Roles { get; set; }
-    public override DbSet<Application.Model.Identity.RoleClaimModel> RoleClaims { get; set; }
-    public override DbSet<Application.Model.Identity.UserRoleTrainingModel> UserTrainingRoles { get; set; }
-    public override DbSet<Application.Model.Identity.UserModel> Users { get; set; }
-
-    public override DbSet<Application.Model.Training.TrainingSectionModel> TrainingSections { get; set; }
-    public override DbSet<Application.Model.Training.ExerciseSetModel> ExerciseSets { get; set; }
-    public override DbSet<Application.Model.Training.GymExerciseModel> Exercises { get; set; }
-    public override DbSet<Application.Model.Training.GymGroupModel> GymGroups { get; set; }
-    public override DbSet<Application.Model.Training.UserTrainingSheetModel> UserTrainingSheets { get; set; }
-
     public MySqlTrainingContext(DbContextOptions<MySqlTrainingContext> options)
         : base(options)
-    { }
+    { 
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

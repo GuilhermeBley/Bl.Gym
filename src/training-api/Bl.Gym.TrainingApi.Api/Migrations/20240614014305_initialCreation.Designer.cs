@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bl.Gym.TrainingApi.Api.Migrations
 {
     [DbContext(typeof(MySqlTrainingContext))]
-    [Migration("20240614014108_initialCreation")]
+    [Migration("20240614014305_initialCreation")]
     partial class initialCreation
     {
         /// <inheritdoc />
