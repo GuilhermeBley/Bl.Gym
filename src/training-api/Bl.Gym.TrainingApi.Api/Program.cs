@@ -12,7 +12,7 @@ builder.Services.AddScoped<Bl.Gym.TrainingApi.Api.Providers.ContextIdentityProvi
 builder.Services.AddScoped<Bl.Gym.TrainingApi.Application.Providers.IIdentityProvider>(
     provider => provider.GetRequiredService<Bl.Gym.TrainingApi.Api.Providers.ContextIdentityProvider>());
 
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(typeof(Program).Assembly);
 
 builder.Services.Configure<Bl.Gym.TrainingApi.Infrastructure.Options.PostgreSqlOption>(
     builder.Configuration.GetSection(Bl.Gym.TrainingApi.Infrastructure.Options.PostgreSqlOption.SECTION));
