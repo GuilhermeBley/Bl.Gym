@@ -1,24 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Bl.Gym.TrainingApi.Infrastructure.Repositories;
 
-internal class DefaultStringLengthConvention : IEntityTypeConfiguration<object>
+internal static class DefaultStringLengthConvention
 {
-    private readonly int _maxLength;
-
-    public DefaultStringLengthConvention(int maxLength)
+    public static void Apply(ModelBuilder modelBuilder, int maxLength)
     {
-        _maxLength = maxLength;
-    }
-
-    public void Configure(EntityTypeBuilder<object> builder)
-    {
-        foreach (var property in builder.Metadata.GetProperties())
+        foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {
-            if (property.ClrType == typeof(string) && !property.GetMaxLength().HasValue)
+            foreach (var property in entity.GetProperties())
             {
-                property.SetMaxLength(_maxLength);
+                if (property.ClrType == typeof(string) && property.GetMaxLength() == null)
+                {
+                    property.SetMaxLength(maxLength);
+                }
             }
         }
     }

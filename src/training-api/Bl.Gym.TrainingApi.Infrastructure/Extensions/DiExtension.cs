@@ -1,11 +1,16 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Bl.Gym.TrainingApi.Infrastructure.Options;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using System.Reflection;
 
 namespace Bl.Gym.TrainingApi.Infrastructure.Extensions;
 
 public static class DiExtension
 {
     public static IServiceCollection AddInfrastructure(
-        this IServiceCollection serviceCollection)
+        this IServiceCollection serviceCollection,
+        Assembly migrationAssembly)
     {
         return serviceCollection
             .AddMediatR(cfg =>
@@ -13,6 +18,15 @@ public static class DiExtension
                 cfg.RegisterServicesFromAssembly(typeof(Application.Commands.Identity.CreateUser.CreateUserHandler).Assembly);
             })
             .AddScoped<Application.Services.GymRoleCheckerService>()
-            .AddDbContext<Application.Repositories.TrainingContext, Repositories.MySqlTrainingContext>();
+            .AddDbContext<Repositories.MySqlTrainingContext>((provider, opt) =>
+            {
+                var config = provider.GetRequiredService<IOptions<PostgreSqlOption>>();
+                opt.UseNpgsql(config.Value.ConnectionString, opt =>
+                    {
+                        opt.MigrationsAssembly(migrationAssembly?.FullName ?? typeof(DiExtension).Assembly.FullName);
+                    });
+            })
+            .AddScoped<Application.Repositories.TrainingContext>(
+                provider => provider.GetRequiredService<Repositories.MySqlTrainingContext>());
     }
 }

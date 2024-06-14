@@ -5,29 +5,28 @@ using Microsoft.Extensions.Options;
 
 namespace Bl.Gym.TrainingApi.Infrastructure.Repositories;
 
-internal class MySqlTrainingContext 
+public class MySqlTrainingContext 
     : TrainingContext
 {
-    private readonly IOptions<PostgreSqlOption> _options;
 
-    public MySqlTrainingContext(IOptions<PostgreSqlOption> options)
-    {
-        _options = options;
-    }
+    public override DbSet<Application.Model.Identity.RoleModel> Roles { get; set; }
+    public override DbSet<Application.Model.Identity.RoleClaimModel> RoleClaims { get; set; }
+    public override DbSet<Application.Model.Identity.UserRoleTrainingModel> UserTrainingRoles { get; set; }
+    public override DbSet<Application.Model.Identity.UserModel> Users { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
+    public override DbSet<Application.Model.Training.TrainingSectionModel> TrainingSections { get; set; }
+    public override DbSet<Application.Model.Training.ExerciseSetModel> ExerciseSets { get; set; }
+    public override DbSet<Application.Model.Training.GymExerciseModel> Exercises { get; set; }
+    public override DbSet<Application.Model.Training.GymGroupModel> GymGroups { get; set; }
+    public override DbSet<Application.Model.Training.UserTrainingSheetModel> UserTrainingSheets { get; set; }
 
-        optionsBuilder
-            .UseNpgsql(_options.Value.ConnectionString);
-    }
+    public MySqlTrainingContext(DbContextOptions<MySqlTrainingContext> options)
+        : base(options)
+    { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new DefaultStringLengthConvention(500));
-
-        base.OnModelCreating(modelBuilder);
+        DefaultStringLengthConvention.Apply(modelBuilder, 500);
 
         modelBuilder.Entity<Application.Model.Identity.RoleClaimModel>(b =>
         {
@@ -52,7 +51,7 @@ internal class MySqlTrainingContext
 
             b.HasIndex(p => p.NormalizedUserName).IsUnique();
 
-            b.Property(p => p.LockoutEnd).HasConversion(ConversionUtils.DateTimeToUtcDateTimeConversion);
+            b.Property(p => p.LockoutEnd).HasConversion(ConversionUtils.DateoffSetToUtcDateoffSetConversion);
         });
 
         modelBuilder.Entity<Application.Model.Identity.UserRoleTrainingModel>(b =>
@@ -83,7 +82,7 @@ internal class MySqlTrainingContext
 
             b.Property(p => p.Title).HasMaxLength(255);
 
-            b.Property(p => p.CreatedAt).HasConversion(ConversionUtils.DateTimeToUtcDateTimeConversion);
+            b.Property(p => p.CreatedAt).HasConversion(ConversionUtils.DateoffSetToUtcDateoffSetConversion);
         });
 
         modelBuilder.Entity<Application.Model.Training.GymGroupModel>(b =>
