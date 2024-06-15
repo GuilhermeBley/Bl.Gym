@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Bl.Gym.TrainingApi.Api.Services;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bl.Gym.TrainingApi.Api.Endpoints;
@@ -18,11 +19,22 @@ public class UserEndpoint
 
         builder.MapPost("user/login", async (
             [FromBody]Application.Commands.Identity.Login.LoginRequest request,
-            IMediator mediator) =>
+            IMediator mediator,
+            TokenGeneratorService tokenGenerator) =>
         {
             var response = await mediator.Send(request);
 
-            return Results.Ok();
+            var tokenResult = tokenGenerator.Generate(
+                response.Claims.ToArray(),
+                DateTime.UtcNow.AddHours(2));
+
+            return Results.Ok(
+                new
+                {
+                    response.Email,
+                    response.Username,
+                    Token = tokenResult
+                });
         });
 
         builder.MapPost("user/login/gym/{gymId}", async (

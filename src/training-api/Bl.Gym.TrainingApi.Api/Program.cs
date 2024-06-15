@@ -22,7 +22,27 @@ builder.Services.Configure<Bl.Gym.TrainingApi.Infrastructure.Options.PostgreSqlO
 builder.Services.Configure<Bl.Gym.TrainingApi.Api.Options.JwtOptions>(
     builder.Configuration.GetSection(Bl.Gym.TrainingApi.Api.Options.JwtOptions.SECTION));
 
-builder.Services.AddAuthentication();
+builder.Services
+    .AddAuthentication(cfg =>
+    {
+        cfg.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+        cfg.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(cfg =>
+    {
+        cfg.RequireHttpsMetadata = false;
+        cfg.SaveToken = true;
+        cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+                System.Text.Encoding.ASCII.GetBytes(
+                    builder.Configuration.GetSection("Jwt:Key").Value ?? string.Empty)),
+            ValidateLifetime = true,
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            RoleClaimType = Bl.Gym.TrainingApi.Domain.Security.UserClaim.DEFAULT_ROLE
+        };
+    });
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
