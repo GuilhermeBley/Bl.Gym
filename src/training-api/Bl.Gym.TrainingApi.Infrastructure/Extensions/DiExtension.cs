@@ -27,6 +27,8 @@ public static class DiExtension
                     });
             })
             .AddScoped<Application.Repositories.TrainingContext>(
-                provider => provider.GetRequiredService<Repositories.MySqlTrainingContext>());
+                provider => provider.GetRequiredService<Repositories.MySqlTrainingContext>())
+            
+            .AddScoped<Application.Repositories.Training.IGetAllTrainingsByCurrentUserRepository, Repositories.Training.GetAllTrainingsByCurrentUserRepository>();
     }
 }

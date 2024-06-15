@@ -34,6 +34,6 @@ public class GetAllTrainingsByCurrentUserHandler
 
         var id = user.RequiredUserId();
 
-        return await _repository.GetAsync(cancellationToken);
+        return await _repository.GetAsync(id, cancellationToken);
     }
 }

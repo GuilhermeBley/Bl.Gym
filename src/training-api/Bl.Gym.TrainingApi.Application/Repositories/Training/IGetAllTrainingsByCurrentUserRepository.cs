@@ -8,5 +8,6 @@ namespace Bl.Gym.TrainingApi.Application.Repositories.Training;
 public interface IGetAllTrainingsByCurrentUserRepository
 {
     Task<IEnumerable<GetAllTrainingsByCurrentUserResponse>> GetAsync(
+        Guid userId,
         CancellationToken cancellationToken = default);
 }
