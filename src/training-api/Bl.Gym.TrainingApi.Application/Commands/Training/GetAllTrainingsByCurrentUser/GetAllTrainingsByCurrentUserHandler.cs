@@ -1,6 +1,7 @@
 ﻿
 using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
+using Bl.Gym.TrainingApi.Application.Repositories.Training;
 using System;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Training.GetAllTrainingsByCurrentUser;
@@ -11,12 +12,18 @@ public class GetAllTrainingsByCurrentUserHandler
     private readonly TrainingContext _context;
     private readonly ILogger<GetAllTrainingsByCurrentUserHandler> _logger;
     private readonly IIdentityProvider _identityProvider;
+    private readonly IGetAllTrainingsByCurrentUserRepository _repository;
 
-    public GetAllTrainingsByCurrentUserHandler(TrainingContext context, ILogger<GetAllTrainingsByCurrentUserHandler> logger, IIdentityProvider identityProvider)
+    public GetAllTrainingsByCurrentUserHandler(
+        TrainingContext context, 
+        ILogger<GetAllTrainingsByCurrentUserHandler> logger, 
+        IIdentityProvider identityProvider,
+        IGetAllTrainingsByCurrentUserRepository repository)
     {
         _context = context;
         _logger = logger;
         _identityProvider = identityProvider;
+        _repository = repository;
     }
 
     public async Task<IEnumerable<GetAllTrainingsByCurrentUserResponse>> Handle(
@@ -27,29 +34,6 @@ public class GetAllTrainingsByCurrentUserHandler
 
         var id = user.RequiredUserId();
 
-        return await
-            (from roleGym in _context.UserTrainingRoles.AsNoTracking()
-             join trainingSheet in _context.UserTrainingSheets.AsNoTracking()
-                 on new {
-                     GymId = roleGym.GymGroupId,
-                     UserId = roleGym.UserId
-                 } equals new
-                 {
-                     GymId = trainingSheet.GymId,
-                     UserId = id
-                 }
-             join gym in _context.GymGroups.AsNoTracking()
-                 on roleGym.GymGroupId equals gym.Id
-             join section in _context.TrainingSections.AsNoTracking()
-                 on trainingSheet.Id equals section.UserTrainingSheetId
-             select new GetAllTrainingsByCurrentUserResponse(
-                 trainingSheet.Id,
-                 gym.Id,
-                 gym.Name,
-                 gym.Description,
-                 trainingSheet.CreatedAt,
-                 _context.TrainingSections.AsNoTracking().Count(e => e.UserTrainingSheetId == trainingSheet.Id)))
-            .OrderByDescending(p => p.TrainingCreatedAt)
-            .ToListAsync(cancellationToken);
+        return await _repository.GetAsync(cancellationToken);
     }
 }
