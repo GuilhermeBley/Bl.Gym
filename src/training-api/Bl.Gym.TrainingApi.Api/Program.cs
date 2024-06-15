@@ -1,3 +1,4 @@
+using Bl.Gym.TrainingApi.Api.Services;
 using Bl.Gym.TrainingApi.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,9 +14,13 @@ builder.Services.AddScoped<Bl.Gym.TrainingApi.Application.Providers.IIdentityPro
     provider => provider.GetRequiredService<Bl.Gym.TrainingApi.Api.Providers.ContextIdentityProvider>());
 
 builder.Services.AddInfrastructure(typeof(Program).Assembly);
+builder.Services.AddSingleton<TokenGeneratorService>();
 
 builder.Services.Configure<Bl.Gym.TrainingApi.Infrastructure.Options.PostgreSqlOption>(
     builder.Configuration.GetSection(Bl.Gym.TrainingApi.Infrastructure.Options.PostgreSqlOption.SECTION));
+
+builder.Services.Configure<Bl.Gym.TrainingApi.Api.Options.JwtOptions>(
+    builder.Configuration.GetSection(Bl.Gym.TrainingApi.Api.Options.JwtOptions.SECTION));
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
@@ -33,8 +38,8 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseMiddleware<Bl.Gym.TrainingApi.Api.Middleware.CoreExceptionHandlingMiddleware>();
 app.UseMiddleware<Bl.Gym.TrainingApi.Api.Middleware.IdentityMiddleware>();
