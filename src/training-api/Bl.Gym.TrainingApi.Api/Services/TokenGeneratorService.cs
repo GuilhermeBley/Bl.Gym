@@ -44,7 +44,7 @@ public class TokenGeneratorService
 
         foreach (var claim in claims)
             claimsNonDuplicated.TryAdd(
-                string.Concat(claim.ValueType, claim.Value),
+                string.Concat(claim.Type, claim.Value),
                 claim);
 
         ci.AddClaims(claimsNonDuplicated.Values);

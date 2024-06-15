@@ -20,7 +20,7 @@ public static class ClaimsPrincipalExtension
     {
         var claim = principal
             .Claims
-            .FirstOrDefault(claim => claim.ValueType == Domain.Security.UserClaim.DEFAULT_USER_ID);
+            .FirstOrDefault(claim => claim.Type == Domain.Security.UserClaim.DEFAULT_USER_ID);
 
         if (claim is null ||
             !Guid.TryParse(claim.Value, out var id))
@@ -45,7 +45,7 @@ public static class ClaimsPrincipalExtension
     {
         var claim = principal
             .Claims
-            .FirstOrDefault(claim => claim.ValueType == Domain.Security.UserClaim.DEFAULT_GYM_ID);
+            .FirstOrDefault(claim => claim.Type == Domain.Security.UserClaim.DEFAULT_GYM_ID);
 
         if (claim is null ||
             !Guid.TryParse(claim.Value, out var id))
@@ -70,7 +70,7 @@ public static class ClaimsPrincipalExtension
     {
         var claim = principal
             .Claims
-            .FirstOrDefault(claim => claim.ValueType == Domain.Security.UserClaim.DEFAULT_USER_NAME);
+            .FirstOrDefault(claim => claim.Type == Domain.Security.UserClaim.DEFAULT_USER_NAME);
 
         if (claim is null)
             return null;
@@ -93,7 +93,7 @@ public static class ClaimsPrincipalExtension
     {
         var claim = principal
             .Claims
-            .FirstOrDefault(claim => claim.ValueType == Domain.Security.UserClaim.DEFAULT_USER_NAME);
+            .FirstOrDefault(claim => claim.Type == Domain.Security.UserClaim.DEFAULT_USER_NAME);
 
         if (claim is null)
             return null;
@@ -103,7 +103,7 @@ public static class ClaimsPrincipalExtension
 
     public static bool IsInRole(this ClaimsPrincipal principal, Claim roleClaim)
     {
-        if (principal.Identities.Any(id => id.RoleClaimType == roleClaim.ValueType))
+        if (principal.Identities.Any(id => id.RoleClaimType == roleClaim.Type))
             return false;
         
         return principal.IsInRole(roleClaim.Value);
@@ -119,7 +119,7 @@ public static class ClaimsPrincipalExtension
         if (!IsLogged(principal))
             throw new UnauthorizedCoreException();
 
-        if (principal.Identities.Any(id => id.RoleClaimType == roleClaim.ValueType))
+        if (principal.Identities.Any(id => id.RoleClaimType == roleClaim.Type))
             throw new ForbbidenCoreException();
 
         if (!principal.IsInRole(roleClaim.Value))
