@@ -26,6 +26,14 @@ public class GetAllTrainingsByCurrentUserRepository
             .QueryAsync<GetAllTrainingsByCurrentUserResponse>(
                 new CommandDefinition(
                     """
+                    SELECT 
+                        TrainingId
+                        GymId
+                        GymName
+                        GymDescription
+                        TrainingCreatedAt
+                        SectionsCount
+                    FROM 
 
                     """,
                     parameters: new
