@@ -1,11 +1,11 @@
 import { NavigationContainer } from "@react-navigation/native";
 
-import NotLoggedStack from "./NotLoggedStack";
+import SelectGymTabs from "./SelectGymTabs";
 
 const Router = () => {
     return (
         <NavigationContainer>
-            <NotLoggedStack />
+            <SelectGymTabs />
         </NavigationContainer>
     )
 }
