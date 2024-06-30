@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { UserContext } from "../contexts/UserContext";
 import { useContext } from "react";
 
@@ -10,11 +10,11 @@ const LoginScreen = () => {
 
     const userContext = useContext(UserContext);
 
-    
+
 
     return (
         <View>
-
+            <Text style={{fontSize: 100}}>mylogin</Text>
         </View>
     );
 };
