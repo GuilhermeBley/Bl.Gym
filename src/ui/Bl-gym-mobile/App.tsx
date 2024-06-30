@@ -7,7 +7,7 @@ export default function App() {
   return (
     <UserContextProvider>
       <AuthContainer
-        authorizedContent={(<Router></Router>)}
+        authorizedContent={(<Router />)}
         unauthorizedContent={(<LoginScreen />)}
       />
     </UserContextProvider>
