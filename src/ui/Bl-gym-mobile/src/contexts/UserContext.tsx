@@ -39,8 +39,9 @@ class UserContextProps{
             this.roles = decoded.roles;
             this.authorized = decoded.authorized;
         }
-        catch{
-            console.error("Failed to parse login.")
+        catch(error) {
+            this.setAsUnauthorized();
+            console.error("Failed to parse login.", error)
         }
     }
 
