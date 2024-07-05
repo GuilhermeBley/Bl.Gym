@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { UserContext } from "../../contexts/UserContext";
 import { useContext } from "react";
 import styles from "./styles";
+import axios from "../../api/GymApi";
 
 const LoginScreen = () => {
 
