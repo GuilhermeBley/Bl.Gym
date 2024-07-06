@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { Alert, View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { UserContext } from "../../contexts/UserContext";
 import { useContext } from "react";
 import styles from "./styles";
-import { handleLogin } from "./action";
+import { handleLogin, LoginResultStatus } from "./action";
 
 const LoginScreen = () => {
 
@@ -15,6 +15,14 @@ const LoginScreen = () => {
   const handleLoginAndNavigate = async () => {
     let response = await handleLogin(userLoginInput, userPasswordInput);
     
+    if (response.Status === LoginResultStatus.InvalidLoginOrPassword) {
+      Alert.alert("Falha no Login", "Usuário ou senha inválidos.");
+      return;
+    }
+    if (response.Status !== LoginResultStatus.Success) {
+      Alert.alert("Falha no Login", "Falha ao realizar o login.");
+      return;
+    }
   }
 
 
