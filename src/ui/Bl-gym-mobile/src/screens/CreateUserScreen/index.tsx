@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, Alert } from 'react-native';
 import styles from '../LoginScreen/styles';
+import { handleCreateUser } from './action';
 
 const CreateUserScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -9,13 +10,21 @@ const CreateUserScreen = () => {
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!firstName || !lastName || !email || !password || !phoneNumber) {
-      Alert.alert('Error', 'All fields are required.');
+      Alert.alert('Falha', 'Adicione os campos necessários.');
       return;
     }
-    // Handle user creation logic here
-    Alert.alert('Success', 'User created successfully!');
+    
+    var result = await handleCreateUser(firstName, lastName, email, password, phoneNumber);
+
+    if (result.Success){
+      //
+      // Successfully created, going to the next page
+      //
+    }
+
+    Alert.alert("Falha", result.Errors.join('\n'));
   };
 
   return (
