@@ -11,7 +11,7 @@ const CreateUserScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const handleSubmit = async () => {
-    if (!firstName || !lastName || !email || !password || !phoneNumber) {
+    if (!firstName || !lastName || !email || !password) {
       Alert.alert('Falha', 'Adicione os campos necessários.');
       return;
     }
