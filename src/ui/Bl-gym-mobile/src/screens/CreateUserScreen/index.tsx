@@ -80,11 +80,12 @@ const CreateUserScreen = () => {
           confirmPassword: "",
           phoneNumber: null,
         }}
-        onSubmit={(values, actions) => { 
+        onSubmit={(values, actions) => {
           return
-            handleSubmit()
+          handleSubmit()
             .finally(() => actions.setSubmitting(false));
         }}
+        validationSchema={validationSchema}
       >
 
         {formikProps => (
