@@ -16,23 +16,35 @@ const LoginScreen = () => {
     label: string;
     [key: string]: any;
   }
+  const validationSchema = yup.object().shape({
+    login: yup.string()
+      .email("E-mail inválido.")
+      .required("Login é obrigatório."),
+    password: yup.string()
+      .min(8, "Senha inválida, deve conter no mínimo 8 caracteres.")
+      .required("Senha é obrigatório."),
+  });
 
-  const [userLoginInput, setUserLoginInput] = useState("");
-  const [userPasswordInput, setUserPasswordInput] = useState("");
+  const [buttonErrorMessage, setButtonErrorMessage] = useState("");
 
   const userContext = useContext(UserContext);
 
-  const handleLoginAndNavigate = async () => {
-    let response = await handleLogin(userLoginInput, userPasswordInput);
+  const handleLoginAndNavigate = async (
+    login: string,
+    password: string
+  ) => {
+    let response = await handleLogin(login, password);
     
     if (response.Status === LoginResultStatus.InvalidLoginOrPassword) {
-      Alert.alert("Falha no Login", "Usuário ou senha inválidos.");
+      setButtonErrorMessage("Usuário ou senha inválidos.");
       return;
     }
     if (response.Status !== LoginResultStatus.Success) {
-      Alert.alert("Falha no Login", "Falha ao realizar o login.");
+      setButtonErrorMessage("Falha ao realizar o login.");
       return;
     }
+
+    userContext.setUserByJwtToken(response.Token);
   }
 
   const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
@@ -71,8 +83,9 @@ const LoginScreen = () => {
           password: ""
         }}
         onSubmit={(values, actions) => 
-          handleLogin(values.login, values.password)
-          .finally(() => actions.setSubmitting(false))}
+          handleLoginAndNavigate(values.login, values.password)
+            .finally(() => actions.setSubmitting(false))}
+        validationSchema={validationSchema}
       >
 
         {formikProps => (
@@ -94,6 +107,10 @@ const LoginScreen = () => {
             {formikProps.isSubmitting ? 
               <ActivityIndicator /> :
               <Button onPress={() => formikProps.handleSubmit()} title="Entrar" />}
+            
+            <Text style={{ color: "red", width: "auto" }}>
+              {buttonErrorMessage}
+            </Text>
           </React.Fragment>
         )}
       </Formik>
