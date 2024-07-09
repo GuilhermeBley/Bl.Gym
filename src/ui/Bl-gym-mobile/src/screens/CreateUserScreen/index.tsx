@@ -120,7 +120,7 @@ const CreateUserScreen = () => {
             />
             {formikProps.isSubmitting ? 
               <ActivityIndicator /> :
-              <Button onPress={() => formikProps.handleSubmit()} title="Submit" />}
+              <Button onPress={() => formikProps.handleSubmit()} title="Criar usuário" />}
           </React.Fragment>
         )}
       </Formik>
