@@ -93,6 +93,7 @@ const CreateUserScreen = () => {
               formikKey={"firstName"}
               formikProps={formikProps}
               label={"Primeiro nome"}
+              autoFocus
             />
             
             <StyledInput
