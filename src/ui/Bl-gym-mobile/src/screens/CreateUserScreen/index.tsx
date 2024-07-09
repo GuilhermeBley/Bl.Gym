@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, Button, Alert, SafeAreaView, ActivityIndicator } from 'react-native';
 import styles from '../LoginScreen/styles';
 import { handleCreateUser } from './action';
 import { Formik, FormikProps } from 'formik';
@@ -80,7 +80,11 @@ const CreateUserScreen = () => {
           confirmPassword: "",
           phoneNumber: null,
         }}
-        onSubmit={(values, actions) => { }}
+        onSubmit={(values, actions) => { 
+          return
+            handleSubmit()
+            .finally(() => actions.setSubmitting(false));
+        }}
       >
 
         {formikProps => (
@@ -114,6 +118,9 @@ const CreateUserScreen = () => {
               formikProps={formikProps}
               label={"Confirme a senha"}
             />
+            {formikProps.isSubmitting ? 
+              <ActivityIndicator /> :
+              <Button onPress={() => formikProps.handleSubmit()} title="Submit" />}
           </React.Fragment>
         )}
       </Formik>
