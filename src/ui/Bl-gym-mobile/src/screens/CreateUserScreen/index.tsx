@@ -80,11 +80,10 @@ const CreateUserScreen = () => {
           confirmPassword: "",
           phoneNumber: null,
         }}
-        onSubmit={(values, actions) => {
-          return
+        onSubmit={(values, actions) =>
           handleSubmit()
-            .finally(() => actions.setSubmitting(false));
-        }}
+          .finally(() => actions.setSubmitting(false))
+        }
         validationSchema={validationSchema}
       >
 
