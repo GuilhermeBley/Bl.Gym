@@ -53,15 +53,16 @@ const LoginScreen = () => {
     const error = formikProps.touched[formikKey] && formikProps.errors[formikKey];
     const errorMessage = typeof error === 'string' ? error : '';
     
-    if (error !== '')
+    if (errorMessage.length > 0)
     {
       inputStyles.borderColor = "red"
     }
 
     return (
-      <View>
+      <View style={styles.inputContainer}>
         <Text>{label}</Text>
         <TextInput
+          style={inputStyles}
           value={formikProps.values[formikKey]}
           onChangeText={formikProps.handleChange(formikKey)}
           onBlur={formikProps.handleBlur(formikKey)}
@@ -69,14 +70,14 @@ const LoginScreen = () => {
         >
 
         </TextInput>
-        {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
+        <Text style={{ color: 'red' }}>{errorMessage}</Text>
       </View>
     );
   }
 
 
   return (
-    <SafeAreaView style={{marginTop: 90}}>
+    <SafeAreaView style={styles.container}>
       <Formik
         initialValues={{
           login: "",
@@ -94,6 +95,7 @@ const LoginScreen = () => {
               formikKey={"login"}
               formikProps={formikProps}
               label={"Login"}
+              keyboardType="email-address"
               autoFocus
             />
             
@@ -104,13 +106,15 @@ const LoginScreen = () => {
               secureTextEntry
             />
 
-            {formikProps.isSubmitting ? 
-              <ActivityIndicator /> :
-              <Button onPress={() => formikProps.handleSubmit()} title="Entrar" />}
-            
-            <Text style={{ color: "red", width: "auto" }}>
-              {buttonErrorMessage}
-            </Text>
+            <View style={styles.buttonContainer}>
+              {formikProps.isSubmitting ? 
+                <ActivityIndicator /> :
+                <Button onPress={() => formikProps.handleSubmit()} title="Entrar" />}
+              
+              <Text style={{ color: "red", width: "auto" }}>
+                {buttonErrorMessage}
+              </Text>
+            </View>
           </React.Fragment>
         )}
       </Formik>

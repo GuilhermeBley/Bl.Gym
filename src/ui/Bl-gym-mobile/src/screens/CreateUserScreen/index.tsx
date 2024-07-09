@@ -44,15 +44,16 @@ const CreateUserScreen = () => {
     const error = formikProps.touched[formikKey] && formikProps.errors[formikKey];
     const errorMessage = typeof error === 'string' ? error : '';
     
-    if (error !== '')
+    if (errorMessage)
     {
       inputStyles.borderColor = "red"
     }
 
     return (
-      <View>
+      <View style={styles.inputContainer}>
         <Text>{label}</Text>
         <TextInput
+          style={inputStyles}
           value={formikProps.values[formikKey]}
           onChangeText={formikProps.handleChange(formikKey)}
           onBlur={formikProps.handleBlur(formikKey)}
@@ -70,7 +71,7 @@ const CreateUserScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{marginTop: 90}}>
+    <SafeAreaView style={styles.container}>
       <Formik
         initialValues={{
           firstName: "",
@@ -106,6 +107,7 @@ const CreateUserScreen = () => {
               formikKey={"email"}
               formikProps={formikProps}
               label={"E-mail"}
+              keyboardType="email-address"
             />
             
             <StyledInput
@@ -119,9 +121,12 @@ const CreateUserScreen = () => {
               formikProps={formikProps}
               label={"Confirme a senha"}
             />
-            {formikProps.isSubmitting ? 
-              <ActivityIndicator /> :
-              <Button onPress={() => formikProps.handleSubmit()} title="Criar usuário" />}
+
+            <View style={styles.buttonContainer}>
+              {formikProps.isSubmitting ? 
+                <ActivityIndicator /> :
+                <Button onPress={() => formikProps.handleSubmit()} title="Criar usuário" />}
+            </View>
           </React.Fragment>
         )}
       </Formik>
