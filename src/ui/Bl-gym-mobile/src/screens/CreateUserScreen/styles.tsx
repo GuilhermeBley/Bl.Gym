@@ -12,10 +12,9 @@ export const styles = StyleSheet.create({
       textAlign: 'center',
     },
     input: {
-      height: 40,
-      borderColor: 'gray',
       borderWidth: 1,
-      marginBottom: 20,
-      paddingHorizontal: 10,
+      borderColor: "black",
+      padding: 10,
+      marginBottom: 3
     },
 });
