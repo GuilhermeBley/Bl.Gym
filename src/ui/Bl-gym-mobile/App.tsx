@@ -1,3 +1,5 @@
+import 'react-native-gesture-handler';
+
 import Router from './src/routes/index';
 import UserContextProvider from './src/contexts/UserContext';
 import LoginScreen from './src/screens/LoginScreen';

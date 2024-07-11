@@ -75,7 +75,7 @@ const LoginScreen = () => {
     );
   }
 
-
+  console.debug("LoginScreen");
   return (
     <SafeAreaView style={styles.container}>
       <Formik

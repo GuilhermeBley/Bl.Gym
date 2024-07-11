@@ -1,7 +1,9 @@
-import HomeScreen from '../screens/HomeScreen';
+import 'react-native-gesture-handler';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import { HOME_SCREEN } from '.';
+import HomeScreen from '../screens/HomeScreen';
+
+export const HOME_SCREEN = "Home";
 
 const Tab = createBottomTabNavigator();
 

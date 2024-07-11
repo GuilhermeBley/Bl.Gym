@@ -1,17 +1,22 @@
 import 'react-native-gesture-handler';
 import { createStackNavigator } from '@react-navigation/stack';
-import { LOGIN_SCREEN, CREATE_USER_SCREEN } from '.';
 
 import LoginScreen from '../screens/LoginScreen';
 import CreateUserScreen from '../screens/CreateUserScreen';
 
+export const LOGIN_SCREEN = "Login";
+export const CREATE_USER_SCREEN = "CreateUser";
+
 const Stack = createStackNavigator();
 
-const AuthStack = () => (
-    <Stack.Navigator>
-        <Stack.Screen name={LOGIN_SCREEN} component={LoginScreen} />
-        <Stack.Screen name={CREATE_USER_SCREEN} component={CreateUserScreen} />
-    </Stack.Navigator>
-);
+const AuthStack = () => {
+    console.debug("AuthStack");
+    return (
+        <Stack.Navigator initialRouteName={LOGIN_SCREEN}>
+            <Stack.Screen name={LOGIN_SCREEN} component={LoginScreen} />
+            <Stack.Screen name={CREATE_USER_SCREEN} component={CreateUserScreen} />
+        </Stack.Navigator>
+    );
+}
 
 export default AuthStack;
