@@ -1,12 +1,14 @@
 import HomeScreen from '../screens/HomeScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import { HOME_SCREEN } from '.';
+
 const Tab = createBottomTabNavigator();
 
 function SelectGymTabs() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name={HOME_SCREEN} component={HomeScreen} />
     </Tab.Navigator>
   );
 }
