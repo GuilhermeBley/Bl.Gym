@@ -7,8 +7,9 @@ import { handleLogin, LoginResultStatus } from "./action";
 import { Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { CREATE_USER_SCREEN } from "../../routes/AuthStack";
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }: any) => {
 
   interface StyledInputProps {
     formikKey: string,
@@ -112,12 +113,13 @@ const LoginScreen = () => {
 
                 <View style={styles.separatorContainer}>
                   <View style={styles.line} />
-                  <Text style={styles.separatorText}>or</Text>
+                  <Text style={styles.separatorText}>ou</Text>
                   <View style={styles.line} />
                 </View>
 
                 <Button
-                  title="Criar uma conta"/>
+                  title="Criar uma conta"
+                  onPress={()=>navigation.navigate(CREATE_USER_SCREEN)}/>
               <Text style={{ color: "red", width: "auto" }}>
                 {buttonErrorMessage}
               </Text>
