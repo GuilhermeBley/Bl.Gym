@@ -110,10 +110,14 @@ const LoginScreen = () => {
                 <ActivityIndicator /> :
                 <Button onPress={() => formikProps.handleSubmit()} title="Entrar" />}
 
-                <TouchableOpacity
-                  style={styles.linkButton}>
-                  <Text style={styles.linkText}>Novo usuário</Text>
-                </TouchableOpacity>
+                <View style={styles.separatorContainer}>
+                  <View style={styles.line} />
+                  <Text style={styles.separatorText}>or</Text>
+                  <View style={styles.line} />
+                </View>
+
+                <Button
+                  title="Criar uma conta"/>
               <Text style={{ color: "red", width: "auto" }}>
                 {buttonErrorMessage}
               </Text>
