@@ -5,7 +5,26 @@ import { handleCreateUser } from './action';
 import { Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 
+interface UserCreateModel{
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string,
+  confirmPassword: string,
+  phoneNumber: string | number | null,
+}
+
 const CreateUserScreen = () => {
+  
+  const initialValues: UserCreateModel = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phoneNumber: null,
+  };
+
 
   interface StyledInputProps {
     formikKey: string,
@@ -66,23 +85,16 @@ const CreateUserScreen = () => {
     );
   }
 
-  const handleSubmit = async () => {
-
+  const handleSubmit = async (data: UserCreateModel) => {
+    handleCreateUser(data.firstName, data.lastName, data.email, data.password, data.phoneNumber?.toString() ?? null)
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Formik
-        initialValues={{
-          firstName: "",
-          lastName: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
-          phoneNumber: null,
-        }}
+        initialValues={initialValues}
         onSubmit={(values, actions) =>
-          handleSubmit()
+          handleSubmit(values)
           .finally(() => actions.setSubmitting(false))
         }
         validationSchema={validationSchema}
