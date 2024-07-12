@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from "react-native";
+import { Alert, View, Text, TextInput, Button, StyleSheet, ActivityIndicator, Linking, TouchableOpacity } from "react-native";
 import { UserContext } from "../../contexts/UserContext";
 import { useContext } from "react";
 import styles from "./styles";
@@ -34,7 +34,7 @@ const LoginScreen = () => {
     password: string
   ) => {
     let response = await handleLogin(login, password);
-    
+
     if (response.Status === LoginResultStatus.InvalidLoginOrPassword) {
       setButtonErrorMessage("Usuário ou senha inválidos.");
       return;
@@ -49,12 +49,11 @@ const LoginScreen = () => {
 
   const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
     const inputStyles = styles.input;
-    
+
     const error = formikProps.touched[formikKey] && formikProps.errors[formikKey];
     const errorMessage = typeof error === 'string' ? error : '';
-    
-    if (errorMessage.length > 0)
-    {
+
+    if (errorMessage.length > 0) {
       inputStyles.borderColor = "red"
     }
 
@@ -83,7 +82,7 @@ const LoginScreen = () => {
           login: "",
           password: ""
         }}
-        onSubmit={(values, actions) => 
+        onSubmit={(values, actions) =>
           handleLoginAndNavigate(values.login, values.password)
             .finally(() => actions.setSubmitting(false))}
         validationSchema={validationSchema}
@@ -98,7 +97,7 @@ const LoginScreen = () => {
               keyboardType="email-address"
               autoFocus
             />
-            
+
             <StyledInput
               formikKey={"password"}
               formikProps={formikProps}
@@ -107,10 +106,14 @@ const LoginScreen = () => {
             />
 
             <View style={styles.buttonContainer}>
-              {formikProps.isSubmitting ? 
+              {formikProps.isSubmitting ?
                 <ActivityIndicator /> :
                 <Button onPress={() => formikProps.handleSubmit()} title="Entrar" />}
-              
+
+                <TouchableOpacity
+                  style={styles.linkButton}>
+                  <Text style={styles.linkText}>Novo usuário</Text>
+                </TouchableOpacity>
               <Text style={{ color: "red", width: "auto" }}>
                 {buttonErrorMessage}
               </Text>

@@ -24,7 +24,17 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 20
-  }
+  },
+  linkButton: {
+    backgroundColor: 'transparent',
+    width: "100%",
+    alignItems: "center",
+    marginTop: 30
+  },
+  linkText: {
+    color: 'blue',
+    textDecorationLine: 'underline',
+  },
 });
 
 export default styles;
