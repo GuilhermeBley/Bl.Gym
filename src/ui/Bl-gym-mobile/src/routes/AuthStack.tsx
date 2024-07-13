@@ -3,9 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import LoginScreen from '../screens/LoginScreen';
 import CreateUserScreen from '../screens/CreateUserScreen';
-
-export const LOGIN_SCREEN = "Login";
-export const CREATE_USER_SCREEN = "CreateUser";
+import { CREATE_USER_SCREEN, LOGIN_SCREEN } from './RoutesConstant';
 
 const Stack = createStackNavigator();
 

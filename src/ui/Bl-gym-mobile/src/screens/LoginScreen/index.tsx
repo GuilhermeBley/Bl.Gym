@@ -7,8 +7,7 @@ import { handleLogin, LoginResultStatus } from "./action";
 import { Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CREATE_USER_SCREEN } from "../../routes/AuthStack";
-import { HOME_SCREEN } from "../../routes/SelectGymTabs";
+import { CREATE_USER_SCREEN, HOME_SCREEN } from "../../routes/RoutesConstant";
 
 interface StyledInputProps {
   formikKey: string,

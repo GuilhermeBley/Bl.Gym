@@ -4,7 +4,7 @@ import styles from '../LoginScreen/styles';
 import { handleCreateUser } from './action';
 import { Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
-import { LOGIN_SCREEN } from '../../routes/AuthStack';
+import { LOGIN_SCREEN } from '../../routes/RoutesConstant';
 
 interface UserCreateModel {
   firstName: string,
