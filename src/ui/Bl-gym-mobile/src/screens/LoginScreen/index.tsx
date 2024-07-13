@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, View, Text, TextInput, Button, StyleSheet, ActivityIndicator, Linking, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, Button, ActivityIndicator } from "react-native";
 import { UserContext } from "../../contexts/UserContext";
 import { useContext } from "react";
 import styles from "./styles";
@@ -8,23 +8,25 @@ import { Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CREATE_USER_SCREEN } from "../../routes/AuthStack";
+import { HOME_SCREEN } from "../../routes/SelectGymTabs";
+
+interface StyledInputProps {
+  formikKey: string,
+  formikProps: FormikProps<any>;
+  label: string;
+  [key: string]: any;
+}
+
+const validationSchema = yup.object().shape({
+  login: yup.string()
+    .email("E-mail inválido.")
+    .required("Login é obrigatório."),
+  password: yup.string()
+    .min(8, "Senha inválida, deve conter no mínimo 8 caracteres.")
+    .required("Senha é obrigatório."),
+});
 
 const LoginScreen = ({ navigation }: any) => {
-
-  interface StyledInputProps {
-    formikKey: string,
-    formikProps: FormikProps<any>;
-    label: string;
-    [key: string]: any;
-  }
-  const validationSchema = yup.object().shape({
-    login: yup.string()
-      .email("E-mail inválido.")
-      .required("Login é obrigatório."),
-    password: yup.string()
-      .min(8, "Senha inválida, deve conter no mínimo 8 caracteres.")
-      .required("Senha é obrigatório."),
-  });
 
   const [buttonErrorMessage, setButtonErrorMessage] = useState("");
 
@@ -46,6 +48,7 @@ const LoginScreen = ({ navigation }: any) => {
     }
 
     userContext.setUserByJwtToken(response.Token);
+    navigation.navigate(HOME_SCREEN)
   }
 
   const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
