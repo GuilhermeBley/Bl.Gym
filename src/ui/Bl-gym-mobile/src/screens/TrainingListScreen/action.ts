@@ -1,5 +1,9 @@
 import axios from '../../api/GymApi'
 
+export const Data = (userId: number) => {
+
+}
+
 export const handleTrainings = (userId: number) => {
     return axios.get(
         "api/Training/details/{userId}".replace("{userId}", userId.toString())
