@@ -36,5 +36,10 @@ export function handleCreateUser(
             Success: false,
             Errors: ['Falha ao criar usuário.']
         }
+    }).catch(error => {
+        return {
+            Success: false,
+            Errors: ['Falha ao criar usuário.']
+        }
     })
 }

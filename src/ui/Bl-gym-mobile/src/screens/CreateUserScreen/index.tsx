@@ -43,7 +43,7 @@ const validationSchema = yup.object().shape({
     function (value) {
       return this.parent.password === value;
     }),
-  phoneNumber: yup.number(),
+  phoneNumber: yup.number().notRequired(),
 });
 
 const CreateUserScreen = ({ navigator }: any) => {
@@ -86,6 +86,7 @@ const CreateUserScreen = ({ navigator }: any) => {
 
   const handleSubmit = async (data: UserCreateModel) => {
     var result = await handleCreateUser(data.firstName, data.lastName, data.email, data.password, data.phoneNumber?.toString() ?? null)
+    console.debug(result);
 
     if (result.Success) {
       navigator.navigate(LOGIN_SCREEN);
@@ -96,9 +97,12 @@ const CreateUserScreen = ({ navigator }: any) => {
     <SafeAreaView style={styles.container}>
       <Formik
         initialValues={initialValues}
-        onSubmit={(values, actions) =>
-          handleSubmit(values)
-            .finally(() => actions.setSubmitting(false))
+        onSubmit={(values, actions) => {
+            console.debug("handling user creation...")  
+
+            return handleSubmit(values)
+              .finally(() => actions.setSubmitting(false))
+          }
         }
         validationSchema={validationSchema}
       >
@@ -129,12 +133,14 @@ const CreateUserScreen = ({ navigator }: any) => {
               formikKey={"password"}
               formikProps={formikProps}
               label={"Senha"}
+              secureTextEntry
             />
 
             <StyledInput
               formikKey={"confirmPassword"}
               formikProps={formikProps}
               label={"Confirme a senha"}
+              secureTextEntry
             />
 
             <View style={styles.buttonContainer}>
