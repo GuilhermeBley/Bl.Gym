@@ -19,7 +19,7 @@ export const handleTrainings = (userId: number) => {
     return axios.get(
         "api/Training/details/{userId}".replace("{userId}", userId.toString())
     ).then((response) => {
-
+        
         if (response.status !== 200)
             return {
                 Success: false,

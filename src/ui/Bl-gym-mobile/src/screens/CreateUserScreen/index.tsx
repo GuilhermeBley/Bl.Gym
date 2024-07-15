@@ -42,7 +42,7 @@ const validationSchema = yup.object().shape({
   confirmPassword: yup.string().test("passwords-match", "As senhas devem ser iguais.",
     function (value) {
       return this.parent.password === value;
-    }),
+    }).required("Confirmação de senha obrigatório."),
   phoneNumber: yup.number().notRequired(),
 });
 
@@ -140,6 +140,13 @@ const CreateUserScreen = ({ navigator }: any) => {
               formikKey={"confirmPassword"}
               formikProps={formikProps}
               label={"Confirme a senha"}
+              secureTextEntry
+            />
+
+            <StyledInput
+              formikKey={"phoneNumber"}
+              formikProps={formikProps}
+              label={"phoneNumber"}
               secureTextEntry
             />
 

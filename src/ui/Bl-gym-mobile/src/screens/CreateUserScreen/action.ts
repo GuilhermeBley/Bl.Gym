@@ -19,6 +19,8 @@ export function handleCreateUser(
         password,
         phoneNumber,
     }).then(response => {
+        console.debug("data: ")
+        console.debug(response.data)
 
         if (response.status == 200)
             return {
