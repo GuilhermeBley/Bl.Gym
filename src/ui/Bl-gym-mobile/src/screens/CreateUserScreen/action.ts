@@ -12,13 +12,16 @@ export function handleCreateUser(
     password: string,
     phoneNumber: string | null
 ): Promise<UserCreationResult>{
-    return axios.post('api/user', {
+    return axios.post('user', {
         firstName,
         lastName,
         email,
         password,
         phoneNumber,
     }).then(response => {
+        console.debug(response.request)
+        console.debug("status code: ")
+        console.debug(response.statusText)
         console.debug("data: ")
         console.debug(response.data)
 
@@ -39,6 +42,7 @@ export function handleCreateUser(
             Errors: ['Falha ao criar usuário.']
         }
     }).catch(error => {
+        console.debug(error)
         return {
             Success: false,
             Errors: ['Falha ao criar usuário.']
