@@ -1,12 +1,15 @@
-import HomeScreen from '../screens/HomeScreen';
+import 'react-native-gesture-handler';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import HomeScreen from '../screens/HomeScreen';
+import { HOME_SCREEN } from './RoutesConstant';
 
 const Tab = createBottomTabNavigator();
 
 function SelectGymTabs() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name={HOME_SCREEN} component={HomeScreen} />
     </Tab.Navigator>
   );
 }

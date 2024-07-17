@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
-import { View } from "react-native";
 
 interface AuthContainerProps {
     authorizedContent: React.ReactNode;
@@ -14,19 +13,11 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
 
     if (userContext.authorized) {
         console.log("User authorized.")
-        return (
-            <View>
-                {authorizedContent}
-            </View>
-        )
+        return authorizedContent;
     }
 
     console.log("User unauthorized.")
-    return (
-        <View>
-            {unauthorizedContent}
-        </View>
-    );
+    return unauthorizedContent;
 }
 
 export default AuthContainer;

@@ -15,7 +15,12 @@ export const styles = StyleSheet.create({
       height: 40,
       borderColor: 'gray',
       borderWidth: 1,
-      marginBottom: 20,
-      paddingHorizontal: 10,
+      paddingHorizontal: 8,
+    },
+    buttonContainer: {
+      marginTop: 20
+    },
+    inputContainer: {
+      marginBottom: 12,
     },
 });
