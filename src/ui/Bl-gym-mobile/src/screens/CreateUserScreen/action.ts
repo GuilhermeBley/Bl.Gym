@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import axios from "../../api/GymApi";
 
 interface UserCreationResult{
@@ -31,18 +32,19 @@ export function handleCreateUser(
                 Errors: []
             }
 
-        if (response.status == 403)
-            return {
-                Success: false,
-                Errors: ['Usuário já existente.']
-            }
-
         return {
             Success: false,
             Errors: ['Falha ao criar usuário.']
         }
-    }).catch(error => {
+    }).catch((error: AxiosError) => {
         console.debug(error)
+
+        if (error.response?.status == 409)
+            return {
+                Success: false,
+                Errors: ['Usuário já existente.']
+            }
+        
         return {
             Success: false,
             Errors: ['Falha ao criar usuário.']
