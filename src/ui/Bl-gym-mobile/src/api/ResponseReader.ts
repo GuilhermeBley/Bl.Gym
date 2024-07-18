@@ -1,6 +1,10 @@
 import { AxiosResponse } from "axios";
 
-const ErrorsDictionaryPtBr = {
+interface ErrorsDictionary {
+    [key: string]: string;
+}
+
+const ErrorsDictionaryPtBr : ErrorsDictionary = {
     "Unauthorized": "Usuário não autenticado.",
     "Forbbiden": "Usuário não autorizado.",
     "UserIsntMemberOfThisGym": "Usuário não é membro dessa academia.",
@@ -30,6 +34,14 @@ interface GymApiResponse {
     Errors: string[]
 }
 
+function getErrorMessage(key: string): string | undefined {
+    if (key in ErrorsDictionaryPtBr) {
+        return ErrorsDictionaryPtBr[key];
+    } else {
+        return undefined;
+    }
+}
+
 function TryGetResultFromResponse(
     response: AxiosResponse | null
 ) {
@@ -56,7 +68,7 @@ function TryGetResultFromResponse(
         if (typeof d.message !== "string")
             return;
 
-        
+        return getErrorMessage(d.message)
     })
 
     return {
