@@ -31,7 +31,8 @@ const ErrorsDictionaryPtBr : ErrorsDictionary = {
 
 interface GymApiResponse {
     Data: any,
-    Errors: string[]
+    Errors: string[],
+    ContainsError: boolean
 }
 
 function getErrorMessage(key: string): string | undefined {
@@ -43,24 +44,27 @@ function getErrorMessage(key: string): string | undefined {
 }
 
 function TryGetResultFromResponse(
-    response: AxiosResponse | null
+    response: AxiosResponse<unknown, any> | undefined | null
 ) {
-    if (response == null)
+    if (response === null || response === undefined)
         return {
             Data: null,
-            Errors: []
+            Errors: ["Falha em resposta."],
+            ContainsError: true
         } as GymApiResponse
 
     if (response.status >= 200 || response.status < 300)
         return {
             Data: response.data,
-            Errors: []
+            Errors: [],
+            ContainsError: false
         } as GymApiResponse
 
     if (!Array.isArray(response.data))
         return {
             Data: response.data,
-            Errors: []
+            Errors: ["Falha em resposta."],
+            ContainsError: true
         } as GymApiResponse
     
     var errors: string[] = []

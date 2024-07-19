@@ -1,5 +1,6 @@
 import { AxiosError } from "axios";
 import axios from "../../api/GymApi";
+import TryGetResultFromResponse from "../../api/ResponseReader";
 
 interface UserCreationResult{
     Success: boolean,
@@ -47,7 +48,7 @@ export function handleCreateUser(
         
         return {
             Success: false,
-            Errors: ['Falha ao criar usuário.']
+            Errors: TryGetResultFromResponse(error.response).Errors
         }
     })
 }
