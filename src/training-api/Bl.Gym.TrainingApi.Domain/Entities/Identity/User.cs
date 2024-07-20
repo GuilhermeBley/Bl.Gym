@@ -86,18 +86,9 @@ public class User
     {
         var builder = new ResultBuilder<User>();
 
-        var isValidPassword =
-            password.Length >= 8 &&
-            password.Length <= 64 &&
-            password.Any(char.IsUpper) &&
-            password.Any(char.IsNumber) &&
-            (password.Any(char.IsSeparator) ||
-            password.Any(char.IsSymbol) ||
-            password.Any(char.IsPunctuation));
+        var hashResult = CreatePasswordResult(password);
 
-        builder.AddIf(!isValidPassword, CoreExceptionCode.InvalidPassword);
-
-        var hashResult = Security.Sha256Convert.CreateHashedPassword(password);
+        builder.AddRange(hashResult.Errors);
 
         var userResult = Create(
             id: id,
@@ -105,8 +96,8 @@ public class User
             lastName: lastName,
             email: email,
             emailConfirmed: false,
-            passwordHash: hashResult.HashBase64,
-            passwordSalt: hashResult.Salt,
+            passwordHash: hashResult.ResultValue?.HashPassword ?? string.Empty,
+            passwordSalt: hashResult.ResultValue?.Salt ?? string.Empty,
             securityStamp: Guid.NewGuid(),
             concurrencyStamp: Guid.NewGuid(),
             phoneNumber: phoneNumber,
@@ -177,4 +168,28 @@ public class User
                 PasswordSalt = passwordSalt,
             });
     }
+
+    public static Result<PasswordResult> CreatePasswordResult(string password)
+    {
+        ResultBuilder<PasswordResult> builder = new();
+
+        var isValidPassword =
+            password.Length >= 8 &&
+            password.Length <= 64 &&
+            password.Any(char.IsUpper) &&
+            password.Any(char.IsNumber) &&
+            (password.Any(char.IsSeparator) ||
+            password.Any(char.IsSymbol) ||
+            password.Any(char.IsPunctuation));
+
+        builder.AddIf(!isValidPassword, CoreExceptionCode.InvalidPassword);
+
+        var hashResult = Security.Sha256Convert.CreateHashedPassword(password);
+
+        return builder.CreateResult(() => new(hashResult.HashBase64, hashResult.Salt));
+    }
+
+    public record PasswordResult(
+        string HashPassword,
+        string Salt);
 }
