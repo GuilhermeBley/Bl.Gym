@@ -37,13 +37,10 @@ public class UserEndpoint
                 });
         });
 
-        builder.MapPost("user/login/gym/{gymId}", async (
-            Guid gymId,
+        builder.MapPatch("user/change-password", async (
+            Application.Commands.Identity.ChangePassword.ChangePasswordRequest request,
             IMediator mediator) =>
         {
-            var request
-                = new Application.Commands.Identity.LoginToSpecificGym.LoginToSpecificGymRequest(gymId);
-
             var response = await mediator.Send(request);
 
             return Results.Ok();
