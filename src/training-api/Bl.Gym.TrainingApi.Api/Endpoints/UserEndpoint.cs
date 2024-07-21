@@ -37,6 +37,14 @@ public class UserEndpoint
                 });
         });
 
+        builder.MapPost("user/change-password/request", async (
+            [FromBody] Application.Commands.Identity.ChangePassword.ChangePasswordRequest request,
+            [FromServices] IMediator mediator
+        ) => {
+
+            await Task.CompletedTask;
+        });
+
         builder.MapPatch("user/change-password", async (
             [FromBody] Application.Commands.Identity.ChangePassword.ChangePasswordRequest request,
             [FromServices] IMediator mediator) =>
