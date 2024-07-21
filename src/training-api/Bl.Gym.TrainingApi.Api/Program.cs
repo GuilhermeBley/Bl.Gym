@@ -1,3 +1,4 @@
+using Bl.Gym.TrainingApi.Api.Policies;
 using Bl.Gym.TrainingApi.Api.Services;
 using Bl.Gym.TrainingApi.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -58,22 +59,47 @@ builder.Services
         cfg.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
         cfg.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
     })
-    .AddJwtBearer(cfg =>
-    {
-        cfg.RequireHttpsMetadata = false;
-        cfg.SaveToken = true;
-        cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    .AddJwtBearer(
+        Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme, 
+        cfg =>
         {
-            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
-                System.Text.Encoding.ASCII.GetBytes(
-                    builder.Configuration.GetSection("Jwt:Key").Value ?? string.Empty)),
-            ValidateLifetime = true,
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            RoleClaimType = Bl.Gym.TrainingApi.Domain.Security.UserClaim.DEFAULT_ROLE
-        };
-    });
-builder.Services.AddAuthorization();
+            cfg.RequireHttpsMetadata = false;
+            cfg.SaveToken = true;
+            cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+                    System.Text.Encoding.ASCII.GetBytes(
+                        builder.Configuration.GetSection("Jwt:Key").Value ?? string.Empty)),
+                ValidateLifetime = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RoleClaimType = Bl.Gym.TrainingApi.Domain.Security.UserClaim.DEFAULT_ROLE
+            };
+        })
+    .AddJwtBearer(
+        ForgotPasswordPolicy.Scheme,
+        cfg =>
+        {
+            cfg.RequireHttpsMetadata = false;
+            cfg.SaveToken = true;
+            cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+                    System.Text.Encoding.ASCII.GetBytes(
+                        builder.Configuration.GetSection("Jwt:EmailKey").Value ?? string.Empty)),
+                ValidateLifetime = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RoleClaimType = Bl.Gym.TrainingApi.Domain.Security.UserClaim.DEFAULT_ROLE
+            };
+        });
+builder.Services.AddAuthorization(cfg =>
+{
+    cfg.AddPolicy(TrainingPolicy.POLICY_NAME, builder => 
+        builder.RequireClaim(TrainingPolicy.REQUIRE_CLAIM_TYPE));
+    cfg.AddPolicy(ForgotPasswordPolicy.POLICY_NAME, builder => 
+        builder.RequireRole(ForgotPasswordPolicy.RequireRole.Value));
+});
 
 var app = builder.Build();
 

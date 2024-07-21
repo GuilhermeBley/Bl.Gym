@@ -38,12 +38,14 @@ public class UserEndpoint
         });
 
         builder.MapPatch("user/change-password", async (
-            Application.Commands.Identity.ChangePassword.ChangePasswordRequest request,
-            IMediator mediator) =>
+            [FromBody] Application.Commands.Identity.ChangePassword.ChangePasswordRequest request,
+            [FromServices] IMediator mediator) =>
         {
             var response = await mediator.Send(request);
 
             return Results.Ok();
+        }).RequireAuthorization(cfg => {
+            cfg.AddAuthenticationSchemes(Bl.Gym.TrainingApi.Api.Policies.ForgotPasswordPolicy.Scheme);
         });
     }
 }
