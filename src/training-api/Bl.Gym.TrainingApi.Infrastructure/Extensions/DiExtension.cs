@@ -17,7 +17,7 @@ public static class DiExtension
             {
                 var config = provider.GetRequiredService<IOptions<AzureEventbusOption>>();
                 
-                return new EventBus.Infrastructure.AzureEventBus(config.);
+                return new EventBus.Infrastructure.AzureEventBus(config.Value.ConnectionsString);
             })
             .AddMediatR(cfg =>
             {
