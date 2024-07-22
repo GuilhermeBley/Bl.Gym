@@ -13,5 +13,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Bl.Gym.TrainingApi.Domain\Bl.Gym.TrainingApi.Domain.csproj" />
+	  <ProjectReference Include="..\..\BuildingBlocks\EventBus\Bl.Gym.EventBus\Bl.Gym.EventBus.csproj" />
 	</ItemGroup>
 </Project>
