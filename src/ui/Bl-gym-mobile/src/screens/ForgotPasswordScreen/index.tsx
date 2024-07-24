@@ -26,8 +26,6 @@ const ForgotPasswordScreen = ({ navigation }: any) => {
 
   const [buttonErrorMessage, setButtonErrorMessage] = useState("");
 
-  const userContext = useContext(UserContext);
-
   const handleChangePasswordAndNavigate = async (
     login: string
   ) => {
