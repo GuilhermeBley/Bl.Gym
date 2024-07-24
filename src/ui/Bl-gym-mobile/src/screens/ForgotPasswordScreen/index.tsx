@@ -7,6 +7,7 @@ import { Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LOGIN_SCREEN } from "../../routes/RoutesConstant";
+import { handleRequestToChangePassword } from "./action";
 
 interface StyledInputProps {
   formikKey: string,
@@ -30,7 +31,7 @@ const ForgotPasswordScreen = ({ navigation }: any) => {
   const handleChangePasswordAndNavigate = async (
     login: string
   ) => {
-    
+    return handleRequestToChangePassword({ email: login })
   }
 
   const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
