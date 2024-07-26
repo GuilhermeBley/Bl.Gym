@@ -45,7 +45,7 @@ function getErrorMessage(key: string): string | undefined {
 
 function TryGetResultFromResponse(
     response: AxiosResponse<unknown, any> | undefined | null
-) {
+){
     if (response === null || response === undefined)
         return {
             Data: null,
@@ -53,7 +53,7 @@ function TryGetResultFromResponse(
             ContainsError: true
         } as GymApiResponse
 
-    if (response.status >= 200 || response.status < 300)
+    if (response.status >= 200 && response.status < 300)
         return {
             Data: response.data,
             Errors: [],
