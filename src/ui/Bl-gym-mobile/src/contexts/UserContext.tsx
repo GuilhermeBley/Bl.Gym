@@ -1,7 +1,7 @@
-import { createContext } from "react";
+import { createContext, useState } from "react";
 import jwtDecoder from 'jwt-decode';
 
-class UserContextProps{
+class UserContextModel{
     id: string;
     name: string;
     email: string;
@@ -22,49 +22,60 @@ class UserContextProps{
         }
         return roles.some(role => this.roles.includes(role));
     }
+}
 
-    setUserByJwtToken(jwtToken: string): void {
+interface UserContextProps{
+    user: UserContextModel,
+    login: (jwtToken: string) => void,
+    logout: () => void
+}
+
+const unauthorizedUser = new UserContextModel(
+    "", "", "", [], false
+);
+
+export const UserContext = createContext<UserContextProps>({
+    user: unauthorizedUser,
+    login: (token) => { },
+    logout: () => { }
+});
+
+export default function UserContextProvider({children} : any){
+
+    const [user, setUser] = useState(unauthorizedUser)
+
+    // TODO: check user cache
+
+    const login = (jwtToken: string): void => {
         try{
             const decoded: any = jwtDecoder.jwtDecode(jwtToken);
 
-            if (!decoded ||
-                parseInt(decoded.id) < 1)
-                this.setAsUnauthorized();
+            if (!decoded || parseInt(decoded.id) < 1){
+                logout();
                 return;
+            }
     
             // Update the user properties based on the decoded token
-            this.id = decoded.id;
-            this.name = decoded.name;
-            this.email = decoded.email;
-            this.roles = decoded.roles;
-            this.authorized = decoded.authorized;
+            setUser(new UserContextModel(
+                decoded.id,
+                decoded.name,
+                decoded.email,
+                decoded.roles,
+                decoded.authorized,
+            ))
         }
         catch(error) {
-            this.setAsUnauthorized();
+            logout();
             console.error("Failed to parse login.", error)
         }
     }
 
-    setAsUnauthorized()
-    {
-        this.id = "";
-        this.name = "";
-        this.email = "";
-        this.roles = [];
-        this.authorized = false;
+    const logout = () => {
+        setUser(unauthorizedUser)
     }
-}
-
-const unauthorizedUser = new UserContextProps(
-    "", "", "", [], false
-);
-
-export const UserContext = createContext<UserContextProps>(unauthorizedUser);
-
-export default function UserContextProvider({children} : any, user: UserContextProps){
-
+    
     return (
-        <UserContext.Provider value={user}>
+        <UserContext.Provider value={{ user, login, logout }}>
             {children}
         </UserContext.Provider>
     );

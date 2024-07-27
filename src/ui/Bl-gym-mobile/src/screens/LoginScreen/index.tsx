@@ -28,14 +28,14 @@ const validationSchema = yup.object().shape({
 const LoginScreen = ({ navigation }: any) => {
 
   const [buttonErrorMessage, setButtonErrorMessage] = useState("");
-  const userContext = useContext(UserContext);
+  const { login } = useContext(UserContext);
 
   const handleLoginAndNavigate = async (
-    login: string,
-    password: string
+    loginInput: string,
+    passwordInput: string
   ) => {
 
-    let response = await handleLogin(login, password);
+    let response = await handleLogin(loginInput, passwordInput);
 
     if (response.Status === LoginResultStatus.InvalidLoginOrPassword) {
       setButtonErrorMessage("Usuário ou senha inválidos.");
@@ -46,7 +46,7 @@ const LoginScreen = ({ navigation }: any) => {
       return;
     }
 
-    userContext.setUserByJwtToken(response.Token);
+    login(response.Token);
     navigation.navigate(HOME_SCREEN)
   }
 
