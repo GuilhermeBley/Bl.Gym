@@ -1,6 +1,11 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { FlatList, View, Text } from "react-native";
+import { useState } from "react";
+
+interface TrainingDataState{
+    trainings: TrainingSummaryModel[]
+}
 
 interface TrainingSummaryModel {
     TrainingId: string,
@@ -28,15 +33,26 @@ const TrainingCardComponent = (item : TrainingSummaryModel) => {
 
 const TrainingListScreen = () => {
 
-    const trainings: TrainingSummaryModel[] = [];
+    const [trainingData, setTrainingData] = 
+        useState<TrainingDataState>({
+            trainings: [],
+        });
 
-    <SafeAreaView style={styles.container}>
-        <FlatList
-            data={trainings}
-            renderItem={(info) => TrainingCardComponent(info.item)}
-            keyExtractor={(item) => item.TrainingId}
-        />
-    </SafeAreaView>
+    
+
+    return(
+        <SafeAreaView style={styles.container}>
+            
+            <View>
+                <Text>Lista de treinos: </Text>
+            </View>
+            <FlatList
+                data={trainingData.trainings}
+                renderItem={(info) => TrainingCardComponent(info.item)}
+                keyExtractor={(item) => item.TrainingId}
+            />
+        </SafeAreaView>
+    )
 };
 
 export default TrainingListScreen;
