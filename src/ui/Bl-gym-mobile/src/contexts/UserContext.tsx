@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import jwtDecoder from 'jwt-decode';
+import * as jwtDecode from 'jwt-decode';
 
 class UserContextModel{
     id: string;
@@ -48,7 +48,7 @@ export default function UserContextProvider({children} : any){
 
     const login = (jwtToken: string): void => {
         try{
-            const decoded: any = jwtDecoder.jwtDecode(jwtToken);
+            const decoded: any = jwtDecode.jwtDecode(jwtToken);
 
             if (!decoded || parseInt(decoded.id) < 1){
                 logout();
@@ -61,7 +61,7 @@ export default function UserContextProvider({children} : any){
                 decoded.name,
                 decoded.email,
                 decoded.roles,
-                decoded.authorized,
+                true,
             ))
         }
         catch(error) {
