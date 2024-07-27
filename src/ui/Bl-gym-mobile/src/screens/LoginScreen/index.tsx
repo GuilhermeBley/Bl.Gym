@@ -28,13 +28,13 @@ const validationSchema = yup.object().shape({
 const LoginScreen = ({ navigation }: any) => {
 
   const [buttonErrorMessage, setButtonErrorMessage] = useState("");
-
   const userContext = useContext(UserContext);
 
   const handleLoginAndNavigate = async (
     login: string,
     password: string
   ) => {
+
     let response = await handleLogin(login, password);
 
     if (response.Status === LoginResultStatus.InvalidLoginOrPassword) {

@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "../../api/GymApi";
+import { Axios, AxiosError } from "axios";
 
 export enum LoginResultStatus {
     Success,
@@ -16,32 +17,23 @@ export const handleLogin = async (
     login: string,
     password: string
 ) => {
-    try
-    {
-        let response = await axios.post(
+        return await axios.post(
             'user/login',
             {
                 Login: login,
                 Password: password
+            })
+            .then((response) => {
+                return {
+                    Status: LoginResultStatus.Success,
+                    Token: response.data.token
+                }
+            })
+            .catch((error: AxiosError) => {
+                console.debug(error);
+                return {
+                    Status: LoginResultStatus.InvalidLoginOrPassword,
+                    Token: null
+                }
             });
-        
-        if (response.status == 200)
-        {
-            return {
-                Status: LoginResultStatus.Success,
-                Token: response.data.token
-            }
-        }
-    
-        return {
-            Status: LoginResultStatus.InvalidLoginOrPassword,
-            Token: null
-        }
-    } catch(error) {
-        console.debug("Failed to login", error)
-        return {
-            Status: LoginResultStatus.FailedToLogin,
-            Token: null
-        }
-    }
 }
