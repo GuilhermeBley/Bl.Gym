@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
-import { FlatList, View, Text } from "react-native";
+import { FlatList, View, Text, Pressable } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { handleTrainings } from "./action";
 import { UserContext } from "../../contexts/UserContext";
@@ -18,21 +18,6 @@ interface TrainingSummaryModel {
     GymDescription: string,
     TrainingCreatedAt: Date,
     SectionsCount: string,
-}
-
-const TrainingCardComponent = (item : TrainingSummaryModel) => {
-    return (
-        <View style={styles.card}>
-            <View style={styles.cardContent}>
-                <Text style={styles.cardTitle}>
-                    {item.GymName}
-                </Text>
-                <Text style={styles.cardText}>
-                    {item.GymDescription}
-                </Text>
-            </View>
-        </View>
-    );
 }
 
 const TrainingListScreen = () => {
@@ -65,6 +50,25 @@ const TrainingListScreen = () => {
             source.cancel();
         }
     }, [])
+
+    const TrainingCardComponent = (item : TrainingSummaryModel) => {
+        return (
+            <View style={styles.card}>
+                <Pressable style={styles.cardContent} onPress={navigateToTrainingPage}>
+                    <Text style={styles.cardTitle}>
+                        {item.GymName}
+                    </Text>
+                    <Text style={styles.cardText}>
+                        {item.GymDescription}
+                    </Text>
+                </Pressable>
+            </View>
+        );
+    }
+
+    const navigateToTrainingPage = () => {
+        
+    }
 
     return(
         <SafeAreaView style={styles.container}>
