@@ -1,10 +1,14 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { FlatList, View, Text } from "react-native";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { handleTrainings } from "./action";
+import { UserContext } from "../../contexts/UserContext";
+import axios from "axios";
 
 interface TrainingDataState{
-    trainings: TrainingSummaryModel[]
+    trainings: TrainingSummaryModel[],
+    errors: string[]
 }
 
 interface TrainingSummaryModel {
@@ -33,12 +37,34 @@ const TrainingCardComponent = (item : TrainingSummaryModel) => {
 
 const TrainingListScreen = () => {
 
+    const userContext = useContext(UserContext);
+
     const [trainingData, setTrainingData] = 
         useState<TrainingDataState>({
             trainings: [],
+            errors: []
         });
 
-    
+    useEffect(() => {
+        const source = axios.CancelToken.source();
+
+        const fetchData = async () => {
+            var result = await handleTrainings(userContext.user.id, source.token)
+            
+            if (result.Success) {
+                trainingData.trainings.push(result.Data)
+                return;
+            }
+
+            trainingData.errors.push("Falha ao coletar dados dos treinos.");
+        } 
+
+        fetchData();
+
+        return () => {
+            source.cancel();
+        }
+    }, [])
 
     return(
         <SafeAreaView style={styles.container}>
