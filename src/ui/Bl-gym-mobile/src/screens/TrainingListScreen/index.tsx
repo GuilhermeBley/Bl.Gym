@@ -5,6 +5,8 @@ import { useContext, useEffect, useState } from "react";
 import { handleTrainings } from "./action";
 import { UserContext } from "../../contexts/UserContext";
 import axios from "axios";
+import { TrainingContext } from "../../contexts/TrainingContext";
+import { TRAINING_SCREEN } from "../../routes/RoutesConstant";
 
 interface TrainingDataState{
     trainings: TrainingSummaryModel[],
@@ -20,9 +22,10 @@ interface TrainingSummaryModel {
     SectionsCount: string,
 }
 
-const TrainingListScreen = () => {
+const TrainingListScreen = ({ navigation }: any) => {
 
     const userContext = useContext(UserContext);
+    const trainingContext = useContext(TrainingContext);
 
     const [trainingData, setTrainingData] = 
         useState<TrainingDataState>({
@@ -54,7 +57,9 @@ const TrainingListScreen = () => {
     const TrainingCardComponent = (item : TrainingSummaryModel) => {
         return (
             <View style={styles.card}>
-                <Pressable style={styles.cardContent} onPress={navigateToTrainingPage}>
+                <Pressable
+                    style={styles.cardContent}
+                    onPress={() => navigateToTrainingPage(item.TrainingId)}>
                     <Text style={styles.cardTitle}>
                         {item.GymName}
                     </Text>
@@ -66,8 +71,14 @@ const TrainingListScreen = () => {
         );
     }
 
-    const navigateToTrainingPage = () => {
-        
+    const navigateToTrainingPage = (trainingId: string) => {
+        trainingContext.setTrainingContext({
+            trainingDescription: 'Meu treino',
+            trainingId: trainingId,
+            trainingName: 'Meu treino'
+        })
+
+        navigation.navigate(TRAINING_SCREEN)
     }
 
     return(
