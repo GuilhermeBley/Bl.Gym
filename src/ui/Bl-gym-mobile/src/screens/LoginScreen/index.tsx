@@ -8,6 +8,7 @@ import { Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CREATE_USER_SCREEN, HOME_SCREEN } from "../../routes/RoutesConstant";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface StyledInputProps {
   formikKey: string,
@@ -47,7 +48,8 @@ const LoginScreen = ({ navigation }: any) => {
     }
 
     login(response.Token);
-    navigation.navigate(HOME_SCREEN)
+    
+    await AsyncStorage.setItem("Authorization", `Bearer ${response.Token}`);
   }
 
   const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
