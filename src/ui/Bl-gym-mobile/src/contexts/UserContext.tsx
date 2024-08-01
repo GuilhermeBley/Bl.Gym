@@ -37,7 +37,7 @@ const unauthorizedUser = new UserContextModel(
 
 export const UserContext = createContext<UserContextProps>({
     user: unauthorizedUser,
-    login: (token) => { },
+    login: (_) => { },
     logout: () => { }
 });
 

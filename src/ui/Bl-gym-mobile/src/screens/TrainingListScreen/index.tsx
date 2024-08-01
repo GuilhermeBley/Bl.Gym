@@ -40,11 +40,21 @@ const TrainingListScreen = ({ navigation }: any) => {
             var result = await handleTrainings(userContext.user.id, source.token)
             
             if (result.Success) {
-                trainingData.trainings.push(result.Data)
+
+                setTrainingData(previous => { 
+                    previous.trainings.push(result.Data)
+                    
+                    return previous;
+                })
+                
                 return;
             }
 
-            trainingData.errors.push("Falha ao coletar dados dos treinos.");
+            setTrainingData(previous => {
+                previous.errors.push("Falha ao coletar dados dos treinos.");
+                
+                return previous;
+            })
         } 
 
         fetchData();
@@ -53,6 +63,16 @@ const TrainingListScreen = ({ navigation }: any) => {
             source.cancel();
         }
     }, [])
+
+    const navigateToTrainingPage = (trainingId: string) => {
+        trainingContext.setTrainingContext({
+            trainingDescription: 'Meu treino',
+            trainingId: trainingId,
+            trainingName: 'Meu treino'
+        })
+
+        navigation.navigate(TRAINING_SCREEN)
+    }
 
     const TrainingCardComponent = (item : TrainingSummaryModel) => {
         return (
@@ -69,16 +89,6 @@ const TrainingListScreen = ({ navigation }: any) => {
                 </Pressable>
             </View>
         );
-    }
-
-    const navigateToTrainingPage = (trainingId: string) => {
-        trainingContext.setTrainingContext({
-            trainingDescription: 'Meu treino',
-            trainingId: trainingId,
-            trainingName: 'Meu treino'
-        })
-
-        navigation.navigate(TRAINING_SCREEN)
     }
 
     return(
