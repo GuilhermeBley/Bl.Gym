@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import * as jwtDecode from 'jwt-decode';
+import { getAuthorization } from "../services/AuthStorageService";
 
 class UserContextModel{
     id: string;
@@ -40,11 +41,9 @@ export const UserContext = createContext<UserContextProps>({
     logout: () => { }
 });
 
-export default function UserContextProvider({children} : any){
+export default async function UserContextProvider({children} : any){
 
     const [user, setUser] = useState(unauthorizedUser)
-
-    // TODO: check user cache
 
     const login = (jwtToken: string): void => {
         try{
@@ -54,7 +53,7 @@ export default function UserContextProvider({children} : any){
                 logout();
                 return;
             }
-    
+            
             // Update the user properties based on the decoded token
             setUser(new UserContextModel(
                 decoded.id,
@@ -72,6 +71,12 @@ export default function UserContextProvider({children} : any){
 
     const logout = () => {
         setUser(unauthorizedUser)
+    }
+
+    let token = await getAuthorization();
+
+    if (token !== undefined && token !== null && token !== '') {
+        login(token)
     }
     
     return (
