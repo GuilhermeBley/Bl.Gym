@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import * as jwtDecode from 'jwt-decode';
 import { getAuthorization } from "../services/AuthStorageService";
+import { ActivityIndicator, View } from "react-native";
 
 class UserContextModel{
     id: string;
@@ -35,6 +36,14 @@ const unauthorizedUser = new UserContextModel(
     "", "", "", [], false
 );
 
+const PageNotProperlyLoadedComponent = () => {
+    return (
+        <View>
+            <ActivityIndicator/>
+        </View>
+    );
+}
+
 export const UserContext = createContext<UserContextProps>({
     user: unauthorizedUser,
     login: (_) => { },
@@ -44,14 +53,31 @@ export const UserContext = createContext<UserContextProps>({
 export default function UserContextProvider({children} : any){
 
     const [user, setUser] = useState(unauthorizedUser)
+    const [pageStatus, setPageStatus] = useState({
+        authorizationLoaded: false,
+    });
 
     useEffect(() => {
 
         const fetchData = async () => {
-            let token = await getAuthorization();
 
-            if (token !== undefined && token !== null && token !== '') {
-                login(token)
+            try{
+                console.debug('getAuthorization started.')
+                let token = await getAuthorization();
+    
+                if (token !== undefined && token !== null && token !== '') {
+                    login(token)
+                }
+            }
+            finally{
+                console.debug('getAuthorization executed.')
+
+                setPageStatus(previous => ({
+                    ...previous,
+                    authorizationLoaded: true  
+                }))
+
+                console.debug('previous.authorizationLoaded = ', pageStatus.authorizationLoaded)
             }
         };
 
@@ -88,9 +114,9 @@ export default function UserContextProvider({children} : any){
         setUser(unauthorizedUser)
     }
     
-    return (
+    return(
         <UserContext.Provider value={{ user, login, logout }}>
-            {children}
+            {pageStatus.authorizationLoaded ? children : PageNotProperlyLoadedComponent()}
         </UserContext.Provider>
     );
 }
