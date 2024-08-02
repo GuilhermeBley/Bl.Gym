@@ -40,21 +40,19 @@ const TrainingListScreen = ({ navigation }: any) => {
             var result = await handleTrainings(userContext.user.id, source.token)
             
             if (result.Success) {
-
-                setTrainingData(previous => { 
-                    previous.trainings.push(result.Data)
-                    
-                    return previous;
-                })
+                
+                setTrainingData(previous => ({
+                    ...previous,
+                    trainings: result.Data
+                }));
                 
                 return;
             }
 
-            setTrainingData(previous => {
-                previous.errors.push("Falha ao coletar dados dos treinos.");
-                
-                return previous;
-            })
+            setTrainingData(previous => ({
+                ...previous,
+                errors: [...previous.errors, "Falha ao coletar dados dos treinos."]
+            }));
         } 
 
         fetchData();
