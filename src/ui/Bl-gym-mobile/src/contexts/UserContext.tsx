@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import * as jwtDecode from 'jwt-decode';
 import { getAuthorization } from "../services/AuthStorageService";
 
@@ -41,9 +41,24 @@ export const UserContext = createContext<UserContextProps>({
     logout: () => { }
 });
 
-export default async function UserContextProvider({children} : any){
+export default function UserContextProvider({children} : any){
 
     const [user, setUser] = useState(unauthorizedUser)
+
+    useEffect(() => {
+
+        const fetchData = async () => {
+            let token = await getAuthorization();
+
+            if (token !== undefined && token !== null && token !== '') {
+                login(token)
+            }
+        };
+
+        fetchData();
+
+        return () => { /*nothing to dispose*/ }
+    }, [])
 
     const login = (jwtToken: string): void => {
         try{
@@ -71,12 +86,6 @@ export default async function UserContextProvider({children} : any){
 
     const logout = () => {
         setUser(unauthorizedUser)
-    }
-
-    let token = await getAuthorization();
-
-    if (token !== undefined && token !== null && token !== '') {
-        login(token)
     }
     
     return (
