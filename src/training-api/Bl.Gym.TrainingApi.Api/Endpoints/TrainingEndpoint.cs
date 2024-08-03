@@ -22,6 +22,22 @@ public class TrainingEndpoint
 
         }).RequireAuthorization();
 
+        builder.MapGet("Training/details/{userId}/sheet/{sheetId}", async (
+            HttpContext context, 
+            IMediator mediator, 
+            Guid userId,
+            Guid sheetId) =>
+        {
+            if (userId != context.User.RequiredUserId())
+                return Results.Unauthorized();
+
+            var result =
+                await mediator.Send(new Application.Commands.Training.GetTrainingInfoById.GetTrainingInfoByIdRequest(sheetId));
+
+            return Results.Ok(result);
+
+        }).RequireAuthorization();
+
         builder.MapPost("Training", async (
             HttpContext context, 
             IMediator mediator, 
