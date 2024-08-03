@@ -7,7 +7,7 @@ namespace Bl.Gym.TrainingApi.Application.Commands.Training.GetTrainingInfoById;
 /// </summary>
 /// <param name="Sections"></param>
 public record GetTrainingInfoByIdResponse(
-    IEnumerable<GetTrainingInfoByIdResponseSection> Sections,
+    GetTrainingInfoByIdResponseSection Section,
     string Status,
     DateTimeOffset CreatedAt);
 
@@ -15,13 +15,14 @@ public record GetTrainingInfoByIdResponse(
 /// Specific from an single training of day.
 /// </summary>
 public record GetTrainingInfoByIdResponseSection(
-    Guid Id,
+    Guid SectionId,
     string MuscularGroup,
     int TargetDaysCount,
     int CurrentDaysCount,
     Guid ConcurrencyStamp,
     IEnumerable<GetTrainingInfoByIdResponseExerciseSet> Sets,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt)
+    ;
 
 public record GetTrainingInfoByIdResponseExerciseSet(
     string Set,
