@@ -12,7 +12,6 @@ public class TrainingSectionModel
     public string MuscularGroup { get; set; } = string.Empty;
     public int TargetDaysCount { get; set; }
     public int CurrentDaysCount { get; set; }
-    public List<ExerciseSetModel> Sets { get; set; } = new();
     public Guid ConcurrencyStamp { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     
@@ -23,9 +22,7 @@ public class TrainingSectionModel
             muscularGroup: this.MuscularGroup,
             targetDaysCount: this.TargetDaysCount,
             currentDaysCount: this.CurrentDaysCount,
-            sets: Sets.Count == 0
-                ? ExerciseSet.CreateEmptyRange()
-                : Sets.Select(s => ExerciseSet.Create(s.Id, s.Set, s.ExerciseId).RequiredResult),
+            sets: ExerciseSet.CreateEmptyRange(),
             concurrencyStamp: this.ConcurrencyStamp,
             createdAt: this.CreatedAt)
             .RequiredResult;
@@ -42,8 +39,7 @@ public class TrainingSectionModel
             MuscularGroup = entity.MuscularGroup,
             UserTrainingSheetId = userTrainingSheetId,
             CurrentDaysCount = entity.CurrentDaysCount,
-            TargetDaysCount = entity.TargetDaysCount,
-            Sets = entity.Sets.Select(set => ExerciseSetModel.MapFromEntity(set, entity.Id)).ToList()
+            TargetDaysCount = entity.TargetDaysCount
         };
     }
 }
