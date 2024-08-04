@@ -13,6 +13,12 @@ public static class DiExtension
         Assembly migrationAssembly)
     {
         return serviceCollection
+            .AddSingleton<EventBus.IEventBus>(provider =>
+            {
+                var config = provider.GetRequiredService<IOptions<AzureEventbusOption>>();
+                
+                return new EventBus.Infrastructure.AzureEventBus(config.Value.ConnectionsString);
+            })
             .AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(typeof(Application.Commands.Identity.CreateUser.CreateUserHandler).Assembly);

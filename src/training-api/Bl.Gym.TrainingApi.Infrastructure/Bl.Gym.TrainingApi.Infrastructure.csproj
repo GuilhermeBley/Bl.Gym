@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bl.Gym.TrainingApi.Application\Bl.Gym.TrainingApi.Application.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\EventBus\Bl.Gym.EventBus.Infrastructure\Bl.Gym.EventBus.Infrastructure.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

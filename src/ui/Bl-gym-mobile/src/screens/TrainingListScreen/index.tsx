@@ -1,6 +1,17 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
-import { FlatList, View, Text } from "react-native";
+import { FlatList, View, Text, Pressable } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { handleTrainings } from "./action";
+import { UserContext } from "../../contexts/UserContext";
+import axios from "axios";
+import { TrainingContext } from "../../contexts/TrainingContext";
+import { TRAINING_SCREEN } from "../../routes/RoutesConstant";
+
+interface TrainingDataState{
+    trainings: TrainingSummaryModel[],
+    errors: string[]
+}
 
 interface TrainingSummaryModel {
     TrainingId: string,
@@ -11,32 +22,86 @@ interface TrainingSummaryModel {
     SectionsCount: string,
 }
 
-const TrainingCardComponent = (item : TrainingSummaryModel) => {
-    return (
-        <View style={styles.card}>
-            <View style={styles.cardContent}>
-                <Text style={styles.cardTitle}>
-                    {item.GymName}
-                </Text>
-                <Text style={styles.cardText}>
-                    {item.GymDescription}
-                </Text>
+const TrainingListScreen = ({ navigation }: any) => {
+
+    const userContext = useContext(UserContext);
+    const trainingContext = useContext(TrainingContext);
+
+    const [trainingData, setTrainingData] = 
+        useState<TrainingDataState>({
+            trainings: [],
+            errors: []
+        });
+
+    useEffect(() => {
+        const source = axios.CancelToken.source();
+
+        const fetchData = async () => {
+            var result = await handleTrainings(userContext.user.id, source.token)
+            
+            if (result.Success) {
+                
+                setTrainingData(previous => ({
+                    ...previous,
+                    trainings: result.Data
+                }));
+                
+                return;
+            }
+
+            setTrainingData(previous => ({
+                ...previous,
+                errors: [...previous.errors, "Falha ao coletar dados dos treinos."]
+            }));
+        } 
+
+        fetchData();
+
+        return () => {
+            source.cancel();
+        }
+    }, [])
+
+    const navigateToTrainingPage = (trainingId: string) => {
+        trainingContext.setTrainingContext({
+            trainingDescription: 'Meu treino',
+            trainingId: trainingId,
+            trainingName: 'Meu treino'
+        })
+
+        navigation.navigate(TRAINING_SCREEN)
+    }
+
+    const TrainingCardComponent = (item : TrainingSummaryModel) => {
+        return (
+            <View style={styles.card}>
+                <Pressable
+                    style={styles.cardContent}
+                    onPress={() => navigateToTrainingPage(item.TrainingId)}>
+                    <Text style={styles.cardTitle}>
+                        {item.GymName}
+                    </Text>
+                    <Text style={styles.cardText}>
+                        {item.GymDescription}
+                    </Text>
+                </Pressable>
             </View>
-        </View>
-    );
-}
+        );
+    }
 
-const TrainingListScreen = () => {
-
-    const trainings: TrainingSummaryModel[] = [];
-
-    <SafeAreaView style={styles.container}>
-        <FlatList
-            data={trainings}
-            renderItem={(info) => TrainingCardComponent(info.item)}
-            keyExtractor={(item) => item.TrainingId}
-        />
-    </SafeAreaView>
+    return(
+        <SafeAreaView style={styles.container}>
+            
+            <View>
+                <Text>Lista de treinos: </Text>
+            </View>
+            <FlatList
+                data={trainingData.trainings}
+                renderItem={(info) => TrainingCardComponent(info.item)}
+                keyExtractor={(item) => item.TrainingId}
+            />
+        </SafeAreaView>
+    )
 };
 
 export default TrainingListScreen;

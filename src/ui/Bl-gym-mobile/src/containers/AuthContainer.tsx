@@ -9,9 +9,9 @@ interface AuthContainerProps {
 const AuthContainer: React.FC<AuthContainerProps> = ({
     authorizedContent, unauthorizedContent }) => {
     
-    const userContext = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
-    if (userContext.authorized) {
+    if (user.authorized) {
         console.log("User authorized.")
         return authorizedContent;
     }

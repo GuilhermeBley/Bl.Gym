@@ -23,6 +23,12 @@ public static class UserClaim
     /// </summary>
     public static Claim ManageGymGroup => new(DEFAULT_ROLE, "ManageGymGroup");
 
+    /// <summary>
+    /// The user with this role is authorized to change his password.
+    /// </summary>
+    public static Claim ChangePassword => new(DEFAULT_ROLE, "ChangePassword");
+
+
     public static Claim CreateUserNameClaim(string userName)
         => new(DEFAULT_USER_NAME, userName);
     public static Claim CreateUserIdClaim(Guid userId)

@@ -8,6 +8,7 @@ import { Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CREATE_USER_SCREEN, HOME_SCREEN } from "../../routes/RoutesConstant";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface StyledInputProps {
   formikKey: string,
@@ -28,14 +29,14 @@ const validationSchema = yup.object().shape({
 const LoginScreen = ({ navigation }: any) => {
 
   const [buttonErrorMessage, setButtonErrorMessage] = useState("");
-
-  const userContext = useContext(UserContext);
+  const { login } = useContext(UserContext);
 
   const handleLoginAndNavigate = async (
-    login: string,
-    password: string
+    loginInput: string,
+    passwordInput: string
   ) => {
-    let response = await handleLogin(login, password);
+
+    let response = await handleLogin(loginInput, passwordInput);
 
     if (response.Status === LoginResultStatus.InvalidLoginOrPassword) {
       setButtonErrorMessage("Usuário ou senha inválidos.");
@@ -46,8 +47,9 @@ const LoginScreen = ({ navigation }: any) => {
       return;
     }
 
-    userContext.setUserByJwtToken(response.Token);
-    navigation.navigate(HOME_SCREEN)
+    login(response.Token);
+    
+    await AsyncStorage.setItem("Authorization", `Bearer ${response.Token}`);
   }
 
   const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {

@@ -1,7 +1,9 @@
-import { createContext } from "react";
-import jwtDecoder from 'jwt-decode';
+import { createContext, useEffect, useState } from "react";
+import * as jwtDecode from 'jwt-decode';
+import { getAuthorization } from "../services/AuthStorageService";
+import { ActivityIndicator, View } from "react-native";
 
-class UserContextProps{
+class UserContextModel{
     id: string;
     name: string;
     email: string;
@@ -22,50 +24,99 @@ class UserContextProps{
         }
         return roles.some(role => this.roles.includes(role));
     }
+}
 
-    setUserByJwtToken(jwtToken: string): void {
-        try{
-            const decoded: any = jwtDecoder.jwtDecode(jwtToken);
+interface UserContextProps{
+    user: UserContextModel,
+    login: (jwtToken: string) => void,
+    logout: () => void
+}
 
-            if (!decoded ||
-                parseInt(decoded.id) < 1)
-                this.setAsUnauthorized();
-                return;
+const unauthorizedUser = new UserContextModel(
+    "", "", "", [], false
+);
+
+const PageNotProperlyLoadedComponent = () => {
+    return (
+        <View>
+            <ActivityIndicator/>
+        </View>
+    );
+}
+
+export const UserContext = createContext<UserContextProps>({
+    user: unauthorizedUser,
+    login: (_) => { },
+    logout: () => { }
+});
+
+export default function UserContextProvider({children} : any){
+
+    const [user, setUser] = useState(unauthorizedUser)
+    const [pageStatus, setPageStatus] = useState({
+        authorizationLoaded: false,
+    });
+
+    useEffect(() => {
+
+        const fetchData = async () => {
+
+            try{
+                console.debug('getAuthorization started.')
+                let token = await getAuthorization();
     
+                if (token !== undefined && token !== null && token !== '') {
+                    login(token)
+                }
+            }
+            finally{
+                console.debug('getAuthorization executed.')
+
+                setPageStatus(previous => ({
+                    ...previous,
+                    authorizationLoaded: true  
+                }))
+
+                console.debug('previous.authorizationLoaded = ', pageStatus.authorizationLoaded)
+            }
+        };
+
+        fetchData();
+
+        return () => { /*nothing to dispose*/ }
+    }, [])
+
+    const login = (jwtToken: string): void => {
+        try{
+            const decoded: any = jwtDecode.jwtDecode(jwtToken);
+
+            if (!decoded || parseInt(decoded.id) < 1){
+                logout();
+                return;
+            }
+            
             // Update the user properties based on the decoded token
-            this.id = decoded.id;
-            this.name = decoded.name;
-            this.email = decoded.email;
-            this.roles = decoded.roles;
-            this.authorized = decoded.authorized;
+            setUser(new UserContextModel(
+                decoded.id,
+                decoded.name,
+                decoded.email,
+                decoded.roles,
+                true,
+            ))
         }
         catch(error) {
-            this.setAsUnauthorized();
+            logout();
             console.error("Failed to parse login.", error)
         }
     }
 
-    setAsUnauthorized()
-    {
-        this.id = "";
-        this.name = "";
-        this.email = "";
-        this.roles = [];
-        this.authorized = false;
+    const logout = () => {
+        setUser(unauthorizedUser)
     }
-}
-
-const unauthorizedUser = new UserContextProps(
-    "", "", "", [], false
-);
-
-export const UserContext = createContext<UserContextProps>(unauthorizedUser);
-
-export default function UserContextProvider({children} : any, user: UserContextProps){
-
-    return (
-        <UserContext.Provider value={user}>
-            {children}
+    
+    return(
+        <UserContext.Provider value={{ user, login, logout }}>
+            {pageStatus.authorizationLoaded ? children : PageNotProperlyLoadedComponent()}
         </UserContext.Provider>
     );
 }

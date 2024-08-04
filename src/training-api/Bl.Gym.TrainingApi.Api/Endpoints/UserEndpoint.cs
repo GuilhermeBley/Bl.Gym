@@ -37,16 +37,23 @@ public class UserEndpoint
                 });
         });
 
-        builder.MapPost("user/login/gym/{gymId}", async (
-            Guid gymId,
-            IMediator mediator) =>
-        {
-            var request
-                = new Application.Commands.Identity.LoginToSpecificGym.LoginToSpecificGymRequest(gymId);
+        builder.MapPost("user/change-password/request", async (
+            [FromBody] Application.Commands.Identity.RequestToChangePassword.RequestToChangePasswordRequest request,
+            [FromServices] IMediator mediator
+        ) => {
 
+            await Task.CompletedTask;
+        });
+
+        builder.MapPatch("user/change-password", async (
+            [FromBody] Application.Commands.Identity.ChangePassword.ChangePasswordRequest request,
+            [FromServices] IMediator mediator) =>
+        {
             var response = await mediator.Send(request);
 
             return Results.Ok();
+        }).RequireAuthorization(cfg => {
+            cfg.AddAuthenticationSchemes(Bl.Gym.TrainingApi.Api.Policies.ForgotPasswordPolicy.Scheme);
         });
     }
 }

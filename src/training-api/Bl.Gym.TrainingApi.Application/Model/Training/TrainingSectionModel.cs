@@ -2,13 +2,16 @@
 
 namespace Bl.Gym.TrainingApi.Application.Model.Training;
 
+/// <summary>
+/// This model represents an traning set, that contains 1 or n <see cref="ExerciseSet"/>.
+/// </summary>
 public class TrainingSectionModel
 {
     public Guid Id { get; set; }
     public Guid UserTrainingSheetId { get; set; }
     public string MuscularGroup { get; set; } = string.Empty;
-    public int TargetDaysCount { get; private set; }
-    public int CurrentDaysCount { get; private set; }
+    public int TargetDaysCount { get; set; }
+    public int CurrentDaysCount { get; set; }
     public Guid ConcurrencyStamp { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     
