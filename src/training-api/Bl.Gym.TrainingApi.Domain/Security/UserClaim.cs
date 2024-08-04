@@ -28,6 +28,14 @@ public static class UserClaim
     /// </summary>
     public static Claim ChangePassword => new(DEFAULT_ROLE, "ChangePassword");
 
+    /// <summary>
+    /// The user with this role is authorized to create or manage any gym.
+    /// </summary>
+    /// <remarks>
+    ///     <para>This role is usually given to admins.</para>
+    /// </remarks>
+    public static Claim ManageAnyGym => new(DEFAULT_ROLE, "ManageAnyGym");
+
 
     public static Claim CreateUserNameClaim(string userName)
         => new(DEFAULT_USER_NAME, userName);

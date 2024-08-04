@@ -44,7 +44,7 @@ public class GymGroup
                 Id = id,
                 CreatedAt = createdAt,
                 Name = name,
-                Description = description,
+                Description = description
             });
     }
 }
