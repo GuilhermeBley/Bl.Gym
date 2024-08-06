@@ -1,8 +1,6 @@
-﻿
-using Bl.Gym.TrainingApi.Application.Providers;
+﻿using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
 using Bl.Gym.TrainingApi.Domain.Entities.Training;
-using System.Xml.Linq;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Training.CreateGymGroupByAdmin;
 
@@ -17,8 +15,8 @@ public class CreateGymGroupByAdminHandler
     private readonly TrainingContext _trainingContext;
 
     public CreateGymGroupByAdminHandler(
-        IIdentityProvider identityProvider, 
-        ILogger<CreateGymGroupByAdminHandler> logger, 
+        IIdentityProvider identityProvider,
+        ILogger<CreateGymGroupByAdminHandler> logger,
         TrainingContext trainingContext)
     {
         _identityProvider = identityProvider;
@@ -27,7 +25,7 @@ public class CreateGymGroupByAdminHandler
     }
 
     public async Task<CreateGymGroupByAdminResponse> Handle(
-        CreateGymGroupByAdminRequest request, 
+        CreateGymGroupByAdminRequest request,
         CancellationToken cancellationToken)
     {
         var user = await _identityProvider.GetCurrentAsync(cancellationToken);
@@ -45,6 +43,13 @@ public class CreateGymGroupByAdminHandler
             createdAt: DateTime.UtcNow)
             .RequiredResult;
 
+        var adminRole
+            = await _trainingContext
+            .Roles
+            .SingleAsync(
+                e => e.NormalizedName == Domain.Entities.Identity.Role.GymGroupOwner.NormalizedName,
+                cancellationToken: cancellationToken);
+
         using var transaction = await _trainingContext.Database.BeginTransactionAsync(cancellationToken);
 
         var gymAddedResult = await _trainingContext.GymGroups.AddAsync(
@@ -52,14 +57,17 @@ public class CreateGymGroupByAdminHandler
             cancellationToken);
 
         await _trainingContext.UserTrainingRoles.AddAsync(
-            new Model.Identity.UserRoleTrainingModel{
+            new Model.Identity.UserRoleTrainingModel
+            {
                 GymGroupId = gymAddedResult.Entity.Id,
-                RoleId = 1,
+                RoleId = adminRole.Id,
                 UserId = userId
             });
 
         transaction.Commit();
 
         await _trainingContext.SaveChangesAsync();
+
+        return new(gymAddedResult.Entity.Id);
     }
 }
