@@ -27,7 +27,7 @@ public class GetCurrentUserGymsHandler
         if (userId != request.UserId)
             throw CoreException.CreateByCode(CoreExceptionCode.Unauthorized);
 
-        var gyms =
+        var gyms = await
             (from gym in _trainingContext.GymGroups.AsNoTracking()
              join userRole in _trainingContext.UserTrainingRoles.AsNoTracking()
                  on new { GymId = gym.Id, UserId = userId } equals new { GymId = userRole.GymGroupId, UserId = userRole.UserId }
@@ -40,7 +40,7 @@ public class GetCurrentUserGymsHandler
                  gym.CreatedAt,
                  role.Name))
             .ToListAsync(cancellationToken);
-                
-        return new GetCurrentUserGymsResponse(gyms)
+
+        return new GetCurrentUserGymsResponse(gyms);
     }
 }
