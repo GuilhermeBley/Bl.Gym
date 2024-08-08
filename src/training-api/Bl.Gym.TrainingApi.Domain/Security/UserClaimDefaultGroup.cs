@@ -4,6 +4,7 @@ using System.Security.Claims;
 
 namespace Bl.Gym.TrainingApi.Domain.Security;
 
+[Obsolete($"Use {nameof(Entities.Identity.Role)}.")]
 public class UserClaimDefaultGroup
     : IReadOnlyList<Claim>
 {
