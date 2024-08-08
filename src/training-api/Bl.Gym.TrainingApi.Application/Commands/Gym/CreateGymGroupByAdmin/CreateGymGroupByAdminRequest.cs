@@ -1,4 +1,4 @@
-﻿namespace Bl.Gym.TrainingApi.Application.Commands.Training.CreateGymGroupByAdmin;
+﻿namespace Bl.Gym.TrainingApi.Application.Commands.Gym.CreateGymGroupByAdmin;
 
 /// <summary>
 /// Creates a new gym as user ADMIN

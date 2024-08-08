@@ -1,4 +1,4 @@
-﻿namespace Bl.Gym.TrainingApi.Application.Commands.Training.GetCurrentUserGym;
+﻿namespace Bl.Gym.TrainingApi.Application.Commands.Gym.GetCurrentUserGym;
 
 public record GetCurrentUserGymResponse(
     Guid Id,
