@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using Bl.Gym.TrainingApi.Api.Model.Gym;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Bl.Gym.TrainingApi.Api.Endpoints;
 
@@ -18,6 +20,22 @@ public class GymEndpoint
                 return Results.Ok(result);
 
             return Results.NoContent();
+
+        }).RequireAuthorization();
+
+        builder.MapPost("gym/createAsAdmin", async (
+            HttpContext context, 
+            IMediator mediator,
+            [FromBody] CreateGymAsAdminModel model) =>
+        {
+            var userId = context.User.RequiredUserId();
+
+            var result =
+                await mediator.Send(new Application.Commands.Gym.CreateGymGroupByAdmin.CreateGymGroupByAdminRequest(
+                    model.Name,
+                    model.Description));
+
+            return Results.Created($"gym/user/{userId}", new { result.GymCreatedId });
 
         }).RequireAuthorization();
     }
