@@ -54,6 +54,7 @@ public class UserEndpoint
             return Results.Ok();
         }).RequireAuthorization(cfg => {
             cfg.AddAuthenticationSchemes(Bl.Gym.TrainingApi.Api.Policies.ForgotPasswordPolicy.Scheme);
+            cfg.RequireRole(Policies.ForgotPasswordPolicy.RequireRole.Value);
         });
     }
 }

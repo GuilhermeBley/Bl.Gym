@@ -1,8 +1,7 @@
-﻿
-using Bl.Gym.TrainingApi.Application.Providers;
+﻿using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
 
-namespace Bl.Gym.TrainingApi.Application.Commands.Training.GetCurrentUserGym;
+namespace Bl.Gym.TrainingApi.Application.Commands.Gym.GetCurrentUserGym;
 
 public class GetCurrentUserGymsHandler
     : IRequestHandler<GetCurrentUserGymsRequest, GetCurrentUserGymsResponse>
@@ -17,7 +16,7 @@ public class GetCurrentUserGymsHandler
     }
 
     public async Task<GetCurrentUserGymsResponse> Handle(
-        GetCurrentUserGymsRequest request, 
+        GetCurrentUserGymsRequest request,
         CancellationToken cancellationToken)
     {
         var user = await _identityProvider.GetCurrentAsync(cancellationToken);
@@ -30,7 +29,7 @@ public class GetCurrentUserGymsHandler
         var gyms = await
             (from gym in _trainingContext.GymGroups.AsNoTracking()
              join userRole in _trainingContext.UserTrainingRoles.AsNoTracking()
-                 on new { GymId = gym.Id, UserId = userId } equals new { GymId = userRole.GymGroupId, UserId = userRole.UserId }
+                 on new { GymId = gym.Id, UserId = userId } equals new { GymId = userRole.GymGroupId, userRole.UserId }
              join role in _trainingContext.Roles.AsNoTracking()
                  on userRole.RoleId equals role.Id
              select new GetCurrentUserGymResponse(

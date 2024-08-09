@@ -2,7 +2,7 @@
 using Bl.Gym.TrainingApi.Application.Repositories;
 using Bl.Gym.TrainingApi.Domain.Entities.Training;
 
-namespace Bl.Gym.TrainingApi.Application.Commands.Training.CreateGymGroupByAdmin;
+namespace Bl.Gym.TrainingApi.Application.Commands.Gym.CreateGymGroupByAdmin;
 
 /// <summary>
 /// This handler creates and assign the new gym to the current user.
