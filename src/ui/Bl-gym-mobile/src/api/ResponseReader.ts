@@ -29,8 +29,10 @@ const ErrorsDictionaryPtBr : ErrorsDictionary = {
     "UserAlreadyLoggedInGym": "Usuário já registrado na academia.",
 }
 
-interface GymApiResponse {
-    Data: any,
+const DefaultErrorMessage = "Erro ao executar operação.";
+
+interface GymApiResponse<T = any> {
+    Data: T,
     Errors: string[],
     ContainsError: boolean
 }
@@ -39,7 +41,7 @@ function getErrorMessage(key: string): string | undefined {
     if (key in ErrorsDictionaryPtBr) {
         return ErrorsDictionaryPtBr[key];
     } else {
-        return undefined;
+        return DefaultErrorMessage;
     }
 }
 
@@ -49,23 +51,23 @@ function TryGetResultFromResponse<T = any>(
     if (response === null || response === undefined)
         return {
             Data: null,
-            Errors: ["Falha em resposta."],
+            Errors: [DefaultErrorMessage],
             ContainsError: true
-        } as GymApiResponse
+        } as GymApiResponse<T>
 
     if (response.status >= 200 && response.status < 300)
         return {
             Data: response.data,
             Errors: [],
             ContainsError: false
-        } as GymApiResponse
+        } as GymApiResponse<T>
 
     if (!Array.isArray(response.data))
         return {
             Data: response.data,
-            Errors: ["Falha em resposta."],
+            Errors: [DefaultErrorMessage],
             ContainsError: true
-        } as GymApiResponse
+        } as GymApiResponse<T>
     
     var errors: string[] = []
     response.data.forEach(d => {
@@ -78,7 +80,7 @@ function TryGetResultFromResponse<T = any>(
     return {
         Data: response.data,
         Errors: errors
-    } as GymApiResponse
+    } as GymApiResponse<T>
 }
 
 export default TryGetResultFromResponse;
