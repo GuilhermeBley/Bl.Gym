@@ -43,8 +43,8 @@ function getErrorMessage(key: string): string | undefined {
     }
 }
 
-function TryGetResultFromResponse(
-    response: AxiosResponse<unknown, any> | undefined | null
+function TryGetResultFromResponse<T = any>(
+    response: AxiosResponse<T, any> | undefined | null
 ){
     if (response === null || response === undefined)
         return {
