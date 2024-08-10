@@ -5,13 +5,14 @@ import { GetCurrentUserGymResponse, handleGyms } from "./action";
 import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
+import { ManageAnyGym } from "../../Constants/roleConstants";
 
-interface PageDataProps{
+interface PageDataProps {
     Gyms: GetCurrentUserGymResponse[],
     errors: string[]
 }
 
-const GymCardComponent = (item : GetCurrentUserGymResponse) => {
+const GymCardComponent = (item: GetCurrentUserGymResponse) => {
     return (
         <View style={styles.card}>
             <View
@@ -40,20 +41,20 @@ const GymScreen = () => {
         Gyms: [],
         errors: []
     })
-    
+
     useEffect(() => {
         const source = axios.CancelToken.source();
 
         const fetchData = async () => {
             var result = await handleGyms(userContext.user.id, source.token)
-            
+
             if (result.Success) {
-                
+
                 setPageData(previous => ({
                     ...previous,
                     Gyms: result.Data.Gyms
                 }));
-                
+
                 return;
             }
 
@@ -61,7 +62,7 @@ const GymScreen = () => {
                 ...previous,
                 errors: ["Falha ao coletar dados dos treinos."]
             }));
-        } 
+        }
 
         fetchData();
 
@@ -76,16 +77,19 @@ const GymScreen = () => {
                 data={pageData.Gyms}
                 renderItem={(info) => GymCardComponent(info.item)}
                 keyExtractor={(item) => item.Id}>
-                
+
             </FlatList>
 
-            <Pressable
-                style={styles.addGymButton}
-                onPress={() => handleModalGymCreation()}>
-                <Text style={styles.addGymButtonText}>
-                    Criar academia
-                </Text>
-            </Pressable>
+            {userContext.user.isInRole(ManageAnyGym)
+                ? (
+                    <Pressable
+                        style={styles.addGymButton}
+                        onPress={() => handleModalGymCreation()}>
+                        <Text style={styles.addGymButtonText}>
+                            Criar academia
+                        </Text>
+                    </Pressable>)
+                : (<View></View>)/* Don't show nothing */}
         </SafeAreaView>
     );
 }
