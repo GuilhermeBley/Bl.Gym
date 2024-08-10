@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 import { GetCurrentUserGymResponse, handleGyms } from "./action";
 import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,6 +28,10 @@ const GymCardComponent = (item : GetCurrentUserGymResponse) => {
             </View>
         </View>
     );
+}
+
+const handleModalGymCreation = () => {
+
 }
 
 const GymScreen = () => {
@@ -74,6 +78,14 @@ const GymScreen = () => {
                 keyExtractor={(item) => item.Id}>
                 
             </FlatList>
+
+            <Pressable
+                style={styles.addGymButton}
+                onPress={() => handleModalGymCreation()}>
+                <Text style={styles.addGymButtonText}>
+                    Criar academia
+                </Text>
+            </Pressable>
         </SafeAreaView>
     );
 }
