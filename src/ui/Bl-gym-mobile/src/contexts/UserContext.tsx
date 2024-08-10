@@ -18,11 +18,11 @@ class UserContextModel{
         this.authorized = authorized;
     }
 
-    isInRole(roles: string | string[]): boolean {
-        if (typeof roles === 'string') {
-            return this.roles.includes(roles);
+    isInRole(rolesToCheck: string | string[]): boolean {
+        if (typeof rolesToCheck === 'string') {
+            return this.roles.includes(rolesToCheck);
         }
-        return roles.some(role => this.roles.includes(role));
+        return rolesToCheck.every(role => this.roles.includes(role));
     }
 }
 
