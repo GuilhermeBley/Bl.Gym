@@ -6,6 +6,7 @@ import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { ManageAnyGym } from "../../Constants/roleConstants";
+import CreateGymModalWithManageAnyGymRole from "../../components/gym/CreateGymModalWithManageAnyGymRole";
 
 interface PageDataProps {
     Gyms: GetCurrentUserGymResponse[],
@@ -31,12 +32,9 @@ const GymCardComponent = (item: GetCurrentUserGymResponse) => {
     );
 }
 
-const handleModalGymCreation = () => {
-
-}
-
 const GymScreen = () => {
     const userContext = useContext(UserContext);
+    const [modalVisible, setModalVisible] = useState(false)
     const [pageData, setPageData] = useState<PageDataProps>({
         Gyms: [],
         errors: []
@@ -71,6 +69,10 @@ const GymScreen = () => {
         }
     }, [])
 
+    const handleModalGymCreation = () => {
+        setModalVisible(true)
+    }
+
     return (
         <SafeAreaView>
             <FlatList
@@ -90,6 +92,10 @@ const GymScreen = () => {
                         </Text>
                     </Pressable>)
                 : (<View></View>)/* Don't show nothing */}
+            
+            <CreateGymModalWithManageAnyGymRole
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible} />
         </SafeAreaView>
     );
 }
