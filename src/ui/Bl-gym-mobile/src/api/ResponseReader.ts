@@ -34,7 +34,8 @@ const DefaultErrorMessage = "Erro ao executar operação.";
 interface GymApiResponse<T = any> {
     Data: T,
     Errors: string[],
-    ContainsError: boolean
+    ContainsError: boolean,
+    Success: boolean
 }
 
 function getErrorMessage(key: string): string | undefined {
@@ -59,14 +60,16 @@ function TryGetResultFromResponse<T = any>(
         return {
             Data: response.data,
             Errors: [],
-            ContainsError: false
+            ContainsError: false,
+            Success: true
         } as GymApiResponse<T>
 
     if (!Array.isArray(response.data))
         return {
             Data: response.data,
             Errors: [DefaultErrorMessage],
-            ContainsError: true
+            ContainsError: true,
+            Success: false
         } as GymApiResponse<T>
     
     var errors: string[] = []
@@ -79,7 +82,8 @@ function TryGetResultFromResponse<T = any>(
 
     return {
         Data: response.data,
-        Errors: errors
+        Errors: errors,
+        Success: true
     } as GymApiResponse<T>
 }
 
