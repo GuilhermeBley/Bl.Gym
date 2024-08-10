@@ -1,5 +1,5 @@
 import axios from "../../api/GymApi"
-import { CancelToken } from "axios"
+import { AxiosError, CancelToken } from "axios"
 import TryGetResultFromResponse from "../../api/ResponseReader"
 
 interface GetCurrentUserGymResponse{
@@ -18,11 +18,14 @@ export const fetchGyms = (
     userId: string,
     cancellationToken: CancelToken | undefined = undefined) => {
     return axios
-        .get<GetCurrentUserGymsResponse>("gym/user/{userId}".replace("{userId}", userId))
+        .get<GetCurrentUserGymsResponse>(
+            "gym/user/{userId}".replace("{userId}", userId),
+            { cancelToken: cancellationToken })
         .then(response => {
             return response.data;
         })
-        .catch(error => {
-            return TryGetResultFromResponse(error);
+        .catch((error: AxiosError<GetCurrentUserGymsResponse>) => {
+            
+            return TryGetResultFromResponse(error.response);
         })
 }
