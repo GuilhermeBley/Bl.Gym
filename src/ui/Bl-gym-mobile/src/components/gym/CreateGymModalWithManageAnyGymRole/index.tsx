@@ -2,6 +2,7 @@ import { Modal, View, Text, Button, ActivityIndicator, TextInput } from "react-n
 import { styles } from "./styles";
 import React from "react";
 import { Formik, FormikProps } from "formik";
+import * as yup from 'yup';
 
 type ChildComponentProps = {
     modalVisible: boolean,
@@ -19,6 +20,16 @@ interface StyledInputProps {
   label: string;
   [key: string]: any;
 }
+
+const validationSchema = yup.object().shape({
+    gymName: yup.string()
+      .min(2, "O nome deve conter 2 caracteres.")
+      .max(45, "Insira um nome mais curto, por favor.")
+      .required("Nome é obrigatório."),
+    description: yup.string()
+      .min(2, "Descrição muito curta...")
+      .max(1000, "Insira uma descrição um pouco mais curta, por favor.")
+  });
 
 const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
     const inputStyles = styles.input;
