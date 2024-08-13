@@ -1,12 +1,13 @@
 import { Modal, View, Text, Button, ActivityIndicator, TextInput } from "react-native";
 import { styles } from "./styles";
 import React from "react";
-import { Formik, FormikProps } from "formik";
+import { Formik, FormikHelpers, FormikProps } from "formik";
 import * as yup from 'yup';
 
 type ChildComponentProps = {
     modalVisible: boolean,
-    setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
+    setModalVisible: React.Dispatch<React.SetStateAction<boolean>>,
+    onSubmiting: (model: GymCreateModel) => Promise<void>
 };
 
 interface GymCreateModel {
@@ -58,7 +59,16 @@ const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label
     );
 }
 
-const CreateGymModalWithManageAnyGymRole = ({ modalVisible, setModalVisible }: ChildComponentProps) => {
+const CreateGymModalWithManageAnyGymRole = ({
+    modalVisible,
+    setModalVisible,
+    onSubmiting,
+}: ChildComponentProps) => {
+    
+    const handleSubmit = (actions: FormikHelpers<GymCreateModel>, model: GymCreateModel) => {
+        return onSubmiting(model);
+    }
+
     return (
         <Modal
             animationType="slide" // You can use "slide", "fade", or "none"
@@ -103,10 +113,6 @@ const CreateGymModalWithManageAnyGymRole = ({ modalVisible, setModalVisible }: C
                                     {formikProps.isSubmitting ?
                                         <ActivityIndicator /> :
                                         <Button onPress={() => formikProps.handleSubmit()} title="Criar acedemia" />}
-                                </View>
-
-                                <View>
-                                    <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof GymCreateModel]}</Text>
                                 </View>
                             </React.Fragment>
                         );
