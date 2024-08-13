@@ -10,7 +10,7 @@ type ChildComponentProps = {
     onSubmiting: (model: GymCreateModel) => Promise<void>
 };
 
-interface GymCreateModel {
+export interface GymCreateModel {
     gymName: string,
     description: string | undefined
 }

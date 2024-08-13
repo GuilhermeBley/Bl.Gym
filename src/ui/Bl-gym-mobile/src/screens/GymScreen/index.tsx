@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { FlatList, Pressable, Text, View } from "react-native";
-import { GetCurrentUserGymResponse, handleGyms } from "./action";
+import { GetCurrentUserGymResponse, handleCreateGym, handleGyms } from "./action";
 import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { ManageAnyGym } from "../../Constants/roleConstants";
-import CreateGymModalWithManageAnyGymRole from "../../components/gym/CreateGymModalWithManageAnyGymRole";
+import CreateGymModalWithManageAnyGymRole, { GymCreateModel } from "../../components/gym/CreateGymModalWithManageAnyGymRole";
 
 interface PageDataProps {
     Gyms: GetCurrentUserGymResponse[],
@@ -69,6 +69,10 @@ const GymScreen = () => {
         }
     }, [])
 
+    const handleGymCreation = async (model: GymCreateModel) => {
+        await handleCreateGym(model)
+    }
+
     const handleModalGymCreation = () => {
         setModalVisible(true)
     }
@@ -95,7 +99,8 @@ const GymScreen = () => {
             
             <CreateGymModalWithManageAnyGymRole
                 modalVisible={modalVisible}
-                setModalVisible={setModalVisible} />
+                setModalVisible={setModalVisible}
+                onSubmiting={handleGymCreation}/>
         </SafeAreaView>
     );
 }
