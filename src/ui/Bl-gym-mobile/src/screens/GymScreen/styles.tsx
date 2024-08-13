@@ -37,5 +37,8 @@ export const styles = StyleSheet.create({
   },
   addGymButtonText: {
 
+  },
+  footerErrorMessages: {
+    color: "red"
   }
 });

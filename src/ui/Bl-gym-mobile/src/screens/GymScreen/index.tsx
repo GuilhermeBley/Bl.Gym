@@ -70,7 +70,13 @@ const GymScreen = () => {
     }, [])
 
     const handleGymCreation = async (model: GymCreateModel) => {
-        await handleCreateGym(model)
+        var result = await handleCreateGym(model)
+
+        if (result.ContainsError){
+            setPageData(previous => ({ ...previous, errors: result.Errors }))
+        }
+
+        setModalVisible(false);
     }
 
     const handleModalGymCreation = () => {
@@ -100,7 +106,12 @@ const GymScreen = () => {
             <CreateGymModalWithManageAnyGymRole
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
-                onSubmiting={handleGymCreation}/>
+                onSubmiting={handleGymCreation} />
+            
+            {pageData.errors.map(error => (
+                <Text style={styles.footerErrorMessages}>{error}</Text>
+            ))}
+
         </SafeAreaView>
     );
 }
