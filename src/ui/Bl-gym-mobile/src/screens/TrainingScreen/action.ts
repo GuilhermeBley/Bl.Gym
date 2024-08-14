@@ -20,7 +20,7 @@ export const patchCurrentTrainingDays = (
 ) => {
     if (newCurrentDaysCount < 0)
     {
-
+        // TODO: Returns an error
     }
 
     return axios
