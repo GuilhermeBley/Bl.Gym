@@ -1,5 +1,6 @@
-import { CancelToken } from "axios";
-import axios  from "../../api/GymApi"
+import { AxiosError, CancelToken } from "axios";
+import axios from "../../api/GymApi"
+import TryGetResultFromResponse from "../../api/ResponseReader";
 
 export const getTrainingInfoById = (
     trainingId: string,
@@ -9,5 +10,30 @@ export const getTrainingInfoById = (
         .get("", { cancelToken: cancellationToken })
         .then(response => {
             return []
+        })
+}
+
+export const patchCurrentTrainingDays = (
+    sectionId: string,
+    newCurrentDaysCount: number,
+    cancellationToken: CancelToken
+) => {
+    if (newCurrentDaysCount < 0)
+    {
+
+    }
+
+    return axios
+        .patch("Training/{sectionId}/update-current-training-days",
+            {
+                SectionId: sectionId,
+                NewCurrentDaysCount: newCurrentDaysCount,
+            },
+            { cancelToken: cancellationToken })
+        .then(response => {
+            return TryGetResultFromResponse(response);
+        })
+        .catch((error: AxiosError) => {
+            return TryGetResultFromResponse<any>(error.response);
         })
 }
