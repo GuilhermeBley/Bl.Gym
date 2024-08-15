@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import TrainingListScreen from '../screens/TrainingListScreen';
-import { GYM_SCREEN, HOME_SCREEN, TRAINING_SCREEN } from './RoutesConstant';
+import { GYM_SCREEN, HOME_SCREEN, TRAINING_HOME_SCREEN, TRAINING_SCREEN } from './RoutesConstant';
 import TrainingScreen from '../screens/TrainingScreen';
 import GymScreen from '../screens/GymScreen';
 
@@ -12,8 +12,8 @@ const Stack = createStackNavigator();
 
 function HomeStackNavigator() {
   return (
-    <Stack.Navigator initialRouteName={HOME_SCREEN}>
-      <Stack.Screen name={HOME_SCREEN} component={TrainingListScreen} options={{ title: "Meus treinos" }} />
+    <Stack.Navigator initialRouteName={TRAINING_HOME_SCREEN}>
+      <Stack.Screen name={TRAINING_HOME_SCREEN} component={TrainingListScreen} options={{ title: "Meus treinos" }} />
       <Stack.Screen name={TRAINING_SCREEN} component={TrainingScreen} options={{ title: "Meus treinos" }} />
     </Stack.Navigator>
   );

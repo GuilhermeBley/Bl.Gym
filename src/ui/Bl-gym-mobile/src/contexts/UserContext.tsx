@@ -73,6 +73,7 @@ export default function UserContextProvider({children} : any){
                 let token = await getAuthorization();
     
                 if (token !== undefined && token !== null && token !== '') {
+                    token = token.replace("Bearer ", "")
                     login(token)
                 }
             }
@@ -97,17 +98,17 @@ export default function UserContextProvider({children} : any){
         try{
             const decoded: any = jwtDecode.jwtDecode(jwtToken);
 
-            if (!decoded || parseInt(decoded.id) < 1){
+            if (!decoded || typeof decoded.nameidentifier !== "string"){
                 logout();
                 return;
             }
             
             // Update the user properties based on the decoded token
             setUser(new UserContextModel(
-                decoded.id,
+                decoded.nameidentifier,
                 decoded.name,
-                decoded.email,
-                decoded.roles,
+                decoded.emailaddress,
+                Array.isArray(decoded.roles) ? decoded.roles : [],
                 true,
             ))
         }
