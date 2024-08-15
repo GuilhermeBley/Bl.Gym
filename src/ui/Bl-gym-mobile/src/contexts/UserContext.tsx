@@ -19,6 +19,13 @@ class UserContextModel{
     }
 
     isInRole(rolesToCheck: string | string[]): boolean {
+
+        if (!this.authorized)
+            return false;
+
+        if (!Array.isArray(this.roles))
+            return false;
+
         if (typeof rolesToCheck === 'string') {
             return this.roles.includes(rolesToCheck);
         }

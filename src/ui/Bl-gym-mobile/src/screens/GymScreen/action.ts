@@ -26,7 +26,8 @@ export const handleGyms = (
             return TryGetResultFromResponse(response);
         })
         .catch((error: AxiosError<GetCurrentUserGymsResponse>) => {
-            
+            console.debug('api -> gym/user')
+            console.debug(error)
             return TryGetResultFromResponse(error.response);
         })
 }
