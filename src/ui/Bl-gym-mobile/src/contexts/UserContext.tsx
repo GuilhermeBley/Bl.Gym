@@ -42,12 +42,12 @@ class UserContextModel{
     }
 
     isAuthorized(){
-        const currentTime = new Date
+        const currentTime = new Date;
 
         if (this.dueDate === undefined)
             return false
 
-        return this.authorized && this.dueDate < currentTime
+        return this.authorized && this.dueDate > currentTime
     }
 }
 
