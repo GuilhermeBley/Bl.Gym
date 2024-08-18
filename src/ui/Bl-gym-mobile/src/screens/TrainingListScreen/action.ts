@@ -18,7 +18,7 @@ export const handleLoginInGym = (gymId: string) => {
 
 export const handleTrainings = (userId: string, cancellationToken: CancelToken) => {
     return axios.get(
-        "api/Training/details/{userId}".replace("{userId}", userId), {
+        "Training/details/{userId}".replace("{userId}", userId), {
             cancelToken: cancellationToken
         }
     ).then((response) => {
