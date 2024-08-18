@@ -10,13 +10,21 @@ class UserContextModel{
     email: string;
     roles: string[];
     authorized: boolean;
+    dueDate: Date | undefined;
 
-    constructor(id: string, name: string, email: string, roles: string[], authorized: boolean) {
+    constructor(
+        id: string,
+        name: string, 
+        email: string, 
+        roles: string[], 
+        authorized: boolean, 
+        dueDate: Date | undefined = undefined) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.roles = roles;
         this.authorized = authorized;
+        this.dueDate = dueDate;
     }
 
     isInRole(rolesToCheck: string | string[]): boolean {
@@ -31,6 +39,15 @@ class UserContextModel{
             return this.roles.includes(rolesToCheck);
         }
         return rolesToCheck.every(role => this.roles.includes(role));
+    }
+
+    isAuthorized(){
+        const currentTime = new Date
+
+        if (this.dueDate === undefined)
+            return false
+
+        return this.authorized && this.dueDate < currentTime
     }
 }
 
@@ -113,6 +130,7 @@ export default function UserContextProvider({children} : any){
                 decoded.emailaddress,
                 Array.isArray(decoded.roles) ? decoded.roles : [],
                 true,
+                typeof decoded.exp === "number" ? new Date(decoded.exp * 1000) : undefined
             ))
         }
         catch(error) {
