@@ -87,4 +87,32 @@ function TryGetResultFromResponse<T = any>(
     } as GymApiResponse<T>
 }
 
+export function createFailedResponse<T = any>(
+    errors: string[] | string
+) {
+    if (typeof errors === "string")
+        errors = [errors]
+
+    if (errors == undefined || errors.length == 0)
+        errors = [DefaultErrorMessage]
+
+    return {
+        Data: undefined,
+        Errors: errors,
+        ContainsError: true,
+        Success: false
+    } as GymApiResponse<T>
+}
+
+export function createSuccessResponse<T = any>(
+    item: T
+) {
+    return {
+        Data: item,
+        Errors: [],
+        ContainsError: false,
+        Success: true
+    } as GymApiResponse<T>
+}
+
 export default TryGetResultFromResponse;
