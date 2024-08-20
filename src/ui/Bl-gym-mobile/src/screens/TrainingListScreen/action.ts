@@ -1,5 +1,6 @@
 import { CancelToken } from 'axios';
 import axios from '../../api/GymApi'
+import TryGetResultFromResponse from '../../api/ResponseReader';
 
 export const handleLoginInGym = (gymId: string) => {
     return axios.post(
@@ -18,26 +19,14 @@ export const handleLoginInGym = (gymId: string) => {
 
 export const handleTrainings = (userId: string, cancellationToken: CancelToken) => {
     return axios.get(
-        "api/Training/details/{userId}".replace("{userId}", userId), {
+        "Training/details/{userId}".replace("{userId}", userId), {
             cancelToken: cancellationToken
         }
     ).then((response) => {
         
-        if (response.status !== 200)
-            return {
-                Success: false,
-                Data: []
-            }
-
-        return {
-            Success: true,
-            Data: response.data
-        }
+        return TryGetResultFromResponse(response);
     }).catch((error) => {
         console.debug(error)
-        return {
-            Success: false,
-            Data: []
-        }
+        return TryGetResultFromResponse(error.response);
     });
 }
