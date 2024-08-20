@@ -37,6 +37,9 @@ public class GymEndpoint
 
             return Results.Created($"gym/user/{userId}", new { result.GymCreatedId });
 
-        }).RequireAuthorization();
+        }).RequireAuthorization(cfg =>
+        {
+            cfg.RequireRole(Domain.Security.UserClaim.ManageAnyGym.Value);
+        });
     }
 }

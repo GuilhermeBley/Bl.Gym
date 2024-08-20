@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import * as jwtDecode from 'jwt-decode';
 import { getAuthorization } from "../services/AuthStorageService";
 import { ActivityIndicator, View } from "react-native";
+import axios from "../api/GymApi";
 
 class UserContextModel{
     id: string;
@@ -9,20 +10,44 @@ class UserContextModel{
     email: string;
     roles: string[];
     authorized: boolean;
+    dueDate: Date | undefined;
 
-    constructor(id: string, name: string, email: string, roles: string[], authorized: boolean) {
+    constructor(
+        id: string,
+        name: string, 
+        email: string, 
+        roles: string[], 
+        authorized: boolean, 
+        dueDate: Date | undefined = undefined) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.roles = roles;
         this.authorized = authorized;
+        this.dueDate = dueDate;
     }
 
-    isInRole(roles: string | string[]): boolean {
-        if (typeof roles === 'string') {
-            return this.roles.includes(roles);
+    isInRole(rolesToCheck: string | string[]): boolean {
+
+        if (!this.authorized)
+            return false;
+
+        if (!Array.isArray(this.roles))
+            return false;
+
+        if (typeof rolesToCheck === 'string') {
+            return this.roles.includes(rolesToCheck);
         }
-        return roles.some(role => this.roles.includes(role));
+        return rolesToCheck.every(role => this.roles.includes(role));
+    }
+
+    isAuthorized(){
+        const currentTime = new Date;
+
+        if (this.dueDate === undefined)
+            return false
+
+        return this.authorized && this.dueDate > currentTime
     }
 }
 
@@ -66,7 +91,10 @@ export default function UserContextProvider({children} : any){
                 let token = await getAuthorization();
     
                 if (token !== undefined && token !== null && token !== '') {
+                    let bearerToken = token
+                    token = token.replace("Bearer ", "")
                     login(token)
+                    axios.defaults.headers.common['Authorization'] = bearerToken;
                 }
             }
             finally{
@@ -90,18 +118,19 @@ export default function UserContextProvider({children} : any){
         try{
             const decoded: any = jwtDecode.jwtDecode(jwtToken);
 
-            if (!decoded || parseInt(decoded.id) < 1){
+            if (!decoded || typeof decoded.nameidentifier !== "string"){
                 logout();
                 return;
             }
             
             // Update the user properties based on the decoded token
             setUser(new UserContextModel(
-                decoded.id,
+                decoded.nameidentifier,
                 decoded.name,
-                decoded.email,
-                decoded.roles,
+                decoded.emailaddress,
+                Array.isArray(decoded.roles) ? decoded.roles : [],
                 true,
+                typeof decoded.exp === "number" ? new Date(decoded.exp * 1000) : undefined
             ))
         }
         catch(error) {

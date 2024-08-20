@@ -29,43 +29,48 @@ const ErrorsDictionaryPtBr : ErrorsDictionary = {
     "UserAlreadyLoggedInGym": "Usuário já registrado na academia.",
 }
 
-interface GymApiResponse {
-    Data: any,
+const DefaultErrorMessage = "Erro ao executar operação.";
+
+interface GymApiResponse<T = any> {
+    Data: T,
     Errors: string[],
-    ContainsError: boolean
+    ContainsError: boolean,
+    Success: boolean
 }
 
 function getErrorMessage(key: string): string | undefined {
     if (key in ErrorsDictionaryPtBr) {
         return ErrorsDictionaryPtBr[key];
     } else {
-        return undefined;
+        return DefaultErrorMessage;
     }
 }
 
-function TryGetResultFromResponse(
-    response: AxiosResponse<unknown, any> | undefined | null
+function TryGetResultFromResponse<T = any>(
+    response: AxiosResponse<T, any> | undefined | null
 ){
     if (response === null || response === undefined)
         return {
             Data: null,
-            Errors: ["Falha em resposta."],
+            Errors: [DefaultErrorMessage],
             ContainsError: true
-        } as GymApiResponse
+        } as GymApiResponse<T>
 
     if (response.status >= 200 && response.status < 300)
         return {
             Data: response.data,
             Errors: [],
-            ContainsError: false
-        } as GymApiResponse
+            ContainsError: false,
+            Success: true
+        } as GymApiResponse<T>
 
     if (!Array.isArray(response.data))
         return {
             Data: response.data,
-            Errors: ["Falha em resposta."],
-            ContainsError: true
-        } as GymApiResponse
+            Errors: [DefaultErrorMessage],
+            ContainsError: true,
+            Success: false
+        } as GymApiResponse<T>
     
     var errors: string[] = []
     response.data.forEach(d => {
@@ -77,8 +82,9 @@ function TryGetResultFromResponse(
 
     return {
         Data: response.data,
-        Errors: errors
-    } as GymApiResponse
+        Errors: errors,
+        Success: true
+    } as GymApiResponse<T>
 }
 
 export default TryGetResultFromResponse;

@@ -9,10 +9,11 @@ const Stack = createStackNavigator();
 
 const AuthStack = () => {
     console.debug("AuthStack");
+
     return (
         <Stack.Navigator initialRouteName={LOGIN_SCREEN}>
-            <Stack.Screen name={LOGIN_SCREEN} component={LoginScreen} />
-            <Stack.Screen name={CREATE_USER_SCREEN} component={CreateUserScreen} />
+            <Stack.Screen name={LOGIN_SCREEN} component={LoginScreen} options={{ headerShown: false }}/>
+            <Stack.Screen name={CREATE_USER_SCREEN} component={CreateUserScreen} options={{ title: "Criar novo usuário" }}/>
         </Stack.Navigator>
     );
 }
