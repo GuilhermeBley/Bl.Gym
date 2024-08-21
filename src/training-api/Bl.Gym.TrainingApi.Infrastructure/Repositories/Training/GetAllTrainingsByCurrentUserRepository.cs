@@ -9,10 +9,10 @@ namespace Bl.Gym.TrainingApi.Infrastructure.Repositories.Training;
 public class GetAllTrainingsByCurrentUserRepository
     : IGetAllTrainingsByCurrentUserRepository
 {
-    private readonly MySqlTrainingContext _context;
+    private readonly PostgreTrainingContext _context;
 
     public GetAllTrainingsByCurrentUserRepository(
-        MySqlTrainingContext context)
+        PostgreTrainingContext context)
     {
         _context = context;
     }

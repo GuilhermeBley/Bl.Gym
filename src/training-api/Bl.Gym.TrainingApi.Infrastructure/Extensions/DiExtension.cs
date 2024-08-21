@@ -24,7 +24,7 @@ public static class DiExtension
                 cfg.RegisterServicesFromAssembly(typeof(Application.Commands.Identity.CreateUser.CreateUserHandler).Assembly);
             })
             .AddScoped<Application.Services.GymRoleCheckerService>()
-            .AddDbContext<Repositories.MySqlTrainingContext>((provider, opt) =>
+            .AddDbContext<Repositories.PostgreTrainingContext>((provider, opt) =>
             {
                 var config = provider.GetRequiredService<IOptions<PostgreSqlOption>>();
                 opt.UseNpgsql(config.Value.ConnectionString, opt =>
@@ -33,7 +33,7 @@ public static class DiExtension
                     });
             })
             .AddScoped<Application.Repositories.TrainingContext>(
-                provider => provider.GetRequiredService<Repositories.MySqlTrainingContext>())
+                provider => provider.GetRequiredService<Repositories.PostgreTrainingContext>())
             
             .AddScoped<Application.Repositories.Training.IGetAllTrainingsByCurrentUserRepository, Repositories.Training.GetAllTrainingsByCurrentUserRepository>();
     }

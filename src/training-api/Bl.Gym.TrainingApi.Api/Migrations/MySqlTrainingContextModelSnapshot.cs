@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Bl.Gym.TrainingApi.Api.Migrations
 {
-    [DbContext(typeof(MySqlTrainingContext))]
+    [DbContext(typeof(PostgreTrainingContext))]
     partial class MySqlTrainingContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bl.Gym.TrainingApi.Infrastructure.Repositories;
 
-public class MySqlTrainingContext 
+public class PostgreTrainingContext 
     : TrainingContext
 {
-    public MySqlTrainingContext(DbContextOptions<MySqlTrainingContext> options)
+    public PostgreTrainingContext(DbContextOptions<PostgreTrainingContext> options)
         : base(options)
     { 
     }
@@ -49,6 +49,15 @@ public class MySqlTrainingContext
             b.HasOne<Application.Model.Identity.UserModel>().WithMany().HasForeignKey(p => p.UserId);
             b.HasOne<Application.Model.Identity.RoleModel>().WithMany().HasForeignKey(p => p.RoleId);
             b.HasOne<Application.Model.Training.GymGroupModel>().WithMany().HasForeignKey(p => p.GymGroupId);
+        });
+
+        modelBuilder.Entity<Application.Model.Identity.UserRoleModel>(b =>
+        {
+            b.HasKey(p => p.Id);
+            b.Property(p => p.Id).ValueGeneratedOnAdd();
+
+            b.HasOne<Application.Model.Identity.UserModel>().WithMany().HasForeignKey(p => p.UserId);
+            b.HasOne<Application.Model.Identity.RoleModel>().WithMany().HasForeignKey(p => p.RoleId);
         });
 
         modelBuilder.Entity<Application.Model.Training.ExerciseSetModel>(b =>

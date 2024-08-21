@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Bl.Gym.TrainingApi.Api.Migrations
 {
-    [DbContext(typeof(MySqlTrainingContext))]
+    [DbContext(typeof(PostgreTrainingContext))]
     [Migration("20240614014305_initialCreation")]
     partial class initialCreation
     {
