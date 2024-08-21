@@ -13,6 +13,21 @@ public class Role
     private readonly ImmutableArray<Claim> _claims;
 
     /// <summary>
+    /// Default roles of a system admin.
+    /// </summary>
+    public static Role Admin { get; }
+        = new(
+            new[]
+            {
+                UserClaim.ManageAnyGym
+            }
+        )
+        {
+            Name = nameof(Admin),
+            NormalizedName = NormalizeName(nameof(Admin))
+        };
+
+    /// <summary>
     /// Default roles of an gym student. Use the <see cref="NormalizedName"/> to don't duplicate this entity.
     /// </summary>
     public static Role Student { get; }
