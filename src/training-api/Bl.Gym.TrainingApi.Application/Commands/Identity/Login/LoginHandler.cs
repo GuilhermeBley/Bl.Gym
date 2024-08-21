@@ -1,5 +1,7 @@
-﻿using Bl.Gym.TrainingApi.Application.Repositories;
+﻿using Bl.Gym.TrainingApi.Application.Model.Identity;
+using Bl.Gym.TrainingApi.Application.Repositories;
 using System.Collections.Immutable;
+using System.Security.Claims;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Identity.Login;
 
@@ -72,16 +74,40 @@ public class LoginHandler
                     setter => setter.SetProperty(p => p.AccessFailedCount, 0));
         }
 
+        var userRoles = await GetUserClaimAsync(userFound.Id, cancellationToken);
+
         var claims =
             new[] {
                 Domain.Security.UserClaim.CreateUserEmailClaim(userFound.Email),
                 Domain.Security.UserClaim.CreateUserIdClaim(userFound.Id),
-                Domain.Security.UserClaim.CreateUserNameClaim(userFound.UserName),
-            };
+                Domain.Security.UserClaim.CreateUserNameClaim(userFound.UserName)
+            }.Concat(userRoles);
 
         return new(
             Username: userFound.UserName,
             Email: userFound.Email,
             Claims: claims.ToImmutableArray());
+    }
+
+    private async Task<IEnumerable<Claim>> GetUserClaimAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var claims = await 
+            (from userRole in _context.UserRoles.AsNoTracking()
+            join role in _context.Roles.AsNoTracking()
+                on userRole.RoleId equals role.Id
+            join claim in _context.RoleClaims.AsNoTracking()
+                on role.Id equals claim.RoleId
+            where userRole.Id == userId
+            select new {
+                claim.RoleId,
+                claim.ClaimType,
+                claim.ClaimValue
+            })
+            .ToListAsync(cancellationToken);
+
+        return claims.Select(c => 
+            new Claim(c.ClaimType, c.ClaimValue));
     }
 }
