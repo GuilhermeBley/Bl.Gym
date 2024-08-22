@@ -47,8 +47,6 @@ public class TryAddDefaultRoleClaimsHandler
                 .Select(e => new { e.Id })
                 .FirstOrDefaultAsync(cancellationToken);
 
-            List<Claim> claimsToTryAdd = new List<Claim>();
-
             if (roleFound is null)
             {
                 var roleAdded = await _trainingContext
