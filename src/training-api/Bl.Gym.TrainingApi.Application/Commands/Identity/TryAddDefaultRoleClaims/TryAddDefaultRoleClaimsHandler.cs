@@ -39,20 +39,55 @@ public class TryAddDefaultRoleClaimsHandler
 
         foreach (var role in _rolesToMap)
         {
-            var containsRole = 
+            var roleFound = 
                 await _trainingContext
                 .Roles
                 .AsNoTracking()
-                .AnyAsync(e => e.NormalizedName == role.NormalizedName, cancellationToken);
+                .Where(e => e.NormalizedName == role.NormalizedName)
+                .Select(e => new { e.Id })
+                .FirstOrDefaultAsync(cancellationToken);
 
             List<Claim> claimsToTryAdd = new List<Claim>();
 
-            if (!containsRole)
+            if (roleFound is null)
             {
-                
+                var roleAdded = await _trainingContext
+                    .Roles
+                    .AddAsync(new Model.Identity.RoleModel
+                    {
+                        ConcurrencyStamp = Guid.NewGuid(),
+                        Name = role.Name,
+                        NormalizedName = role.NormalizedName,
+                    });
+
+                roleFound = new { Id = roleAdded.Entity.Id };
+            }
+
+            foreach (var claim in role)
+            {
+                var containsClaim = 
+                    await _trainingContext
+                    .RoleClaims
+                    .AsNoTracking()
+                    .Where(e => e.ClaimValue == claim.Value)
+                    .Where(e => e.ClaimType == claim.Type)
+                    .AnyAsync(cancellationToken);
+
+                if (containsClaim)
+                    continue;
+
+                await _trainingContext
+                    .RoleClaims
+                    .AddAsync(new Model.Identity.RoleClaimModel
+                    {
+                        ClaimType = claim.Type,
+                        ClaimValue = claim.Value,
+                        RoleId = roleFound.Id
+                    });
             }
         }
 
+        await _trainingContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync();
 
         return new TryAddDefaultRoleClaimsResponse();
