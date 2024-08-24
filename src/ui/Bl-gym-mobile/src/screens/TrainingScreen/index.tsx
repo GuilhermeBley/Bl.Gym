@@ -3,11 +3,17 @@ import { Text, View } from "react-native";
 import { TrainingContext } from "../../contexts/TrainingContext";
 import { UserContext } from "../../contexts/UserContext";
 import axios from "axios";
-import { getTrainingInfoById } from "./action";
+import { getTrainingInfoById, GetTrainingInfoByIdResponse } from "./action";
+
+interface TrainingInfoModel{
+    errors: string[],
+    data: GetTrainingInfoByIdResponse | undefined
+}
 
 const TrainingScreen = () => {
-    const [trainingInfo, setTrainingInfo] = useState({
-        data: []
+    const [trainingInfo, setTrainingInfo] = useState<TrainingInfoModel>({
+        errors: [],
+        data: undefined
     });
 
     const trainingContext = useContext(TrainingContext)
@@ -21,13 +27,23 @@ const TrainingScreen = () => {
             if (trainingContext.training === undefined)
                 return;
 
-            let trainings = await getTrainingInfoById(
+            let response = await getTrainingInfoById(
                 trainingContext.training.trainingId,
+                userContext.user.id,
                 source.token);
+            
+            if (response.ContainsError)
+            {
+                setTrainingInfo(previous => ({
+                    ...previous,
+                    errors: response.Errors
+                }))
+                return;
+            }
             
             setTrainingInfo(previous => ({
                 ...previous,
-                data: trainings
+                data: response.Data
             }))
             
         }

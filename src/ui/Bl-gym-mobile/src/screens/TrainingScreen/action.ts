@@ -2,13 +2,13 @@ import { AxiosError, CancelToken } from "axios";
 import axios from "../../api/GymApi"
 import TryGetResultFromResponse, { createFailedResponse } from "../../api/ResponseReader";
 
-interface GetTrainingInfoByIdResponse{
+export interface GetTrainingInfoByIdResponse{
     Section: GetTrainingInfoByIdResponseSection,
     Status: string,
     CreatedAt: Date
 }
 
-interface GetTrainingInfoByIdResponseSection{
+export interface GetTrainingInfoByIdResponseSection{
     SectionId: string,
     MuscularGroup: string,
     TargetDaysCount: number,
@@ -18,7 +18,7 @@ interface GetTrainingInfoByIdResponseSection{
     CreatedAt: Date,
 }
 
-interface GetTrainingInfoByIdResponseExerciseSet{
+export interface GetTrainingInfoByIdResponseExerciseSet{
     Set: string,
     Title: string,
     Description: string,
