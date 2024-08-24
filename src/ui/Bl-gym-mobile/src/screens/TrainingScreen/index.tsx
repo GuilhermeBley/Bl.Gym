@@ -11,12 +11,40 @@ interface TrainingInfoModel{
     selectedSection: GetTrainingInfoByIdResponseSection | undefined
 }
 
-// This component should have a 'start training' button to redirect to section training.
-const SectionComponent = (section: GetTrainingInfoByIdResponseSection) => {
+// Show all the trainings
+const SectionComponent = (
+    section: GetTrainingInfoByIdResponseSection
+) => {
     return (
         <View>
 
         </View>
+    );    
+}
+
+// This component should have a 'start training' button to redirect to section training.
+const SectionToSelectComponent = (section: GetTrainingInfoByIdResponseSection) => {
+    return (
+        <View>
+
+        </View>
+    );
+}
+
+const SectionsOrSetsComponent = (
+    sections: GetTrainingInfoByIdResponseSection[],
+    selectedSection: GetTrainingInfoByIdResponseSection | undefined
+) => {
+    if (selectedSection) {
+        return SectionComponent(selectedSection)
+    }
+
+    // Showing the list of trainings to start.
+    return (
+        <FlatList
+            data={sections}
+            renderItem={(info) => SectionToSelectComponent(info.item)}
+            keyExtractor={(item) => item.SectionId}/>
     );
 }
 
@@ -82,10 +110,10 @@ const TrainingScreen = () => {
                         <Text>{trainingInfo.data.Status}</Text>
                         <Text>Treino feito por {11 /* Somar dias de treino*/} dias</Text>
 
-                        <FlatList
-                            data={trainingInfo.data.Section}
-                            renderItem={(info) => SectionComponent(info.item)}
-                            keyExtractor={(item) => item.SectionId}/>
+                        {SectionsOrSetsComponent(
+                            trainingInfo.data.Section,
+                            trainingInfo.selectedSection
+                        )}
                     </View>
                 }
             </View>
