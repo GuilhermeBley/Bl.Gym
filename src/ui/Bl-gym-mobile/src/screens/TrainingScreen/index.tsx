@@ -1,19 +1,30 @@
 import { useContext, useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { TrainingContext } from "../../contexts/TrainingContext";
 import { UserContext } from "../../contexts/UserContext";
 import axios from "axios";
-import { getTrainingInfoById, GetTrainingInfoByIdResponse } from "./action";
+import { getTrainingInfoById, GetTrainingInfoByIdResponse, GetTrainingInfoByIdResponseSection } from "./action";
 
 interface TrainingInfoModel{
     errors: string[],
-    data: GetTrainingInfoByIdResponse | undefined
+    data: GetTrainingInfoByIdResponse | undefined,
+    selectedSection: GetTrainingInfoByIdResponseSection | undefined
+}
+
+// This component should have a 'start training' button to redirect to section training.
+const SectionComponent = (section: GetTrainingInfoByIdResponseSection) => {
+    return (
+        <View>
+
+        </View>
+    );
 }
 
 const TrainingScreen = () => {
     const [trainingInfo, setTrainingInfo] = useState<TrainingInfoModel>({
         errors: [],
-        data: undefined
+        data: undefined,
+        selectedSection: undefined
     });
 
     const trainingContext = useContext(TrainingContext)
@@ -64,7 +75,19 @@ const TrainingScreen = () => {
         ) :
         (
             <View>
+                {trainingInfo.data === undefined ?
+                    <View>Carregando informações do treino...</View> :
+                    // training info:
+                    <View>
+                        <Text>{trainingInfo.data.Status}</Text>
+                        <Text>Treino feito por {11 /* Somar dias de treino*/} dias</Text>
 
+                        <FlatList
+                            data={trainingInfo.data.Section}
+                            renderItem={(info) => SectionComponent(info.item)}
+                            keyExtractor={(item) => item.SectionId}/>
+                    </View>
+                }
             </View>
         );
 }

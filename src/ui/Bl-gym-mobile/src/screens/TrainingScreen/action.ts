@@ -3,7 +3,7 @@ import axios from "../../api/GymApi"
 import TryGetResultFromResponse, { createFailedResponse } from "../../api/ResponseReader";
 
 export interface GetTrainingInfoByIdResponse{
-    Section: GetTrainingInfoByIdResponseSection,
+    Section: GetTrainingInfoByIdResponseSection[],
     Status: string,
     CreatedAt: Date
 }
