@@ -4,6 +4,7 @@ import { TrainingContext } from "../../contexts/TrainingContext";
 import { UserContext } from "../../contexts/UserContext";
 import axios from "axios";
 import { getTrainingInfoById, GetTrainingInfoByIdResponse, GetTrainingInfoByIdResponseSection } from "./action";
+import { styles } from "./styles";
 
 interface TrainingInfoModel{
     errors: string[],
@@ -25,8 +26,13 @@ const SectionComponent = (
 // This component should have a 'start training' button to redirect to section training.
 const SectionToSelectComponent = (section: GetTrainingInfoByIdResponseSection) => {
     return (
-        <View>
-
+        <View style={styles.SectionToSelectCard}>
+            <Text style={styles.SectionToSelectCardTitle}>
+                {section.MuscularGroup}
+            </Text>
+            <Text style={styles.SectionToSelectCardCount}>
+                {section.CurrentDaysCount} / {section.TargetDaysCount}
+            </Text>
         </View>
     );
 }
