@@ -58,6 +58,29 @@ const TrainingScreen = () => {
     const trainingContext = useContext(TrainingContext)
     const userContext = useContext(UserContext)
 
+    const getCurrentTrainingDays = () => {
+        if (trainingInfo.data === undefined)
+            return 0;
+
+        return trainingInfo.data
+            .Section
+            .reduce((accumulator, currentValue) =>
+                accumulator + currentValue.CurrentDaysCount, 0);
+    }
+
+    const getCurrentTrainingDaysMessage = () => {
+        var days = getCurrentTrainingDays();
+
+        switch (days) {
+            case 0:
+                return "nenhum dia"
+            case 1:
+                return "1 dia"
+            default:
+                return days + " dias"
+        }
+    }
+
     useEffect(() => {
         const source = axios.CancelToken.source();
 
@@ -108,7 +131,9 @@ const TrainingScreen = () => {
                     // training info:
                     <View>
                         <Text>{trainingInfo.data.Status}</Text>
-                        <Text>Treino feito por {11 /* Somar dias de treino*/} dias</Text>
+                        <Text>
+                            Treino feito por {getCurrentTrainingDaysMessage()}.
+                        </Text>
 
                         {SectionsOrSetsComponent(
                             trainingInfo.data.Section,
