@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bl.Gym.TrainingApi.Api.Migrations
 {
     [DbContext(typeof(PostgreTrainingContext))]
-    [Migration("20240803235957_adding columns TrainingSectionModel 2024-08-03")]
-    partial class addingcolumnsTrainingSectionModel20240803
+    [Migration("20240821002649_Adding UserRole table 2024-08-20")]
+    partial class AddingUserRoletable20240820
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,6 +158,27 @@ namespace Bl.Gym.TrainingApi.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Bl.Gym.TrainingApi.Application.Model.Identity.UserRoleModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("Bl.Gym.TrainingApi.Application.Model.Identity.UserRoleTrainingModel", b =>
@@ -325,6 +346,21 @@ namespace Bl.Gym.TrainingApi.Api.Migrations
                     b.HasOne("Bl.Gym.TrainingApi.Application.Model.Identity.RoleModel", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Bl.Gym.TrainingApi.Application.Model.Identity.UserRoleModel", b =>
+                {
+                    b.HasOne("Bl.Gym.TrainingApi.Application.Model.Identity.RoleModel", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bl.Gym.TrainingApi.Application.Model.Identity.UserModel", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

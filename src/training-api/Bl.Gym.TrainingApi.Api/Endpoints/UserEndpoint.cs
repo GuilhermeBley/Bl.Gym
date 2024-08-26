@@ -1,12 +1,16 @@
-﻿using Bl.Gym.TrainingApi.Api.Services;
+﻿using Azure.Core;
+using Bl.Gym.TrainingApi.Api.Services;
 using MediatR;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bl.Gym.TrainingApi.Api.Endpoints;
 
 public class UserEndpoint
 {
-    public static void MapEndpoints(IEndpointRouteBuilder builder)
+    public static void MapEndpoints(
+        IEndpointRouteBuilder builder,
+        bool isDevelopment)
     {
         builder.MapPost("user", async (
             [FromBody]Application.Commands.Identity.CreateUser.CreateUserRequest request,
@@ -55,6 +59,21 @@ public class UserEndpoint
         }).RequireAuthorization(cfg => {
             cfg.AddAuthenticationSchemes(Bl.Gym.TrainingApi.Api.Policies.ForgotPasswordPolicy.Scheme);
             cfg.RequireRole(Policies.ForgotPasswordPolicy.RequireRole.Value);
+        });
+
+        if (isDevelopment)
+            MapDevelopment(builder);
+    }
+
+    private static void MapDevelopment(IEndpointRouteBuilder builder)
+    {
+        builder.MapPost("roles/default-roles", async (
+            [FromServices] IMediator mediator) =>
+        {
+            var response = await mediator.Send(
+                new Application.Commands.Identity.TryAddDefaultRoleClaims.TryAddDefaultRoleClaimsRequest());
+
+            return Results.Ok();
         });
     }
 }

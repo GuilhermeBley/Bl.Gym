@@ -1,14 +1,14 @@
 import { AxiosError, CancelToken } from "axios";
 import axios from "../../api/GymApi"
-import TryGetResultFromResponse from "../../api/ResponseReader";
+import TryGetResultFromResponse, { createFailedResponse } from "../../api/ResponseReader";
 
-interface GetTrainingInfoByIdResponse{
-    Section: GetTrainingInfoByIdResponseSection,
+export interface GetTrainingInfoByIdResponse{
+    Section: GetTrainingInfoByIdResponseSection[],
     Status: string,
     CreatedAt: Date
 }
 
-interface GetTrainingInfoByIdResponseSection{
+export interface GetTrainingInfoByIdResponseSection{
     SectionId: string,
     MuscularGroup: string,
     TargetDaysCount: number,
@@ -18,7 +18,7 @@ interface GetTrainingInfoByIdResponseSection{
     CreatedAt: Date,
 }
 
-interface GetTrainingInfoByIdResponseExerciseSet{
+export interface GetTrainingInfoByIdResponseExerciseSet{
     Set: string,
     Title: string,
     Description: string,
@@ -44,17 +44,17 @@ export const getTrainingInfoById = (
         })
 }
 
-export const patchCurrentTrainingDays = (
+export const patchCurrentTrainingDays = async (
     sectionId: string,
     newCurrentDaysCount: number,
     cancellationToken: CancelToken
 ) => {
     if (newCurrentDaysCount < 0)
     {
-        // TODO: Returns an error
+        return createFailedResponse("Dias completos de treino não pode ser igual a zero.");
     }
 
-    return axios
+    return await axios
         .patch("Training/{sectionId}/update-current-training-days",
             {
                 SectionId: sectionId,
