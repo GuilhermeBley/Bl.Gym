@@ -40,5 +40,15 @@ export const styles = StyleSheet.create({
   },
   footerErrorMessages: {
     color: "red"
-  }
+  },
+  containerCenter: {
+    flex: 1,
+    justifyContent: 'center', // centers vertically
+    alignItems: 'center', // centers horizontally
+  },
+  errorText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: "red"
+  },
 });
