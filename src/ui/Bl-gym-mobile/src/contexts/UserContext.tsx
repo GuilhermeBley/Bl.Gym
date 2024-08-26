@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import * as jwtDecode from 'jwt-decode';
-import { getAuthorization } from "../services/AuthStorageService";
+import { getAuthorization, storeAuthorization } from "../services/AuthStorageService";
 import { ActivityIndicator, View } from "react-native";
 import axios from "../api/GymApi";
 
@@ -91,10 +91,8 @@ export default function UserContextProvider({children} : any){
                 let token = await getAuthorization();
     
                 if (token !== undefined && token !== null && token !== '') {
-                    let bearerToken = token
                     token = token.replace("Bearer ", "")
                     login(token)
-                    axios.defaults.headers.common['Authorization'] = bearerToken;
                 }
             }
             finally{
@@ -132,6 +130,10 @@ export default function UserContextProvider({children} : any){
                 true,
                 typeof decoded.exp === "number" ? new Date(decoded.exp * 1000) : undefined
             ))
+
+            let bearerToken = 'Bearer ' + jwtToken;
+            axios.defaults.headers.common['Authorization'] =  bearerToken;
+            storeAuthorization(bearerToken)
         }
         catch(error) {
             logout();
@@ -140,6 +142,7 @@ export default function UserContextProvider({children} : any){
     }
 
     const logout = () => {
+        storeAuthorization('')
         setUser(unauthorizedUser)
     }
     
