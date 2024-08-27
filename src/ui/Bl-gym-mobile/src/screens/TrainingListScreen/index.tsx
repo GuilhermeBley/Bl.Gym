@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
-import { FlatList, View, Text, Pressable } from "react-native";
+import { FlatList, View, Text, Pressable, ActivityIndicator } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { handleTrainings } from "./action";
 import { UserContext } from "../../contexts/UserContext";
@@ -10,7 +10,9 @@ import { TRAINING_SCREEN } from "../../routes/RoutesConstant";
 
 interface TrainingDataState{
     trainings: TrainingSummaryModel[],
-    errors: string[]
+    errors: string[],
+    startedWithError: boolean,
+    isLoadingInitialData: boolean
 }
 
 interface TrainingSummaryModel {
@@ -27,10 +29,12 @@ const TrainingListScreen = ({ navigation }: any) => {
     const userContext = useContext(UserContext);
     const trainingContext = useContext(TrainingContext);
 
-    const [trainingData, setTrainingData] = 
+    const [pageData, setPageData] = 
         useState<TrainingDataState>({
             trainings: [],
-            errors: []
+            errors: [],
+            startedWithError: false,
+            isLoadingInitialData: true,
         });
 
     useEffect(() => {
@@ -41,7 +45,7 @@ const TrainingListScreen = ({ navigation }: any) => {
             
             if (result.Success) {
                 
-                setTrainingData(previous => ({
+                setPageData(previous => ({
                     ...previous,
                     trainings: result.Data
                 }));
@@ -49,13 +53,20 @@ const TrainingListScreen = ({ navigation }: any) => {
                 return;
             }
 
-            setTrainingData(previous => ({
+            setPageData(previous => ({
                 ...previous,
-                errors: [...previous.errors, "Falha ao coletar dados dos treinos."]
+                errors: [...previous.errors, "Falha ao coletar dados dos treinos."],
+                startedWithError: true
             }));
         } 
 
-        fetchData();
+        fetchData()
+            .finally(() => {
+                setPageData(previous => ({
+                    ...previous,
+                    isLoadingInitialData: false
+                }));  
+            });
 
         return () => {
             source.cancel();
@@ -89,6 +100,26 @@ const TrainingListScreen = ({ navigation }: any) => {
         );
     }
 
+    if (pageData.isLoadingInitialData){
+        return (
+            <SafeAreaView style={styles.containerCenter}>
+                <View>
+                    <ActivityIndicator />
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    if (pageData.startedWithError){
+        return (
+            <SafeAreaView style={styles.containerCenter}>
+                <View>
+                    <Text  style={styles.errorText}>Falha ao inicializar página.</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
     return(
         <SafeAreaView style={styles.container}>
             
@@ -96,7 +127,7 @@ const TrainingListScreen = ({ navigation }: any) => {
                 <Text>Lista de treinos: </Text>
             </View>
             <FlatList
-                data={trainingData.trainings}
+                data={pageData.trainings}
                 renderItem={(info) => TrainingCardComponent(info.item)}
                 keyExtractor={(item) => item.TrainingId}
             />
