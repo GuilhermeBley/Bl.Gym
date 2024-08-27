@@ -48,34 +48,32 @@ const GymScreen = () => {
         const source = axios.CancelToken.source();
 
         const fetchData = async () => {
-            try {
-                var result = await handleGyms(userContext.user.id, source.token)
-                
-                if (result.Success) {
-    
-                    setPageData(previous => ({
-                        ...previous,
-                        Gyms: result.Data.Gyms
-                    }));
-    
-                    return;
-                }
-    
+            var result = await handleGyms(userContext.user.id, source.token)
+
+            if (result.Success) {
+
                 setPageData(previous => ({
                     ...previous,
-                    startedWithError: true,
-                    errors: result.Errors
+                    Gyms: result.Data.Gyms
                 }));
+
+                return;
             }
-            finally {
+
+            setPageData(previous => ({
+                ...previous,
+                startedWithError: true,
+                errors: result.Errors
+            }));
+        }
+
+        fetchData()
+            .finally(() => {
                 setPageData(previous => ({
                     ...previous,
                     isLoadingInitialData: false
                 }));
-            }
-        }
-
-        fetchData();
+            });
 
         return () => {
             source.cancel();
@@ -85,7 +83,7 @@ const GymScreen = () => {
     const handleGymCreation = async (model: GymCreateModel) => {
         var result = await handleCreateGym(model)
 
-        if (result.ContainsError){
+        if (result.ContainsError) {
             setPageData(previous => ({ ...previous, errors: result.Errors }))
         }
 
@@ -96,7 +94,7 @@ const GymScreen = () => {
         setModalVisible(true)
     }
 
-    if (pageData.isLoadingInitialData){
+    if (pageData.isLoadingInitialData) {
         return (
             <SafeAreaView style={styles.containerCenter}>
                 <View>
@@ -106,11 +104,11 @@ const GymScreen = () => {
         );
     }
 
-    if (pageData.startedWithError){
+    if (pageData.startedWithError) {
         return (
             <SafeAreaView style={styles.containerCenter}>
                 <View>
-                    <Text  style={styles.errorText}>Falha ao inicializar página.</Text>
+                    <Text style={styles.errorText}>Falha ao inicializar página.</Text>
                 </View>
             </SafeAreaView>
         );
@@ -135,12 +133,12 @@ const GymScreen = () => {
                         </Text>
                     </Pressable>)
                 : (<View></View>)/* Don't show nothing */}
-            
+
             <CreateGymModalWithManageAnyGymRole
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
                 onSubmiting={handleGymCreation} />
-            
+
             {pageData.errors.map(error => (
                 <Text style={styles.footerErrorMessages}>{error}</Text>
             ))}
