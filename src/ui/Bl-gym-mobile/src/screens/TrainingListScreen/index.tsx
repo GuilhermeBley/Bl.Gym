@@ -7,6 +7,7 @@ import { UserContext } from "../../contexts/UserContext";
 import axios from "axios";
 import { TrainingContext } from "../../contexts/TrainingContext";
 import { TRAINING_SCREEN } from "../../routes/RoutesConstant";
+import commonStyles from "../../styles/commonStyles";
 
 interface TrainingDataState{
     trainings: TrainingSummaryModel[],
@@ -124,9 +125,6 @@ const TrainingListScreen = ({ navigation }: any) => {
     return(
         <SafeAreaView style={styles.container}>
             
-            <View>
-                <Text>Lista de treinos: </Text>
-            </View>
             <FlatList
                 data={pageData.trainings}
                 renderItem={(info) => TrainingCardComponent(info.item)}

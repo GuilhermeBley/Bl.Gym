@@ -3,6 +3,7 @@ import { UserContext } from "../../contexts/UserContext";
 import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
 import { GetCurrentUserGymResponse, handleCreateGym, handleGyms } from "./action";
 import axios from "axios";
+import commonStyles from '../../styles/commonStyles'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { ManageAnyGym } from "../../Constants/roleConstants";
