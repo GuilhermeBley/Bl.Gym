@@ -43,11 +43,12 @@ const TrainingListScreen = ({ navigation }: any) => {
         const fetchData = async () => {
             var result = await handleTrainings(userContext.user.id, source.token)
             
-            if (result.Success) {
+            if (result.Success){
                 
                 setPageData(previous => ({
                     ...previous,
-                    trainings: result.Data
+                    trainings: result.Data,
+                    startedWithError: false,
                 }));
                 
                 return;
