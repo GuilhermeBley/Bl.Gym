@@ -10,7 +10,7 @@ public class RefreshAuthentication
     public DateTime RefreshTokenExpiration { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
-    public Result<RefreshAuthentication> Create(
+    public static Result<RefreshAuthentication> Create(
         Guid userId,
         TimeSpan expiresIn)
         => Create(
@@ -19,7 +19,7 @@ public class RefreshAuthentication
             DateTime.UtcNow.Add(expiresIn),
             DateTime.UtcNow);
 
-    public Result<RefreshAuthentication> Create(
+    public static Result<RefreshAuthentication> Create(
         Guid userId,
         string refreshToken,
         DateTime refreshTokenExpiration,
