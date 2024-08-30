@@ -9,6 +9,7 @@ public abstract class TrainingContext
     public DbSet<Model.Identity.RoleClaimModel> RoleClaims { get; set; }
     public DbSet<Model.Identity.UserRoleTrainingModel> UserTrainingRoles { get; set; }
     public DbSet<Model.Identity.UserRoleModel> UserRoles { get; set; }
+    public DbSet<Model.Identity.RefreshAuthenticationModel> RefreshAuthentications { get; set; }
 
     public DbSet<Model.Identity.UserModel> Users { get; set; }
 
