@@ -1,4 +1,6 @@
-﻿namespace Bl.Gym.TrainingApi.Domain.Entities.Identity;
+﻿using System.Security.Cryptography;
+
+namespace Bl.Gym.TrainingApi.Domain.Entities.Identity;
 
 public class RefreshAuthentication
     : Entity
@@ -10,11 +12,10 @@ public class RefreshAuthentication
 
     public Result<RefreshAuthentication> Create(
         Guid userId,
-        string newRefreshToken,
         TimeSpan expiresIn)
         => Create(
-            userId, 
-            newRefreshToken, 
+            userId,
+            GenerateRefreshToken(), 
             DateTime.UtcNow.Add(expiresIn),
             DateTime.UtcNow);
 
@@ -40,5 +41,13 @@ public class RefreshAuthentication
                 UserId = userId
             };
         });
+    }
+
+    private static string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
     }
 }

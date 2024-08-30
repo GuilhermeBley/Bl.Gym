@@ -28,4 +28,6 @@ public enum CoreExceptionCode
     ThisUserSheetIsntStarted = 400_12,
     UserIsLocked = 400_13,
     UserAlreadyLoggedInGym = 400_14,
+    InvalidRefreshTokenLength = 400_15,
+    InvalidExpirationTokenDate = 400_16,
 }
