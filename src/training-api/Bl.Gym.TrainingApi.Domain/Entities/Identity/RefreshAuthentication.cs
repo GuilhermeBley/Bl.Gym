@@ -5,10 +5,15 @@ namespace Bl.Gym.TrainingApi.Domain.Entities.Identity;
 public class RefreshAuthentication
     : Entity
 {
+    private readonly static TimeSpan _defaultRefreshTokenExpiration = TimeSpan.FromDays(7);
     public Guid UserId { get; private set; }
     public string RefreshToken { get; private set; } = string.Empty;
     public DateTime RefreshTokenExpiration { get; private set; }
     public DateTime UpdatedAt { get; private set; }
+
+    public static Result<RefreshAuthentication> CreateWithDefaultExpiration(
+        Guid userId)
+        => Create(userId, _defaultRefreshTokenExpiration);
 
     public static Result<RefreshAuthentication> Create(
         Guid userId,

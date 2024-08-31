@@ -1,5 +1,7 @@
 ﻿using Bl.Gym.TrainingApi.Application.Model.Identity;
 using Bl.Gym.TrainingApi.Application.Repositories;
+using Bl.Gym.TrainingApi.Domain.Entities.Identity;
+using MediatR;
 using System.Collections.Immutable;
 using System.Security.Claims;
 
@@ -74,6 +76,10 @@ public class LoginHandler
                     setter => setter.SetProperty(p => p.AccessFailedCount, 0));
         }
 
+        var refreshTokenCreated = await CreateRefreshTokenAsync(
+            userFound.Id, 
+            cancellationToken);
+
         var userRoles = await GetUserClaimAsync(userFound.Id, cancellationToken);
 
         var claims =
@@ -88,6 +94,28 @@ public class LoginHandler
             Username: userFound.UserName,
             Email: userFound.Email,
             Claims: claims.ToImmutableArray());
+    }
+
+    private async Task<RefreshAuthentication> CreateRefreshTokenAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var entity = RefreshAuthentication.CreateWithDefaultExpiration(
+            userId)
+            .RequiredResult;
+
+        await _context
+            .RefreshAuthentications
+            .Where(e => e.UserId == userId)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        await _context
+            .RefreshAuthentications
+            .AddAsync(RefreshAuthenticationModel.MapFromEntity(entity));
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return entity;
     }
 
     private async Task<IEnumerable<Claim>> GetUserClaimAsync(

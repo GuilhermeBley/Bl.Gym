@@ -9,12 +9,10 @@ namespace Bl.Gym.TrainingApi.Application.Commands.Identity.RefreshToken;
 public class RefreshTokenHandler
     : IRequestHandler<RefreshTokenRequest, RefreshTokenResponse>
 {
-    private readonly static TimeSpan _defaultRefreshTokenExpiration = TimeSpan.FromDays(7);
     private readonly TrainingContext _context;
     private readonly ILogger<RefreshTokenHandler> _logger;
 
-    public RefreshTokenHandler(
-        TrainingContext context, 
+    public RefreshTokenHandler(TrainingContext context, 
         ILogger<RefreshTokenHandler> logger)
     {
         _context = context;
@@ -25,9 +23,8 @@ public class RefreshTokenHandler
         RefreshTokenRequest request, 
         CancellationToken cancellationToken)
     {
-        var entity = RefreshAuthentication.Create(
-            request.UserId,
-            _defaultRefreshTokenExpiration)
+        var entity = RefreshAuthentication.CreateWithDefaultExpiration(
+            request.UserId)
             .RequiredResult;
 
         var refreshTokenFound
