@@ -84,6 +84,7 @@ public class LoginHandler
             }.Concat(userRoles);
 
         return new(
+            RefreshToken: ,
             Username: userFound.UserName,
             Email: userFound.Email,
             Claims: claims.ToImmutableArray());

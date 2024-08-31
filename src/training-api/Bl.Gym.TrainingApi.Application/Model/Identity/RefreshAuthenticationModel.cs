@@ -7,6 +7,7 @@ public class RefreshAuthenticationModel
     public Guid UserId { get; set; }
     public string RefreshToken { get; set; } = string.Empty;
     public DateTime RefreshTokenExpiration { get; set; }
+    public Guid ConcurrencyStamp { get; set; }
     public DateTime UpdatedAt { get; set; }
 
     public static RefreshAuthenticationModel MapFromEntity(
@@ -17,7 +18,8 @@ public class RefreshAuthenticationModel
             RefreshToken = entity.RefreshToken,
             RefreshTokenExpiration = entity.RefreshTokenExpiration,
             UpdatedAt = entity.UpdatedAt,
-            UserId = entity.UserId
+            UserId = entity.UserId,
+            ConcurrencyStamp = Guid.NewGuid(),
         };
     }
 }
