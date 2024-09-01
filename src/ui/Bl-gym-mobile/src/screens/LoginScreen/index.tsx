@@ -47,7 +47,7 @@ const LoginScreen = ({ navigation }: any) => {
       return;
     }
 
-    login(response.Token);
+    await login(response.Token, response.RefreshToken);
     
     await AsyncStorage.setItem("Authorization", `Bearer ${response.Token}`);
   }

@@ -11,7 +11,8 @@ export enum LoginResultStatus {
 
 interface LoginResult {
     Status: LoginResultStatus,
-    Token: string | null
+    Token: string | null,
+    RefreshToken: string | null,
 }
 
 export const handleLogin = async (
@@ -27,14 +28,16 @@ export const handleLogin = async (
             .then((response) => {
                 return {
                     Status: LoginResultStatus.Success,
-                    Token: response.data.token
+                    Token: response.data.token,
+                    RefreshToken: response.data.refreshToken
                 }
             })
             .catch((error: AxiosError) => {
                 console.debug(error);
                 return {
                     Status: LoginResultStatus.InvalidLoginOrPassword,
-                    Token: null
+                    Token: null,
+                    RefreshToken: null
                 }
             });
 }
