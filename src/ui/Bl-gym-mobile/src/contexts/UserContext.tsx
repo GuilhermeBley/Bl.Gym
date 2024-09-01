@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import * as jwtDecode from 'jwt-decode';
-import { getAuthorization, storeAuthorization } from "../services/AuthStorageService";
+import { getAuthorization, getRefreshToken, storeAuthorization, storeRefreshToken } from "../services/AuthStorageService";
 import { ActivityIndicator, View } from "react-native";
 import axios from "../api/GymApi";
 
@@ -53,8 +53,8 @@ class UserContextModel{
 
 interface UserContextProps{
     user: UserContextModel,
-    login: (jwtToken: string) => void,
-    logout: () => void
+    login: (jwtToken: string, refreshToken: string) => Promise<void>,
+    logout: () => Promise<void>
 }
 
 const unauthorizedUser = new UserContextModel(
@@ -71,8 +71,8 @@ const PageNotProperlyLoadedComponent = () => {
 
 export const UserContext = createContext<UserContextProps>({
     user: unauthorizedUser,
-    login: (_) => { },
-    logout: () => { }
+    login: (token, _) => Promise.resolve(),
+    logout: () => Promise.resolve()
 });
 
 export default function UserContextProvider({children} : any){
@@ -89,10 +89,11 @@ export default function UserContextProvider({children} : any){
             try{
                 console.debug('getAuthorization started.')
                 let token = await getAuthorization();
+                let refreshToken = await getRefreshToken();
     
                 if (token !== undefined && token !== null && token !== '') {
                     token = token.replace("Bearer ", "")
-                    login(token)
+                    await login(token, refreshToken ?? "")
                 }
             }
             finally{
@@ -112,12 +113,12 @@ export default function UserContextProvider({children} : any){
         return () => { /*nothing to dispose*/ }
     }, [])
 
-    const login = (jwtToken: string): void => {
+    const login = async (jwtToken: string, refreshToken: string): Promise<void> => {
         try{
             const decoded: any = jwtDecode.jwtDecode(jwtToken);
 
             if (!decoded || typeof decoded.nameidentifier !== "string"){
-                logout();
+                await logout();
                 return;
             }
             
@@ -133,16 +134,18 @@ export default function UserContextProvider({children} : any){
 
             let bearerToken = 'Bearer ' + jwtToken;
             axios.defaults.headers.common['Authorization'] =  bearerToken;
-            storeAuthorization(bearerToken)
+            await storeAuthorization(bearerToken)
+            await storeRefreshToken(refreshToken)
         }
         catch(error) {
-            logout();
+            await logout();
             console.error("Failed to parse login.", error)
         }
     }
 
-    const logout = () => {
-        storeAuthorization('')
+    const logout = async () => {
+        await storeAuthorization('')
+        await storeRefreshToken('')
         setUser(unauthorizedUser)
     }
     
