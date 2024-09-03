@@ -8,6 +8,7 @@ class UserContextModel{
     id: string;
     name: string;
     email: string;
+    refreshToken: string | undefined;
     roles: string[];
     authorized: boolean;
     dueDate: Date | undefined;
@@ -125,16 +126,21 @@ export default function UserContextProvider({children} : any){
                 await logout();
                 return;
             }
+
+            var userToAuthorize =
+                new UserContextModel(
+                    decoded.nameidentifier,
+                    decoded.name,
+                    decoded.emailaddress,
+                    Array.isArray(decoded.roles) ? decoded.roles : [],
+                    true,
+                    typeof decoded.exp === "number" ? new Date(decoded.exp * 1000) : undefined
+                );
+            
+            userToAuthorize.refreshToken = refreshToken;
             
             // Update the user properties based on the decoded token
-            setUser(new UserContextModel(
-                decoded.nameidentifier,
-                decoded.name,
-                decoded.emailaddress,
-                Array.isArray(decoded.roles) ? decoded.roles : [],
-                true,
-                typeof decoded.exp === "number" ? new Date(decoded.exp * 1000) : undefined
-            ))
+            setUser(userToAuthorize)
 
             let bearerToken = 'Bearer ' + jwtToken;
             axios.defaults.headers.common['Authorization'] =  bearerToken;
