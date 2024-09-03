@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Button, ActivityIndicator } from "react-native";
 import { UserContext } from "../../contexts/UserContext";
 import { useContext } from "react";
@@ -17,6 +17,10 @@ interface StyledInputProps {
   [key: string]: any;
 }
 
+interface PageData{
+  isRunningFirstLoading: boolean
+}
+
 const validationSchema = yup.object().shape({
   login: yup.string()
     .email("E-mail inválido.")
@@ -29,7 +33,10 @@ const validationSchema = yup.object().shape({
 const LoginScreen = ({ navigation }: any) => {
 
   const [buttonErrorMessage, setButtonErrorMessage] = useState("");
-  const { login } = useContext(UserContext);
+  const { login, user } = useContext(UserContext);
+  const [pageData, setPageData] = useState({
+    isRunningFirstLoading: false
+  } as PageData)
 
   const handleLoginAndNavigate = async (
     loginInput: string,
@@ -78,6 +85,26 @@ const LoginScreen = ({ navigation }: any) => {
       </View>
     );
   }
+
+  useEffect(() => {
+    try {
+      setPageData(previous => ({
+        ...previous,
+        isRunningFirstLoading: true
+      }));
+
+      if (user.dueDate !== undefined && user.isExpirated()) {
+        
+      }
+    }
+    finally {
+      setPageData(previous => ({
+        ...previous,
+        isRunningFirstLoading: false
+      }));
+
+    }
+  }, [])
 
   console.debug("LoginScreen");
   return (

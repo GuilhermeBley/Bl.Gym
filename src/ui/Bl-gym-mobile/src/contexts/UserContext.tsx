@@ -42,6 +42,10 @@ class UserContextModel{
     }
 
     isAuthorized(){
+        return this.isExpirated();
+    }
+
+    isExpirated(){
         const currentTime = new Date;
 
         if (this.dueDate === undefined)

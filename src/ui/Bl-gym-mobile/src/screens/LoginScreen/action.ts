@@ -15,6 +15,33 @@ interface LoginResult {
     RefreshToken: string | null,
 }
 
+export const handleRefreshToken = async (
+    refreshToken: string,
+    userId: string
+) => {
+    return await axios.post(
+        'user/refresh',
+        {
+            UserId: userId,
+            RefreshToken: refreshToken
+        })
+        .then((response) => {
+            return {
+                Status: LoginResultStatus.Success,
+                Token: response.data.token,
+                RefreshToken: response.data.refreshToken
+            }
+        })
+        .catch((error: AxiosError) => {
+            console.debug(error);
+            return {
+                Status: LoginResultStatus.InvalidLoginOrPassword,
+                Token: null,
+                RefreshToken: null
+            }
+        });
+}
+
 export const handleLogin = async (
     login: string,
     password: string
