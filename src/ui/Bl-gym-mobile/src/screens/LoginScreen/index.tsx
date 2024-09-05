@@ -8,7 +8,6 @@ import { Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CREATE_USER_SCREEN, HOME_SCREEN } from "../../routes/RoutesConstant";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface StyledInputProps {
   formikKey: string,
