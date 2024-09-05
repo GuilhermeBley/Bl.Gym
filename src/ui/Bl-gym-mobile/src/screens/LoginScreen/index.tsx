@@ -116,6 +116,18 @@ const LoginScreen = ({ navigation }: any) => {
   }, [])
 
   console.debug("LoginScreen");
+
+  if (pageData.isRunningFirstLoading)
+  {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View>
+          <ActivityIndicator></ActivityIndicator>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Formik
