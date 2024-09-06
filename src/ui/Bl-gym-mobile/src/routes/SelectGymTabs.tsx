@@ -6,6 +6,7 @@ import TrainingListScreen from '../screens/TrainingListScreen';
 import { GYM_SCREEN, HOME_SCREEN, TRAINING_HOME_SCREEN, TRAINING_SCREEN } from './RoutesConstant';
 import TrainingScreen from '../screens/TrainingScreen';
 import GymScreen from '../screens/GymScreen';
+import commonStyles from '../styles/commonStyles';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -13,8 +14,8 @@ const Stack = createStackNavigator();
 function HomeStackNavigator() {
   return (
     <Stack.Navigator initialRouteName={TRAINING_HOME_SCREEN}>
-      <Stack.Screen name={TRAINING_HOME_SCREEN} component={TrainingListScreen} options={{ title: "Meus treinos" }} />
-      <Stack.Screen name={TRAINING_SCREEN} component={TrainingScreen} options={{ title: "Meus treinos" }} />
+      <Stack.Screen name={TRAINING_HOME_SCREEN} component={TrainingListScreen} options={{ title: "Meus treinos", headerTitleStyle: commonStyles.PageHeader }} />
+      <Stack.Screen name={TRAINING_SCREEN} component={TrainingScreen} options={{ title: "Meus treinos", headerTitleStyle: commonStyles.PageHeader }} />
     </Stack.Navigator>
   );
 }
@@ -22,8 +23,8 @@ function HomeStackNavigator() {
 function SelectGymTabs() {
   return (
     <Tab.Navigator initialRouteName={HOME_SCREEN}>
-      <Tab.Screen name={HOME_SCREEN} component={HomeStackNavigator} options={{ headerShown: false }}/>
-      <Tab.Screen name={GYM_SCREEN} component={GymScreen} options={{ headerShown: false }}/>
+      <Tab.Screen name={HOME_SCREEN} component={HomeStackNavigator} options={{ headerShown: false }} />
+      <Tab.Screen name={GYM_SCREEN} component={GymScreen} options={{ tabBarLabel: "Academia", title: "Minhas academias", headerTitleStyle: commonStyles.PageHeader }} />
     </Tab.Navigator>
   );
 }

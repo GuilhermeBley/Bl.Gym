@@ -24,7 +24,7 @@ export const handleTrainings = (userId: string, cancellationToken: CancelToken) 
         }
     ).then((response) => {
         
-        return TryGetResultFromResponse(response);
+        return TryGetResultFromResponse(response)
     }).catch((error) => {
         console.debug(error)
         return TryGetResultFromResponse(error.response);

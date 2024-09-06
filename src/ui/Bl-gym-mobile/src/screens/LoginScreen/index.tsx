@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Button, ActivityIndicator } from "react-native";
 import { UserContext } from "../../contexts/UserContext";
 import { useContext } from "react";
 import styles from "./styles";
-import { handleLogin, LoginResultStatus } from "./action";
+import { handleLogin, handleRefreshToken, LoginResultStatus } from "./action";
 import { Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CREATE_USER_SCREEN, HOME_SCREEN } from "../../routes/RoutesConstant";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface StyledInputProps {
   formikKey: string,
   formikProps: FormikProps<any>;
   label: string;
   [key: string]: any;
+}
+
+interface PageData {
+  isRunningFirstLoading: boolean
 }
 
 const validationSchema = yup.object().shape({
@@ -29,7 +32,10 @@ const validationSchema = yup.object().shape({
 const LoginScreen = ({ navigation }: any) => {
 
   const [buttonErrorMessage, setButtonErrorMessage] = useState("");
-  const { login } = useContext(UserContext);
+  const { login, user } = useContext(UserContext);
+  const [pageData, setPageData] = useState({
+    isRunningFirstLoading: false
+  } as PageData)
 
   const handleLoginAndNavigate = async (
     loginInput: string,
@@ -47,9 +53,7 @@ const LoginScreen = ({ navigation }: any) => {
       return;
     }
 
-    login(response.Token);
-    
-    await AsyncStorage.setItem("Authorization", `Bearer ${response.Token}`);
+    await login(response.Token, response.RefreshToken);
   }
 
   const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
@@ -79,7 +83,50 @@ const LoginScreen = ({ navigation }: any) => {
     );
   }
 
+  useEffect(() => {
+
+    let fetchInitialData = async () => {
+      setPageData(previous => ({
+        ...previous,
+        isRunningFirstLoading: true
+      }));
+
+      if (user.refreshToken !== undefined &&
+        user.dueDate !== undefined &&
+        user.isExpirated()
+      ) {
+        let response = await handleRefreshToken(user.refreshToken, user.id);
+
+        if (response.Status !== LoginResultStatus.Success) {
+          return;
+        }
+    
+        await login(response.Token, response.RefreshToken);
+      }
+    }
+
+    fetchInitialData()
+      .finally(() => {
+        setPageData(previous => ({
+          ...previous,
+          isRunningFirstLoading: false
+        }));
+      })
+  }, [])
+
   console.debug("LoginScreen");
+
+  if (pageData.isRunningFirstLoading)
+  {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View>
+          <ActivityIndicator></ActivityIndicator>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Formik
@@ -115,15 +162,15 @@ const LoginScreen = ({ navigation }: any) => {
                 <ActivityIndicator /> :
                 <Button onPress={() => formikProps.handleSubmit()} title="Entrar" />}
 
-                <View style={styles.separatorContainer}>
-                  <View style={styles.line} />
-                  <Text style={styles.separatorText}>ou</Text>
-                  <View style={styles.line} />
-                </View>
+              <View style={styles.separatorContainer}>
+                <View style={styles.line} />
+                <Text style={styles.separatorText}>ou</Text>
+                <View style={styles.line} />
+              </View>
 
-                <Button
-                  title="Criar uma conta"
-                  onPress={()=>navigation.navigate(CREATE_USER_SCREEN)}/>
+              <Button
+                title="Criar uma conta"
+                onPress={() => navigation.navigate(CREATE_USER_SCREEN)} />
               <Text style={{ color: "red", width: "auto" }}>
                 {buttonErrorMessage}
               </Text>

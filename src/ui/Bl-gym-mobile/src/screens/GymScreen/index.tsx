@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
 import { GetCurrentUserGymResponse, handleCreateGym, handleGyms } from "./action";
 import axios from "axios";
+import commonStyles from '../../styles/commonStyles'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { ManageAnyGym } from "../../Constants/roleConstants";
@@ -10,7 +11,9 @@ import CreateGymModalWithManageAnyGymRole, { GymCreateModel } from "../../compon
 
 interface PageDataProps {
     Gyms: GetCurrentUserGymResponse[],
-    errors: string[]
+    errors: string[],
+    startedWithError: boolean,
+    isLoadingInitialData: boolean
 }
 
 const GymCardComponent = (item: GetCurrentUserGymResponse) => {
@@ -37,7 +40,9 @@ const GymScreen = () => {
     const [modalVisible, setModalVisible] = useState(false)
     const [pageData, setPageData] = useState<PageDataProps>({
         Gyms: [],
-        errors: []
+        errors: [],
+        startedWithError: false,
+        isLoadingInitialData: true
     })
 
     useEffect(() => {
@@ -50,7 +55,8 @@ const GymScreen = () => {
 
                 setPageData(previous => ({
                     ...previous,
-                    Gyms: result.Data.Gyms
+                    Gyms: result.Data.Gyms,
+                    startedWithError: false,
                 }));
 
                 return;
@@ -58,11 +64,18 @@ const GymScreen = () => {
 
             setPageData(previous => ({
                 ...previous,
-                errors: ["Falha ao coletar dados dos treinos."]
+                startedWithError: true,
+                errors: result.Errors
             }));
         }
 
-        fetchData();
+        fetchData()
+            .finally(() => {
+                setPageData(previous => ({
+                    ...previous,
+                    isLoadingInitialData: false
+                }));
+            });
 
         return () => {
             source.cancel();
@@ -72,7 +85,7 @@ const GymScreen = () => {
     const handleGymCreation = async (model: GymCreateModel) => {
         var result = await handleCreateGym(model)
 
-        if (result.ContainsError){
+        if (result.ContainsError) {
             setPageData(previous => ({ ...previous, errors: result.Errors }))
         }
 
@@ -81,6 +94,26 @@ const GymScreen = () => {
 
     const handleModalGymCreation = () => {
         setModalVisible(true)
+    }
+
+    if (pageData.isLoadingInitialData) {
+        return (
+            <SafeAreaView style={styles.containerCenter}>
+                <View>
+                    <ActivityIndicator />
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    if (pageData.startedWithError) {
+        return (
+            <SafeAreaView style={styles.containerCenter}>
+                <View>
+                    <Text style={styles.errorText}>Falha ao inicializar página.</Text>
+                </View>
+            </SafeAreaView>
+        );
     }
 
     return (
@@ -102,12 +135,12 @@ const GymScreen = () => {
                         </Text>
                     </Pressable>)
                 : (<View></View>)/* Don't show nothing */}
-            
+
             <CreateGymModalWithManageAnyGymRole
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
                 onSubmiting={handleGymCreation} />
-            
+
             {pageData.errors.map(error => (
                 <Text style={styles.footerErrorMessages}>{error}</Text>
             ))}

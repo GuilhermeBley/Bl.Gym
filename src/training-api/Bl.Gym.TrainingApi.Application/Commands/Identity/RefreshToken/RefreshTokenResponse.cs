@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 
-namespace Bl.Gym.TrainingApi.Application.Commands.Identity.Login;
+namespace Bl.Gym.TrainingApi.Application.Commands.Identity.RefreshToken;
 
-public record LoginResponse(
+public record RefreshTokenResponse(
     string Username,
     string Email,
     string RefreshToken,

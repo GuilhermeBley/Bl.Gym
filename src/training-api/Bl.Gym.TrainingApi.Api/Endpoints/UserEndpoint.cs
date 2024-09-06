@@ -35,6 +35,7 @@ public class UserEndpoint
             return Results.Ok(
                 new
                 {
+                    response.RefreshToken,
                     response.Email,
                     response.Username,
                     Token = tokenResult
@@ -59,6 +60,27 @@ public class UserEndpoint
         }).RequireAuthorization(cfg => {
             cfg.AddAuthenticationSchemes(Bl.Gym.TrainingApi.Api.Policies.ForgotPasswordPolicy.Scheme);
             cfg.RequireRole(Policies.ForgotPasswordPolicy.RequireRole.Value);
+        });
+
+        builder.MapPatch("user/refresh", async (
+            [FromBody] Application.Commands.Identity.RefreshToken.RefreshTokenRequest request,
+            [FromServices] IMediator mediator,
+            [FromServices] TokenGeneratorService tokenGenerator) =>
+        {
+            var response = await mediator.Send(request);
+
+            var tokenResult = tokenGenerator.Generate(
+                response.Claims.ToArray(),
+                DateTime.UtcNow.AddHours(2));
+
+            return Results.Ok(
+                new
+                {
+                    response.RefreshToken,
+                    response.Email,
+                    response.Username,
+                    Token = tokenResult
+                });
         });
 
         if (isDevelopment)

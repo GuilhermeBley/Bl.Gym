@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import * as jwtDecode from 'jwt-decode';
-import { getAuthorization } from "../services/AuthStorageService";
+import { getAuthorization, getRefreshToken, storeAuthorization, storeRefreshToken } from "../services/AuthStorageService";
 import { ActivityIndicator, View } from "react-native";
 import axios from "../api/GymApi";
 
@@ -8,6 +8,7 @@ class UserContextModel{
     id: string;
     name: string;
     email: string;
+    refreshToken: string | undefined;
     roles: string[];
     authorized: boolean;
     dueDate: Date | undefined;
@@ -42,6 +43,10 @@ class UserContextModel{
     }
 
     isAuthorized(){
+        return this.isExpirated();
+    }
+
+    isExpirated(){
         const currentTime = new Date;
 
         if (this.dueDate === undefined)
@@ -53,8 +58,8 @@ class UserContextModel{
 
 interface UserContextProps{
     user: UserContextModel,
-    login: (jwtToken: string) => void,
-    logout: () => void
+    login: (jwtToken: string, refreshToken: string) => Promise<void>,
+    logout: () => Promise<void>
 }
 
 const unauthorizedUser = new UserContextModel(
@@ -71,8 +76,8 @@ const PageNotProperlyLoadedComponent = () => {
 
 export const UserContext = createContext<UserContextProps>({
     user: unauthorizedUser,
-    login: (_) => { },
-    logout: () => { }
+    login: (token, _) => Promise.resolve(),
+    logout: () => Promise.resolve()
 });
 
 export default function UserContextProvider({children} : any){
@@ -89,12 +94,11 @@ export default function UserContextProvider({children} : any){
             try{
                 console.debug('getAuthorization started.')
                 let token = await getAuthorization();
+                let refreshToken = await getRefreshToken();
     
                 if (token !== undefined && token !== null && token !== '') {
-                    let bearerToken = token
                     token = token.replace("Bearer ", "")
-                    login(token)
-                    axios.defaults.headers.common['Authorization'] = bearerToken;
+                    await login(token, refreshToken ?? "")
                 }
             }
             finally{
@@ -114,32 +118,44 @@ export default function UserContextProvider({children} : any){
         return () => { /*nothing to dispose*/ }
     }, [])
 
-    const login = (jwtToken: string): void => {
+    const login = async (jwtToken: string, refreshToken: string): Promise<void> => {
         try{
             const decoded: any = jwtDecode.jwtDecode(jwtToken);
 
             if (!decoded || typeof decoded.nameidentifier !== "string"){
-                logout();
+                await logout();
                 return;
             }
+
+            var userToAuthorize =
+                new UserContextModel(
+                    decoded.nameidentifier,
+                    decoded.name,
+                    decoded.emailaddress,
+                    Array.isArray(decoded.roles) ? decoded.roles : [],
+                    true,
+                    typeof decoded.exp === "number" ? new Date(decoded.exp * 1000) : undefined
+                );
+            
+            userToAuthorize.refreshToken = refreshToken;
             
             // Update the user properties based on the decoded token
-            setUser(new UserContextModel(
-                decoded.nameidentifier,
-                decoded.name,
-                decoded.emailaddress,
-                Array.isArray(decoded.roles) ? decoded.roles : [],
-                true,
-                typeof decoded.exp === "number" ? new Date(decoded.exp * 1000) : undefined
-            ))
+            setUser(userToAuthorize)
+
+            let bearerToken = 'Bearer ' + jwtToken;
+            axios.defaults.headers.common['Authorization'] =  bearerToken;
+            await storeAuthorization(bearerToken)
+            await storeRefreshToken(refreshToken)
         }
         catch(error) {
-            logout();
+            await logout();
             console.error("Failed to parse login.", error)
         }
     }
 
-    const logout = () => {
+    const logout = async () => {
+        await storeAuthorization('')
+        await storeRefreshToken('')
         setUser(unauthorizedUser)
     }
     
