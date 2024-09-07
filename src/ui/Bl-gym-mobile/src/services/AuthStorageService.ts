@@ -6,7 +6,7 @@ const KEY_REFRESH_TOKEN = "RefreshToken"
 // Storing data
 export const storeAuthorization = async (token: string) => {
     try {
-        await AsyncStorage.setItem(KEY_TOKEN, token);
+        await AsyncStorage.setItem(KEY_TOKEN, token ?? "");
     } catch (e) {
         console.error('Error storing data: ', e);
         return undefined;
@@ -26,7 +26,7 @@ export const getAuthorization = async () => {
 // Storing data
 export const storeRefreshToken = async (token: string) => {
     try {
-        await AsyncStorage.setItem(KEY_REFRESH_TOKEN, token);
+        await AsyncStorage.setItem(KEY_REFRESH_TOKEN, token ?? "");
     } catch (e) {
         console.error('Error storing data: ', e);
         return undefined;

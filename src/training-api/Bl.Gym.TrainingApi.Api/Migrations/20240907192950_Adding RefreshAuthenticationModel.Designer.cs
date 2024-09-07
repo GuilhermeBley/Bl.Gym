@@ -3,6 +3,7 @@ using System;
 using Bl.Gym.TrainingApi.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bl.Gym.TrainingApi.Api.Migrations
 {
     [DbContext(typeof(PostgreTrainingContext))]
-    partial class MySqlTrainingContextModelSnapshot : ModelSnapshot
+    [Migration("20240907192950_Adding RefreshAuthenticationModel")]
+    partial class AddingRefreshAuthenticationModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
