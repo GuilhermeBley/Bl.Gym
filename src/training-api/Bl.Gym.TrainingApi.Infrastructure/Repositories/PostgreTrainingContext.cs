@@ -113,5 +113,10 @@ public class PostgreTrainingContext
             b.HasOne<Application.Model.Training.GymGroupModel>().WithMany().HasForeignKey(p => p.GymId);
             b.HasOne<Application.Model.Identity.UserModel>().WithMany().HasForeignKey(p => p.StudentId);
         });
+
+        modelBuilder.Entity<Application.Model.Identity.RefreshAuthenticationModel>(b =>
+        {
+            b.HasKey(p => p.UserId);
+        });
     }
 }
