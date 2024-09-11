@@ -134,7 +134,7 @@ public class LoginHandler
                 on userRole.RoleId equals role.Id
             join claim in _context.RoleClaims.AsNoTracking()
                 on role.Id equals claim.RoleId
-            where userRole.Id == userId
+            where userRole.UserId == userId
             select new {
                 claim.RoleId,
                 claim.ClaimType,
