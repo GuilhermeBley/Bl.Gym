@@ -43,16 +43,18 @@ class UserContextModel{
     }
 
     isAuthorized(){
-        return this.isExpirated();
+        return this.id?.length > 10;
     }
 
     isExpirated(){
         const currentTime = new Date;
 
         if (this.dueDate === undefined)
-            return false
+            return true
 
-        return this.authorized && this.dueDate > currentTime
+        var expirated = this.dueDate < currentTime;
+        console.debug(`[` + currentTime +`] User token will expire at ` + this.dueDate)
+        return expirated;
     }
 }
 

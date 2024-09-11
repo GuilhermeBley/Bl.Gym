@@ -11,8 +11,8 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
     
     const { user } = useContext(UserContext);
 
-    if (user.isAuthorized()) {
-        console.log("User authorized.")
+    if (user.isAuthorized() && !user.isExpirated()) {
+        console.log("User authorized.");
         return authorizedContent;
     }
 
