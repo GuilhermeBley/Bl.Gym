@@ -19,7 +19,10 @@ public class Role
         = new(
             new[]
             {
-                UserClaim.ManageAnyGym
+                UserClaim.ManageAnyGym,
+                UserClaim.ManageTraining,
+                UserClaim.SeeTraining,
+                UserClaim.ManageGymGroup
             }
         )
         {
