@@ -29,6 +29,8 @@ public class LoginHandler
             {
                 e.Id,
                 e.UserName,
+                e.FirstName,
+                e.LastName,
                 e.Email,
                 e.PasswordHash,
                 e.PasswordSalt,
@@ -86,12 +88,16 @@ public class LoginHandler
             new[] {
                 Domain.Security.UserClaim.CreateUserEmailClaim(userFound.Email),
                 Domain.Security.UserClaim.CreateUserIdClaim(userFound.Id),
-                Domain.Security.UserClaim.CreateUserNameClaim(userFound.UserName)
+                Domain.Security.UserClaim.CreateUserNameClaim(userFound.UserName),
+                Domain.Security.UserClaim.CreateFirstNameClaim(userFound.FirstName),
+                Domain.Security.UserClaim.CreateLastNameClaim(userFound.LastName),
             }.Concat(userRoles);
 
         return new(
             RefreshToken: refreshTokenCreated.RefreshToken,
             Username: userFound.UserName,
+            FirstName: userFound.FirstName,
+            LastName: userFound.LastName,
             Email: userFound.Email,
             Claims: claims.ToImmutableArray());
     }

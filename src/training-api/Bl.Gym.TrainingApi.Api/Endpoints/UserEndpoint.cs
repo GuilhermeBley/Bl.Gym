@@ -38,6 +38,8 @@ public class UserEndpoint
                     response.RefreshToken,
                     response.Email,
                     response.Username,
+                    response.FirstName,
+                    response.LastName,
                     Token = tokenResult
                 });
         });

@@ -6,6 +6,8 @@ public static class UserClaim
 {
     public const string DEFAULT_ROLE = "role";
     public const string DEFAULT_USER_NAME = "name";
+    public const string DEFAULT_FIRST_NAME = "firstname";
+    public const string DEFAULT_LAST_NAME = "lastname";
     public const string DEFAULT_USER_ID = "nameidentifier";
     public const string DEFAULT_USER_EMAIL = "emailaddress";
     public const string DEFAULT_GYM_ID = "gymidentifier";
@@ -39,6 +41,12 @@ public static class UserClaim
 
     public static Claim CreateUserNameClaim(string userName)
         => new(DEFAULT_USER_NAME, userName);
+    public static Claim CreateFirstNameClaim(string firstName)
+        => new(DEFAULT_FIRST_NAME, firstName);
+
+    public static Claim CreateLastNameClaim(string lastName)
+        => new(DEFAULT_LAST_NAME, lastName);
+
     public static Claim CreateUserIdClaim(Guid userId)
         => new(DEFAULT_USER_ID, userId.ToString());
     public static Claim CreateUserEmailClaim(string email)
