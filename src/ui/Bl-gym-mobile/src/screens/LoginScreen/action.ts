@@ -19,7 +19,7 @@ export const handleRefreshToken = async (
     refreshToken: string,
     userId: string
 ) => {
-    return await axios.post(
+    return await axios.patch(
         'user/refresh',
         {
             UserId: userId,

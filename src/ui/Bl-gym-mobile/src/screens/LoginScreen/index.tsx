@@ -98,7 +98,7 @@ const LoginScreen = ({ navigation }: any) => {
         let response = await handleRefreshToken(user.refreshToken, user.id);
 
         if (response.Status !== LoginResultStatus.Success) {
-          console.debug("Failed to refresh token.")
+          console.debug("Failed to refresh token.");
           return;
         }
     
