@@ -130,6 +130,17 @@ const TrainingListScreen = ({ navigation }: any) => {
                 renderItem={(info) => TrainingCardComponent(info.item)}
                 keyExtractor={(item) => item.TrainingId}
             />
+
+            {userContext.user.isInRole("sample-check") /* Checks if can manage the gym*/
+                ? (
+                    <Pressable
+                        onPress={() => { /* Open modal creation*/ }}
+                        style={commonStyles.PrimaryButton}>
+                        <Text style={commonStyles.PrimaryButtonText}>
+                            + Novo treino
+                        </Text>
+                    </Pressable>)
+                : (<View></View>)/* Don't show nothing */}
         </SafeAreaView>
     )
 };
