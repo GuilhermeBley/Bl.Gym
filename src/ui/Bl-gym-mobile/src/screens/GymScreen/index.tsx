@@ -128,9 +128,9 @@ const GymScreen = () => {
             {userContext.user.isInRole(ManageAnyGym)
                 ? (
                     <Pressable
-                        style={styles.addGymButton}
+                        style={commonStyles.PrimaryButton}
                         onPress={() => handleModalGymCreation()}>
-                        <Text style={styles.addGymButtonText}>
+                        <Text style={commonStyles.PrimaryButtonText}>
                             Criar academia
                         </Text>
                     </Pressable>)
