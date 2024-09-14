@@ -30,3 +30,15 @@ export const handleTrainings = (userId: string, cancellationToken: CancelToken) 
         return TryGetResultFromResponse(error.response);
     });
 }
+
+export const handleTrainingCreation = (
+    currentUserId: string,
+    trainingUserId: string,
+    trainingData: TrainingCreationModel 
+) => {
+    
+}
+
+export type TrainingCreationModel = {
+
+}
