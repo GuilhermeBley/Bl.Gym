@@ -1,5 +1,7 @@
 ﻿namespace Bl.Gym.TrainingApi.Application.Commands.Training.GetAvailableExercises;
 
 public record GetAvailableExercisesRequest(
-    Guid GymId)
+    Guid GymId,
+    int Skip,
+    int Take)
     : IRequest<GetAvailableExercisesResponse>;
