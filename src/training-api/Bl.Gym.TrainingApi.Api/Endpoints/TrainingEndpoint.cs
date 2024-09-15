@@ -63,5 +63,16 @@ public class TrainingEndpoint
 
             return Results.Ok(result);
         }).RequireAuthorization();
+
+        builder.MapGet("Training/exercises", async (
+            HttpContext context,
+            IMediator mediator) =>
+        {
+            var result =
+                await mediator.Send(
+                    new Application.Commands.Training.GetAvailableExercises.GetAvailableExercisesRequest());
+
+            return Results.Ok(result);
+        }).RequireAuthorization();
     }
 }

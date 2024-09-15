@@ -1,5 +1,6 @@
 ﻿using Bl.Gym.TrainingApi.Application.Repositories;
 using System;
+using System.Security.Claims;
 
 namespace Bl.Gym.TrainingApi.Application.Services;
 
@@ -12,6 +13,34 @@ public class GymRoleCheckerService
     {
         _context = context;
         _logger = logger;
+    }
+
+    public Task ThrowIfUserDoesNotContainRoleInGymAsync(
+        Guid userId,
+        Guid gymId,
+        string role,
+        CancellationToken cancellationToken = default)
+        => ThrowIfUserDoesNotContainClaimInGymAsync(
+            userId: userId,
+            gymId: gymId,
+            claimType: Domain.Security.UserClaim.DEFAULT_ROLE,
+            claimValue: role,
+            cancellationToken);
+
+    public async Task ThrowIfUserDoesNotContainClaimInGymAsync(
+        Guid userId, 
+        Guid gymId,
+        string claimType,
+        string claimValue,
+        CancellationToken cancellationToken = default)
+    {
+        var claims = await GetUserClaimsByGymAsync(userId, gymId, cancellationToken);
+
+        if (!claims.Any(c => c.Type.Equals(claimType, StringComparison.OrdinalIgnoreCase) &&
+                c.Value.Equals(claimValue, StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new ForbbidenCoreException($"User '{userId}' is not member of section '{sectionId}'.");
+        }
     }
 
     public async Task ThrowIfUserIsntInTheSectionAsync(Guid userId, Guid sectionId, CancellationToken cancellationToken = default)
@@ -40,11 +69,27 @@ public class GymRoleCheckerService
             .UserTrainingRoles
             .AsNoTracking()
             .AnyAsync(u =>
-                u.Id == userId &&
+                u.UserId == userId &&
                 u.GymGroupId == gymId,
                 cancellationToken);
 
         return contains;
+    }
+
+    public async Task<Claim[]> GetUserClaimsByGymAsync(Guid userId, Guid gymId, CancellationToken cancellationToken = default)
+    {
+        var claims =
+            await (
+            from userRole in _context.UserTrainingRoles.AsNoTracking()
+            join role in _context.Roles.AsNoTracking()
+                on userRole.RoleId equals role.Id
+            join claim in _context.RoleClaims.AsNoTracking()
+                on role.Id equals claim.RoleId
+            where userRole.Id == userId && userRole.GymGroupId == gymId
+            select new Claim(claim.ClaimType, claim.ClaimValue))
+            .ToListAsync(cancellationToken);
+
+        return claims.ToArray();
     }
 
     public async Task<bool> IsUserInTheSectionAsync(Guid userId, Guid sectionId, CancellationToken cancellationToken = default)
