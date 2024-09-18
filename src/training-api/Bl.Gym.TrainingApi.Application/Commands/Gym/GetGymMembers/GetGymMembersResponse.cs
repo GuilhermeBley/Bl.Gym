@@ -7,4 +7,5 @@ public record GetGymMembersItemResponse(
     Guid UserId,
     string Email,
     string Name,
-    string LastName);
+    string LastName,
+    string RoleName);

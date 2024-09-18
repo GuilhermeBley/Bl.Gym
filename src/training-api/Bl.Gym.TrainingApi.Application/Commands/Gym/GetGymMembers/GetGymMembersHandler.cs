@@ -2,6 +2,8 @@
 using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
 using Bl.Gym.TrainingApi.Application.Services;
+using Bl.Gym.TrainingApi.Domain.Entities.Identity;
+using System.Xml.Linq;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Gym.GetGymMembers;
 
@@ -28,6 +30,21 @@ public class GetGymMembersHandler
             role: Domain.Security.UserClaim.ManageTraining.Value,
             cancellationToken);
 
+        var results = await
+            (from user in _trainingContext.Users
+             join userRole in _trainingContext.UserTrainingRoles
+                on user.Id equals userRole.UserId
+             join role in _trainingContext.Roles
+                on userRole.RoleId equals role.Id
+             where userRole.GymGroupId == request.GymId
+             select new GetGymMembersItemResponse(
+                 /*UserId*/user.Id,
+                 /*Email*/user.Email,
+                 /*Name*/user.FirstName,
+                 /*LastName*/user.LastName,
+                 /*RoleName*/ role.Name))
+            .ToArrayAsync(cancellationToken);
 
+        return new(results);
     }
 }
