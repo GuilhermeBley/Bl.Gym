@@ -2,8 +2,6 @@
 using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
 using Bl.Gym.TrainingApi.Application.Services;
-using Bl.Gym.TrainingApi.Domain.Entities.Identity;
-using System.Xml.Linq;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Gym.GetGymMembers;
 
@@ -13,6 +11,13 @@ public class GetGymMembersHandler
     private readonly TrainingContext _trainingContext;
     private readonly GymRoleCheckerService _gymRoleCheckerService;
     private readonly IIdentityProvider _identityProvider;
+
+    public GetGymMembersHandler(TrainingContext trainingContext, GymRoleCheckerService gymRoleCheckerService, IIdentityProvider identityProvider)
+    {
+        _trainingContext = trainingContext;
+        _gymRoleCheckerService = gymRoleCheckerService;
+        _identityProvider = identityProvider;
+    }
 
     public async Task<GetGymMembersResponse> Handle(
         GetGymMembersRequest request, 
