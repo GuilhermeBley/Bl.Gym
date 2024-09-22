@@ -48,6 +48,29 @@ export const getGymMembers = (
     });
 }
 
+export const getGymExercisesByPage = (
+    gymId: string,
+    page: number = 0,
+    cancellationToken: CancelToken | undefined = undefined) => { 
+        
+    const maxPageSize = 1000;
+
+    return axios.get<GetAvailableExercisesResponse>(
+        "Training/exercises/gym/{gymId}?skip={skip}&take={take}"
+            .replace("{gymId}", gymId)
+            .replace("{skip}", (maxPageSize * page).toString())
+            .replace("{take}", maxPageSize.toString()),
+        { cancelToken: cancellationToken }
+    ).then((response) => {
+
+        return TryGetResultFromResponse(response);
+    })
+    .catch((error) => {
+        console.debug(error)
+        return TryGetResultFromResponse(error.response);
+    });
+}
+
 export type TrainingCreationModel = {
     muscularGroup: string,
     sets: TrainingSetCreationModel[]
@@ -68,4 +91,14 @@ export interface GetGymMembersItemResponse {
     name: string;
     lastName: string;
     roleName: string;
+}
+
+export interface GetAvailableExercisesResponse {
+    availableExercises: GetAvailableExercisesItemResponse[];
+}
+
+export interface GetAvailableExercisesItemResponse {
+    id: string;
+    name: string;
+    description: string;
 }
