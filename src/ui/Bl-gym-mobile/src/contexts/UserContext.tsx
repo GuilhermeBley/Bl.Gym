@@ -29,7 +29,7 @@ class UserContextModel{
     }
 
     isInRole(rolesToCheck: string | string[]): boolean {
-
+//
         if (!this.authorized)
             return false;
 
@@ -74,6 +74,18 @@ const PageNotProperlyLoadedComponent = () => {
             <ActivityIndicator/>
         </View>
     );
+}
+
+const getRolesFromDecoded = (decoded: any) => {
+    if (Array.isArray(decoded.role)){
+        return decoded.role;
+    }
+    
+    if (typeof decoded.role === "string"){
+        return [decoded.role];
+    }
+
+    return [];
 }
 
 export const UserContext = createContext<UserContextProps>({
@@ -134,7 +146,7 @@ export default function UserContextProvider({children} : any){
                     decoded.nameidentifier,
                     (decoded.firstname + ' ' + decoded.lastname),
                     decoded.emailaddress,
-                    Array.isArray(decoded.roles) ? decoded.roles : [],
+                    getRolesFromDecoded(decoded),
                     true,
                     typeof decoded.exp === "number" ? new Date(decoded.exp * 1000) : undefined
                 );
