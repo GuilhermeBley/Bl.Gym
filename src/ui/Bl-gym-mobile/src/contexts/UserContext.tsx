@@ -132,7 +132,7 @@ export default function UserContextProvider({children} : any){
             var userToAuthorize =
                 new UserContextModel(
                     decoded.nameidentifier,
-                    decoded.name,
+                    (decoded.firstname + ' ' + decoded.lastname),
                     decoded.emailaddress,
                     Array.isArray(decoded.roles) ? decoded.roles : [],
                     true,
