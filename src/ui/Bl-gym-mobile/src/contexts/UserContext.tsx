@@ -152,14 +152,16 @@ export default function UserContextProvider({children} : any){
                 );
             
             userToAuthorize.refreshToken = refreshToken;
-            
-            // Update the user properties based on the decoded token
-            setUser(userToAuthorize)
 
+            // On receiving the token, First set the axios Authorization to prevent
+            // any request without the token
             let bearerToken = 'Bearer ' + jwtToken;
             axios.defaults.headers.common['Authorization'] =  bearerToken;
             await storeAuthorization(bearerToken)
             await storeRefreshToken(refreshToken)
+            
+            // Update the user properties based on the decoded token
+            setUser(userToAuthorize)
         }
         catch(error) {
             await logout();
