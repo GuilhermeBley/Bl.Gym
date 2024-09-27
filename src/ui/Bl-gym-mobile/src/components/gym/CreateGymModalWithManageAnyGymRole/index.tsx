@@ -1,8 +1,9 @@
-import { Modal, View, Text, Button, ActivityIndicator, TextInput } from "react-native";
+import { Modal, View, Text, Button, ActivityIndicator, TextInput, Pressable } from "react-native";
 import { styles } from "./styles";
 import React from "react";
 import { Formik, FormikHelpers, FormikProps } from "formik";
 import * as yup from 'yup';
+import commonStyles from "../../../styles/commonStyles";
 
 type ChildComponentProps = {
     modalVisible: boolean,
@@ -16,21 +17,21 @@ export interface GymCreateModel {
 }
 
 interface StyledInputProps {
-  formikKey: string,
-  formikProps: FormikProps<any>;
-  label: string;
-  [key: string]: any;
+    formikKey: string,
+    formikProps: FormikProps<any>;
+    label: string;
+    [key: string]: any;
 }
 
 const validationSchema = yup.object().shape({
     gymName: yup.string()
-      .min(2, "O nome deve conter 2 caracteres.")
-      .max(45, "Insira um nome mais curto, por favor.")
-      .required("Nome é obrigatório."),
+        .min(2, "O nome deve conter 2 caracteres.")
+        .max(45, "Insira um nome mais curto, por favor.")
+        .required("Nome é obrigatório."),
     description: yup.string()
-      .min(2, "Descrição muito curta...")
-      .max(1000, "Insira uma descrição um pouco mais curta, por favor.")
-  });
+        .min(2, "Descrição muito curta...")
+        .max(1000, "Insira uma descrição um pouco mais curta, por favor.")
+});
 
 const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
     const inputStyles = styles.input;
@@ -64,7 +65,7 @@ const CreateGymModalWithManageAnyGymRole = ({
     setModalVisible,
     onSubmiting,
 }: ChildComponentProps) => {
-    
+
     const handleSubmit = (actions: FormikHelpers<GymCreateModel>, model: GymCreateModel) => {
         return onSubmiting(model);
     }
@@ -79,47 +80,57 @@ const CreateGymModalWithManageAnyGymRole = ({
             }}>
 
             <View style={styles.modalView}>
+                <View style={styles.container}>
 
-                <Formik
-                    initialValues={{
-                        description: undefined,
-                        gymName: ""
-                    } as GymCreateModel}
-                    onSubmit={(values, actions) => {
-                        console.debug("handling gym creation...")
+                    <Formik
+                        initialValues={{
+                            description: undefined,
+                            gymName: ""
+                        } as GymCreateModel}
+                        onSubmit={(values, actions) => {
+                            console.debug("handling gym creation...")
 
-                        return handleSubmit(actions, values)
-                            .finally(() => actions.setSubmitting(false));
-                    }
-                    }
-                    validationSchema={validationSchema}
-                >
+                            return handleSubmit(actions, values)
+                                .finally(() => actions.setSubmitting(false));
+                        }
+                        }
+                        validationSchema={validationSchema}
+                    >
 
-                    {formikProps => {
-                        return (
-                            <React.Fragment>
-                                <StyledInput
-                                    formikKey={"gymName"}
-                                    formikProps={formikProps}
-                                    label={"Nome da academia"}
-                                    autoFocus />
+                        {formikProps => {
+                            return (
+                                <React.Fragment>
+                                    <StyledInput
+                                        formikKey={"gymName"}
+                                        formikProps={formikProps}
+                                        label={"Nome da academia"}
+                                        autoFocus />
 
-                                <StyledInput
-                                    formikKey={"description"}
-                                    formikProps={formikProps}
-                                    label={"Descrição"} />
+                                    <StyledInput
+                                        formikKey={"description"}
+                                        formikProps={formikProps}
+                                        label={"Descrição"} />
 
-                                <View style={styles.buttonContainer}>
-                                    {formikProps.isSubmitting ?
-                                        <ActivityIndicator /> :
-                                        <Button onPress={() => formikProps.handleSubmit()} title="Criar acedemia" />}
-                                </View>
-                            </React.Fragment>
-                        );
-                    }}
-                </Formik>
+                                    <View style={styles.buttonContainer}>
+                                        {formikProps.isSubmitting ?
+                                            <ActivityIndicator /> :
+                                            <View style={{marginTop: 10}}>
+                                                <Pressable style={commonStyles.PrimaryButton} onPress={() => formikProps.handleSubmit()}>
+                                                    <Text style={commonStyles.PrimaryButtonText}>Criar</Text>
+                                                </Pressable>
+                                            </View>}
+                                    </View>
+                                </React.Fragment>
+                            );
+                        }}
+                    </Formik>
 
-                <Button title="Fechar" onPress={() => setModalVisible(false)} />
+                    <View style={{marginTop: 10}}>
+                        <Pressable style={commonStyles.SecondaryButton} onPress={() => setModalVisible(false)}>
+                            <Text style={commonStyles.SecondaryButtonText}>Fechar</Text>
+                        </Pressable>
+                    </View>
+                </View>
             </View>
         </Modal>
     );

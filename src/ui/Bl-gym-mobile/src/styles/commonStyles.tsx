@@ -25,6 +25,24 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  SecondaryButton: {
+    backgroundColor: colors.secondary,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3, // Adds shadow on Android
+    shadowColor: '#000', // Adds shadow on iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  SecondaryButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   }
 });
 
