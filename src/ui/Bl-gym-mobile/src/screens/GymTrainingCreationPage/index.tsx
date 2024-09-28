@@ -1,4 +1,4 @@
-import { Formik, FormikProps } from "formik";
+import { Formik, FormikHelpers, FormikProps } from "formik";
 import React from "react";
 import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button } from "react-native";
 import * as yup from 'yup';
@@ -26,6 +26,9 @@ const validationSchema = yup.object().shape({
 });
 
 const GymTrainingCreationPage = () => {
+  
+  const responseErrorsKey = "api-errors"
+  
   const initialValues: TrainingCreationModel = {
     gymId: "",
     trainingStudentId: "",
@@ -58,6 +61,13 @@ const GymTrainingCreationPage = () => {
         {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
       </View>
     );
+  }
+
+  const handleSubmit = async (
+    formikHelper: FormikHelpers<any>,
+    data: TrainingCreationModel
+  ) => {
+
   }
 
   return (
@@ -118,7 +128,7 @@ const GymTrainingCreationPage = () => {
               </View>
 
               <View>
-                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof UserCreateModel]}</Text>
+                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingCreationModel]}</Text>
               </View>
             </React.Fragment>
           );
