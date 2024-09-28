@@ -1,6 +1,6 @@
-import { Formik } from "formik";
+import { Formik, FormikProps } from "formik";
 import React from "react";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button } from "react-native";
 import * as yup from 'yup';
 
 interface TrainingCreationModel {
@@ -8,6 +8,13 @@ interface TrainingCreationModel {
   trainingStudentId: string,
   studentName: string,
   trainingData: undefined | TrainingCreationModel
+}
+
+interface StyledInputProps {
+  formikKey: string,
+  formikProps: FormikProps<any>;
+  label: string;
+  [key: string]: any;
 }
 
 const validationSchema = yup.object().shape({
@@ -25,6 +32,33 @@ const GymTrainingCreationPage = () => {
     trainingData: undefined
   };
 
+  const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
+    const inputStyles = styles.input;
+
+    const error = formikProps.touched[formikKey] && formikProps.errors[formikKey];
+    const errorMessage = typeof error === 'string' ? error : '';
+
+    if (errorMessage) {
+      inputStyles.borderColor = "red"
+    }
+
+    return (
+      <View style={styles.inputContainer}>
+        <Text>{label}</Text>
+        <TextInput
+          style={inputStyles}
+          value={formikProps.values[formikKey]}
+          onChangeText={formikProps.handleChange(formikKey)}
+          onBlur={formikProps.handleBlur(formikKey)}
+          {...rest}
+        >
+
+        </TextInput>
+        {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Formik
@@ -34,8 +68,7 @@ const GymTrainingCreationPage = () => {
 
           return handleSubmit(actions, values)
             .finally(() => actions.setSubmitting(false));
-        }
-        }
+        }}
         validationSchema={validationSchema}
       >
 
