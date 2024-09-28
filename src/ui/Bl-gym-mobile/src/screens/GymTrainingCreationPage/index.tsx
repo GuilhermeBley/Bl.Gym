@@ -1,20 +1,29 @@
 import { Formik } from "formik";
+import React from "react";
 import { SafeAreaView } from "react-native";
+import * as yup from 'yup';
 
 interface TrainingCreationModel {
-    gymId: string,
-    trainingStudentId: string,
-    studentName: string,
-    trainingData: undefined | TrainingCreationModel
+  gymId: string,
+  trainingStudentId: string,
+  studentName: string,
+  trainingData: undefined | TrainingCreationModel
 }
-  
+
+const validationSchema = yup.object().shape({
+  gymId: yup.string()
+    .required("Selecione uma academia."),
+  trainingStudentId: yup.string()
+    .required("Insira um estudante.")
+});
+
 const GymTrainingCreationPage = () => {
-    const initialValues: TrainingCreationModel = {
-        gymId: "",
-        trainingStudentId: "",
-        studentName: "",
-        trainingData: undefined
-    };
+  const initialValues: TrainingCreationModel = {
+    gymId: "",
+    trainingStudentId: "",
+    studentName: "",
+    trainingData: undefined
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,7 +33,7 @@ const GymTrainingCreationPage = () => {
           console.debug("handling user creation...")
 
           return handleSubmit(actions, values)
-              .finally(() => actions.setSubmitting(false));
+            .finally(() => actions.setSubmitting(false));
         }
         }
         validationSchema={validationSchema}

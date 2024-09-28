@@ -2,7 +2,6 @@ import axios, { CancelToken } from "axios"
 import TryGetResultFromResponse from "../../api/ResponseReader";
 import { handleGyms } from "../GymScreen/action";
 
-
 export const handleTrainingCreation = (
     trainingStudentId: string,
     gymId: string,
