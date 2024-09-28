@@ -2,6 +2,7 @@ import { Formik, FormikProps } from "formik";
 import React from "react";
 import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button } from "react-native";
 import * as yup from 'yup';
+import { styles } from "./styles";
 
 interface TrainingCreationModel {
   gymId: string,
