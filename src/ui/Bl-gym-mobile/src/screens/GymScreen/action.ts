@@ -47,7 +47,7 @@ export const handleCreateGym = (
             return TryGetResultFromResponse(response);
         })
         .catch((error: AxiosError) => {
-            
+            console.debug(error);
             return TryGetResultFromResponse(error.response);
         })
 }
