@@ -91,6 +91,8 @@ const LoginScreen = ({ navigation }: any) => {
         isRunningFirstLoading: true
       }));
 
+      console.debug(`Trying to refresh token (${user.refreshToken})`)
+
       if (user.refreshToken !== undefined &&
         user.dueDate !== undefined &&
         user.isExpirated()
