@@ -106,6 +106,9 @@ const LoginScreen = ({ navigation }: any) => {
     
         await login(response.Token, response.RefreshToken)
       }
+      else{
+        console.debug(`Token was not refreshed ${user.isExpirated()} - ${user.dueDate}`)
+      }
     }
 
     fetchInitialData()
