@@ -120,9 +120,6 @@ public static class ClaimsPrincipalExtension
     {
         ThrowIfIsntLogged(principal);
 
-        if (principal.Identities.Any(id => id.RoleClaimType == roleClaim.Type))
-            throw new ForbbidenCoreException();
-
         if (!principal.IsInRole(roleClaim.Value))
             throw new ForbbidenCoreException();
     }
@@ -148,6 +145,6 @@ public static class ClaimsPrincipalExtension
 
     public static bool IsLogged(this ClaimsPrincipal principal)
     {
-        return principal.HasClaim(p => p.ValueType == Domain.Security.UserClaim.DEFAULT_USER_ID);
+        return principal.HasClaim(p => p.Type == Domain.Security.UserClaim.DEFAULT_USER_ID);
     }
 }

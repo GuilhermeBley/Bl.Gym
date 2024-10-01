@@ -39,7 +39,7 @@ public class GymRoleCheckerService
         if (!claims.Any(c => c.Type.Equals(claimType, StringComparison.OrdinalIgnoreCase) &&
                 c.Value.Equals(claimValue, StringComparison.OrdinalIgnoreCase)))
         {
-            throw new ForbbidenCoreException($"User '{userId}' is not member of section '{sectionId}'.");
+            throw new ForbbidenCoreException($"User '{userId}' is not member of Gym '{gymId}'.");
         }
     }
 
