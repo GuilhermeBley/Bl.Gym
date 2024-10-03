@@ -1,9 +1,14 @@
 import { Formik, FormikHelpers, FormikProps } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button } from "react-native";
 import * as yup from 'yup';
 import { styles } from "./styles";
 import { Picker } from '@react-native-picker/picker';
+import { GetCurrentUserGymResponse } from "../GymScreen/action";
+
+interface FormDataModel {
+  availableGyms: GetCurrentUserGymResponse[]
+}
 
 interface TrainingCreationModel {
   gymId: string,
@@ -16,6 +21,14 @@ interface StyledInputProps {
   formikKey: string,
   formikProps: FormikProps<any>;
   label: string;
+  [key: string]: any;
+}
+
+interface StyledSelectProps {
+  formikKey: string;
+  formikProps: any;
+  label: string;
+  options: { label: string; value: string }[];
   [key: string]: any;
 }
 
@@ -37,13 +50,11 @@ const GymTrainingCreationPage = () => {
     trainingData: undefined
   };
 
-  interface StyledSelectProps {
-    formikKey: string;
-    formikProps: any;
-    label: string;
-    options: { label: string; value: string }[];
-    [key: string]: any;
-  }
+  const [formData, setFormData] = useState(
+    {
+      availableGyms : []
+    } as FormDataModel
+  );
   
   const StyledSelect: React.FC<StyledSelectProps> = ({ formikKey, formikProps, label, options, ...rest }) => {
     const inputStyles = styles.input;
@@ -125,10 +136,13 @@ const GymTrainingCreationPage = () => {
         {formikProps => {
           return (
             <React.Fragment>
-              <StyledInput
-                formikKey={"firstName"}
+              <StyledSelect
+                formikKey={"gymId"}
                 formikProps={formikProps}
-                label={"Primeiro nome"}
+                label={"Academia"}
+                options={formData.availableGyms.map(e =>
+                  ({ label: e.Name, value: e.Id })
+                )}
                 autoFocus />
 
               <StyledInput
