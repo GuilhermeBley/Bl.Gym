@@ -63,5 +63,19 @@ public class TrainingEndpoint
 
             return Results.Ok(result);
         }).RequireAuthorization();
+
+        builder.MapGet("Training/exercises/gym/{gymId}", async (
+            HttpContext context,
+            Guid gymId,
+            [FromServices] IMediator mediator,
+            [FromQuery] int skip,
+            [FromQuery] int take) =>
+        {
+            var result =
+                await mediator.Send(
+                    new Application.Commands.Training.GetAvailableExercises.GetAvailableExercisesRequest(gymId, skip, take));
+
+            return Results.Ok(result);
+        }).RequireAuthorization();
     }
 }

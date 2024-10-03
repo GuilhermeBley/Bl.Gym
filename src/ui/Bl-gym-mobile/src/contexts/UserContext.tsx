@@ -29,7 +29,7 @@ class UserContextModel{
     }
 
     isInRole(rolesToCheck: string | string[]): boolean {
-
+//
         if (!this.authorized)
             return false;
 
@@ -74,6 +74,18 @@ const PageNotProperlyLoadedComponent = () => {
             <ActivityIndicator/>
         </View>
     );
+}
+
+const getRolesFromDecoded = (decoded: any) => {
+    if (Array.isArray(decoded.role)){
+        return decoded.role;
+    }
+    
+    if (typeof decoded.role === "string"){
+        return [decoded.role];
+    }
+
+    return [];
 }
 
 export const UserContext = createContext<UserContextProps>({
@@ -132,22 +144,24 @@ export default function UserContextProvider({children} : any){
             var userToAuthorize =
                 new UserContextModel(
                     decoded.nameidentifier,
-                    decoded.name,
+                    (decoded.firstname + ' ' + decoded.lastname),
                     decoded.emailaddress,
-                    Array.isArray(decoded.roles) ? decoded.roles : [],
+                    getRolesFromDecoded(decoded),
                     true,
                     typeof decoded.exp === "number" ? new Date(decoded.exp * 1000) : undefined
                 );
             
             userToAuthorize.refreshToken = refreshToken;
-            
-            // Update the user properties based on the decoded token
-            setUser(userToAuthorize)
 
+            // On receiving the token, First set the axios Authorization to prevent
+            // any request without the token
             let bearerToken = 'Bearer ' + jwtToken;
             axios.defaults.headers.common['Authorization'] =  bearerToken;
             await storeAuthorization(bearerToken)
             await storeRefreshToken(refreshToken)
+            
+            // Update the user properties based on the decoded token
+            setUser(userToAuthorize)
         }
         catch(error) {
             await logout();

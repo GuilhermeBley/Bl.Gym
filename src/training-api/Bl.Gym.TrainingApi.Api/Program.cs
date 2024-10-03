@@ -73,7 +73,6 @@ builder.Services
                 ValidateLifetime = true,
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                RoleClaimType = Bl.Gym.TrainingApi.Domain.Security.UserClaim.DEFAULT_ROLE
             };
         })
     .AddJwtBearer(
@@ -90,7 +89,6 @@ builder.Services
                 ValidateLifetime = true,
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                RoleClaimType = Bl.Gym.TrainingApi.Domain.Security.UserClaim.DEFAULT_ROLE
             };
         });
 builder.Services.AddAuthorization(cfg =>

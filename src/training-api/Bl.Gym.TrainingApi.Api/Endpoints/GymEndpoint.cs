@@ -41,5 +41,20 @@ public class GymEndpoint
         {
             cfg.RequireRole(Domain.Security.UserClaim.ManageAnyGym.Value);
         });
+
+        builder.MapGet("gym/{gymId}/members", async (
+            Guid gymId, 
+            IMediator mediator) =>
+        {
+            var result =
+                await mediator.Send(new Application.Commands.Gym.GetGymMembers.GetGymMembersRequest(
+                    gymId));
+
+            return Results.Ok(result);
+
+        }).RequireAuthorization(cfg =>
+        {
+            cfg.RequireRole(Domain.Security.UserClaim.ManageGymGroup.Value);
+        });
     }
 }

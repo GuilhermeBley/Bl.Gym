@@ -34,6 +34,7 @@ public static class ClaimsPrincipalExtension
     /// </summary>
     /// <exception cref="UnauthorizedAccessException"></exception>
     /// <exception cref="ForbbidenCoreException"></exception>
+    [Obsolete("Gym ID won't be provided by current claim.")]
     public static Guid RequiredGymId(this ClaimsPrincipal principal)
         => GetGymId(principal)
         ?? throw new ForbbidenCoreException();
@@ -41,6 +42,7 @@ public static class ClaimsPrincipalExtension
     /// <summary>
     /// Get the gym ID or null.
     /// </summary>
+    [Obsolete("Gym ID won't be provided by current claim.")]
     public static Guid? GetGymId(this ClaimsPrincipal principal)
     {
         var claim = principal
@@ -116,11 +118,7 @@ public static class ClaimsPrincipalExtension
     /// <exception cref="ForbbidenCoreException"></exception>
     public static void ThrowIfDoesntContainRole(this ClaimsPrincipal principal, Claim roleClaim)
     {
-        if (!IsLogged(principal))
-            throw new UnauthorizedCoreException();
-
-        if (principal.Identities.Any(id => id.RoleClaimType == roleClaim.Type))
-            throw new ForbbidenCoreException();
+        ThrowIfIsntLogged(principal);
 
         if (!principal.IsInRole(roleClaim.Value))
             throw new ForbbidenCoreException();
@@ -131,18 +129,22 @@ public static class ClaimsPrincipalExtension
     /// </summary>
     /// <exception cref="UnauthorizedCoreException"></exception>
     /// <exception cref="ForbbidenCoreException"></exception>
-
     public static void ThrowIfDoesntContainRole(this ClaimsPrincipal principal, string role)
     {
-        if (!IsLogged(principal))
-            throw new UnauthorizedCoreException();
+        ThrowIfIsntLogged(principal);
 
         if (!principal.IsInRole(role))
             throw new ForbbidenCoreException();
     }
 
+    public static void ThrowIfIsntLogged(this ClaimsPrincipal principal)
+    {
+        if (!IsLogged(principal))
+            throw new UnauthorizedCoreException();
+    }
+
     public static bool IsLogged(this ClaimsPrincipal principal)
     {
-        return principal.HasClaim(p => p.ValueType == Domain.Security.UserClaim.DEFAULT_USER_ID);
+        return principal.HasClaim(p => p.Type == Domain.Security.UserClaim.DEFAULT_USER_ID);
     }
 }

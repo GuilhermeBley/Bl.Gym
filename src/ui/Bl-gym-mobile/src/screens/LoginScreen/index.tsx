@@ -91,6 +91,8 @@ const LoginScreen = ({ navigation }: any) => {
         isRunningFirstLoading: true
       }));
 
+      console.debug(`Trying to refresh token (${user.refreshToken})`)
+
       if (user.refreshToken !== undefined &&
         user.dueDate !== undefined &&
         user.isExpirated()
@@ -103,6 +105,9 @@ const LoginScreen = ({ navigation }: any) => {
         }
     
         await login(response.Token, response.RefreshToken)
+      }
+      else{
+        console.debug(`Token was not refreshed ${user.isExpirated()} - ${user.dueDate}`)
       }
     }
 
