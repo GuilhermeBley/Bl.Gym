@@ -5,9 +5,13 @@ import * as yup from 'yup';
 import { styles } from "./styles";
 import { Picker } from '@react-native-picker/picker';
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
+import { GetGymMembersResponse } from "./actions";
 
 interface FormDataModel {
-  availableGyms: GetCurrentUserGymResponse[]
+  availableGyms: GetCurrentUserGymResponse[],
+  availableUsers: GetGymMembersResponse[],
+  selectedGym: string | undefined,
+  selectedStudent: string | undefined
 }
 
 interface TrainingCreationModel {
@@ -52,7 +56,10 @@ const GymTrainingCreationPage = () => {
 
   const [formData, setFormData] = useState(
     {
-      availableGyms : []
+      availableGyms: [],
+      availableUsers: [],
+      selectedGym: undefined,
+      selectedStudent: undefined
     } as FormDataModel
   );
   
@@ -113,6 +120,18 @@ const GymTrainingCreationPage = () => {
     );
   }
 
+  const handleGymSelect = async (
+    selectedGymId: string
+  ) => {
+    if (!selectedGymId)
+      return;
+
+    setFormData(previous => ({
+      ...previous,
+      selectedGym: selectedGymId
+    }));
+  }
+
   const handleSubmit = async (
     formikHelper: FormikHelpers<any>,
     data: TrainingCreationModel
@@ -143,12 +162,17 @@ const GymTrainingCreationPage = () => {
                 options={formData.availableGyms.map(e =>
                   ({ label: e.Name, value: e.Id })
                 )}
-                autoFocus />
-
-              <StyledInput
-                formikKey={"lastName"}
+                autoFocus
+                onValueChange={handleGymSelect} />
+              
+              <StyledSelect
+                formikKey={"studentId"}
                 formikProps={formikProps}
-                label={"Sobrenome"} />
+                label={"Selecione o estudante"}
+                options={formData.availableGyms.map(e =>
+                  ({ label: e.Name, value: e.Id })
+                )}
+                editable={false} />
 
               <StyledInput
                 formikKey={"email"}
