@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { styles } from "./styles";
 import { Picker } from '@react-native-picker/picker';
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
-import { GetGymMembersResponse } from "./actions";
+import { getGymMembers, GetGymMembersResponse } from "./actions";
 
 interface FormDataModel {
   availableGyms: GetCurrentUserGymResponse[],
@@ -120,15 +120,36 @@ const GymTrainingCreationPage = () => {
     );
   }
 
+  const resetFormData = () => {
+    setFormData(previous => ({
+      ...previous,
+      selectedGym: undefined,
+      selectedStudent: undefined,
+      availableUsers: []
+    }));
+  }
+
   const handleGymSelect = async (
     selectedGymId: string
   ) => {
     if (!selectedGymId)
+    {
+      resetFormData();
       return;
+    }
+
+    var membersResult = await getGymMembers(selectedGymId);
+
+    if (membersResult.ContainsError)
+    {
+      resetFormData();
+      return;
+    }
 
     setFormData(previous => ({
       ...previous,
-      selectedGym: selectedGymId
+      selectedGym: selectedGymId,
+      availableUsers: membersResult.Data
     }));
   }
 
