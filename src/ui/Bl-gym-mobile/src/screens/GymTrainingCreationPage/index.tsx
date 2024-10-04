@@ -1,11 +1,12 @@
 import { Formik, FormikHelpers, FormikProps } from "formik";
 import React, { useState } from "react";
-import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button } from "react-native";
+import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressable } from "react-native";
 import * as yup from 'yup';
 import { styles } from "./styles";
 import { Picker } from '@react-native-picker/picker';
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
 import { getGymMembers, GetGymMembersResponse } from "./actions";
+import commonStyles from "../../styles/commonStyles";
 
 interface FormDataModel {
   availableGyms: GetCurrentUserGymResponse[],
@@ -44,9 +45,9 @@ const validationSchema = yup.object().shape({
 });
 
 const GymTrainingCreationPage = () => {
-  
+
   const responseErrorsKey = "api-errors"
-  
+
   const initialValues: TrainingCreationModel = {
     gymId: "",
     trainingStudentId: "",
@@ -62,17 +63,17 @@ const GymTrainingCreationPage = () => {
       selectedStudent: undefined
     } as FormDataModel
   );
-  
+
   const StyledSelect: React.FC<StyledSelectProps> = ({ formikKey, formikProps, label, options, ...rest }) => {
     const inputStyles = styles.input;
-  
+
     const error = formikProps.touched[formikKey] && formikProps.errors[formikKey];
     const errorMessage = typeof error === 'string' ? error : '';
-  
+
     if (errorMessage) {
       inputStyles.borderColor = 'red';
     }
-  
+
     return (
       <View style={styles.inputContainer}>
         <Text>{label}</Text>
@@ -132,16 +133,14 @@ const GymTrainingCreationPage = () => {
   const handleGymSelect = async (
     selectedGymId: string
   ) => {
-    if (!selectedGymId)
-    {
+    if (!selectedGymId) {
       resetFormData();
       return;
     }
 
     var membersResult = await getGymMembers(selectedGymId);
 
-    if (membersResult.ContainsError)
-    {
+    if (membersResult.ContainsError) {
       resetFormData();
       return;
     }
@@ -185,7 +184,7 @@ const GymTrainingCreationPage = () => {
                 )}
                 autoFocus
                 onValueChange={handleGymSelect} />
-              
+
               <StyledSelect
                 formikKey={"studentId"}
                 formikProps={formikProps}
@@ -193,40 +192,49 @@ const GymTrainingCreationPage = () => {
                 options={formData.availableGyms.map(e =>
                   ({ label: e.Name, value: e.Id })
                 )}
-                editable={false} />
+                editable={!formData.selectedGym} />
 
-              <StyledInput
-                formikKey={"email"}
-                formikProps={formikProps}
-                label={"E-mail"}
-                keyboardType="email-address" />
+              {formData.selectedGym ?
+                <View>
 
-              <StyledInput
-                formikKey={"password"}
-                formikProps={formikProps}
-                label={"Senha"}
-                secureTextEntry />
+                  <StyledInput
+                    formikKey={"email"}
+                    formikProps={formikProps}
+                    label={"E-mail"}
+                    keyboardType="email-address" />
 
-              <StyledInput
-                formikKey={"confirmPassword"}
-                formikProps={formikProps}
-                label={"Confirme a senha"}
-                secureTextEntry />
+                  <StyledInput
+                    formikKey={"password"}
+                    formikProps={formikProps}
+                    label={"Senha"}
+                    secureTextEntry />
 
-              <StyledInput
-                formikKey={"phoneNumber"}
-                formikProps={formikProps}
-                label={"phoneNumber"}
-                secureTextEntry />
+                  <StyledInput
+                    formikKey={"confirmPassword"}
+                    formikProps={formikProps}
+                    label={"Confirme a senha"}
+                    secureTextEntry />
+
+                  <StyledInput
+                    formikKey={"phoneNumber"}
+                    formikProps={formikProps}
+                    label={"phoneNumber"}
+                    secureTextEntry />
+                </View> :
+                <View>
+                  <Text>Selecione a academia e o estudante para continuar o processo.</Text>
+                </View>}
+
+              <View>
+                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingCreationModel]}</Text>
+              </View>
 
               <View style={styles.buttonContainer}>
                 {formikProps.isSubmitting ?
                   <ActivityIndicator /> :
-                  <Button onPress={() => formikProps.handleSubmit()} title="Criar usuário" />}
-              </View>
-
-              <View>
-                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingCreationModel]}</Text>
+                  <Pressable style={commonStyles.PrimaryButton} onPress={() => formikProps.handleSubmit()}>
+                    <Text style={commonStyles.PrimaryButtonText}>Criar usuário</Text>
+                  </Pressable>}
               </View>
             </React.Fragment>
           );
