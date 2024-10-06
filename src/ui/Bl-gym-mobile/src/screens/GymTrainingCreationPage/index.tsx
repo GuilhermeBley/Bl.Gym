@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { styles } from "./styles";
 import { Picker } from '@react-native-picker/picker';
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
-import { getGymMembers, GetGymMembersResponse } from "./actions";
+import { getGymMembers, GetGymMembersResponse, TrainingCreationModel } from "./actions";
 import commonStyles from "../../styles/commonStyles";
 
 interface FormDataModel {
@@ -15,7 +15,7 @@ interface FormDataModel {
   selectedStudent: string | undefined
 }
 
-interface TrainingCreationModel {
+interface TrainingGymCreationModel {
   gymId: string,
   trainingStudentId: string,
   studentName: string,
@@ -48,11 +48,14 @@ const GymTrainingCreationPage = () => {
 
   const responseErrorsKey = "api-errors"
 
-  const initialValues: TrainingCreationModel = {
+  const initialValues: TrainingGymCreationModel = {
     gymId: "",
     trainingStudentId: "",
     studentName: "",
-    trainingData: undefined
+    trainingData: {
+      muscularGroup: '',
+      sets: []
+    } as TrainingCreationModel
   };
 
   const [formData, setFormData] = useState(
@@ -154,7 +157,7 @@ const GymTrainingCreationPage = () => {
 
   const handleSubmit = async (
     formikHelper: FormikHelpers<any>,
-    data: TrainingCreationModel
+    data: TrainingGymCreationModel
   ) => {
 
   }
@@ -226,7 +229,7 @@ const GymTrainingCreationPage = () => {
                 </View>}
 
               <View>
-                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingCreationModel]}</Text>
+                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingGymCreationModel]}</Text>
               </View>
 
               <View style={styles.buttonContainer}>
