@@ -1,4 +1,4 @@
-import { Formik, FormikHelpers, FormikProps } from "formik";
+import { FieldArray, Formik, FormikHelpers, FormikProps } from "formik";
 import React, { useState } from "react";
 import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressable } from "react-native";
 import * as yup from 'yup';
@@ -19,7 +19,7 @@ interface TrainingGymCreationModel {
   gymId: string,
   trainingStudentId: string,
   studentName: string,
-  trainingData: undefined | TrainingCreationModel
+  trainingData: TrainingCreationModel
 }
 
 interface StyledInputProps {
@@ -201,28 +201,46 @@ const GymTrainingCreationPage = () => {
                 <View>
 
                   <StyledInput
-                    formikKey={"email"}
+                    formikKey={"TrainingName"}
                     formikProps={formikProps}
-                    label={"E-mail"}
+                    label={"Nome do treino"}
                     keyboardType="email-address" />
 
-                  <StyledInput
-                    formikKey={"password"}
-                    formikProps={formikProps}
-                    label={"Senha"}
-                    secureTextEntry />
+                  {/* Trainings List */}
+                  <FieldArray
+                    name="Trainings"
+                    render={(arrayHelpers) => (
+                      <View>
+                        {formikProps.values.trainingData.sets.map((friend, index) => (
+                          <View key={index}>
+                            <TextInput
+                              placeholder="Friend Name"
+                              value={friend.name}
+                              onChangeText={handleChange(`friends[${index}].name`)}
+                              onBlur={handleBlur(`friends[${index}].name`)}
+                            />
+                            {touched.friends?.[index]?.name && errors.friends?.[index]?.name && (
+                              <Text style={{ color: 'red' }}>{errors.friends[index].name}</Text>
+                            )}
 
-                  <StyledInput
-                    formikKey={"confirmPassword"}
-                    formikProps={formikProps}
-                    label={"Confirme a senha"}
-                    secureTextEntry />
-
-                  <StyledInput
-                    formikKey={"phoneNumber"}
-                    formikProps={formikProps}
-                    label={"phoneNumber"}
-                    secureTextEntry />
+                            <TextInput
+                              placeholder="Relationship"
+                              value={friend.relationship}
+                              onChangeText={handleChange(`friends[${index}].relationship`)}
+                              onBlur={handleBlur(`friends[${index}].relationship`)}
+                            />
+                            {touched.friends?.[index]?.relationship && errors.friends?.[index]?.relationship && (
+                              <Text style={{ color: 'red' }}>{errors.friends[index].relationship}</Text>
+                            )}
+                          </View>
+                        ))}
+                        <Button
+                          title="Add Friend"
+                          onPress={() => arrayHelpers.push({ name: '', relationship: '' })}
+                        />
+                      </View>
+                    )}
+                  />
                 </View> :
                 <View>
                   <Text>Selecione a academia e o estudante para continuar o processo.</Text>
