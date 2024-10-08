@@ -7,6 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
 import { getGymMembers, GetGymMembersResponse, TrainingCreationModel, TrainingSetCreationModel } from "./actions";
 import commonStyles from "../../styles/commonStyles";
+import FilteredInputSelect from "../../components/FilteredInputSelect";
 
 interface FormDataModel {
   availableGyms: GetCurrentUserGymResponse[],
@@ -219,6 +220,8 @@ const GymTrainingCreationPage = () => {
                               onChangeText={handleChange(`friends[${index}].name`)}
                               onBlur={handleBlur(`friends[${index}].name`)}
                             />
+
+                            <FilteredInputSelect />
                           </View>
                         ))}
                         <Button
