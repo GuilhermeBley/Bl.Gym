@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { styles } from "./styles";
 import { Picker } from '@react-native-picker/picker';
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
-import { getGymMembers, GetGymMembersResponse, TrainingCreationModel } from "./actions";
+import { getGymMembers, GetGymMembersResponse, TrainingCreationModel, TrainingSetCreationModel } from "./actions";
 import commonStyles from "../../styles/commonStyles";
 
 interface FormDataModel {
@@ -211,32 +211,19 @@ const GymTrainingCreationPage = () => {
                     name="Trainings"
                     render={(arrayHelpers) => (
                       <View>
-                        {formikProps.values.trainingData.sets.map((friend, index) => (
+                        {formikProps.values.trainingData.sets.map((set, index) => (
                           <View key={index}>
                             <TextInput
                               placeholder="Friend Name"
-                              value={friend.name}
+                              value={set.set}
                               onChangeText={handleChange(`friends[${index}].name`)}
                               onBlur={handleBlur(`friends[${index}].name`)}
                             />
-                            {touched.friends?.[index]?.name && errors.friends?.[index]?.name && (
-                              <Text style={{ color: 'red' }}>{errors.friends[index].name}</Text>
-                            )}
-
-                            <TextInput
-                              placeholder="Relationship"
-                              value={friend.relationship}
-                              onChangeText={handleChange(`friends[${index}].relationship`)}
-                              onBlur={handleBlur(`friends[${index}].relationship`)}
-                            />
-                            {touched.friends?.[index]?.relationship && errors.friends?.[index]?.relationship && (
-                              <Text style={{ color: 'red' }}>{errors.friends[index].relationship}</Text>
-                            )}
                           </View>
                         ))}
                         <Button
-                          title="Add Friend"
-                          onPress={() => arrayHelpers.push({ name: '', relationship: '' })}
+                          title="Adicionar"
+                          onPress={() => arrayHelpers.push({ exerciseId: "", set: "" } as TrainingSetCreationModel)}
                         />
                       </View>
                     )}
