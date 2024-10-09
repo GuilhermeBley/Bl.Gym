@@ -2,18 +2,14 @@ import React, { useState } from 'react';
 import { View, TextInput, FlatList, Text, TouchableOpacity } from 'react-native';
 import styles from './styles';
 
-const SelectInput = () => {
-  // Define the list of options (e.g., a mock data array)
-  const data = [
-    'Apple',
-    'Banana',
-    'Orange',
-    'Pineapple',
-    'Grapes',
-    'Strawberry',
-    'Blueberry',
-    'Watermelon',
-  ];
+interface FilteredInputSelectProps {
+  data: string[];
+  onChange: (text: string) => void;
+}
+
+const FilteredInputSelect : React.FC<FilteredInputSelectProps> = (
+  { data, onChange }
+) => {
 
   const [inputText, setInputText] = useState('');
   const [filteredData, setFilteredData] = useState(data);
@@ -32,6 +28,8 @@ const SelectInput = () => {
       setFilteredData(data);
       setShowDropdown(false);
     }
+
+    onChange(text);
   };
 
   // Function to handle item selection
@@ -64,4 +62,4 @@ const SelectInput = () => {
   );
 };
 
-export default SelectInput;
+export default FilteredInputSelect;

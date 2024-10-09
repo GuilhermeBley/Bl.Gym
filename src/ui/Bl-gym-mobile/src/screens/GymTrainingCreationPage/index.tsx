@@ -221,7 +221,10 @@ const GymTrainingCreationPage = () => {
                               onBlur={handleBlur(`friends[${index}].name`)}
                             />
 
-                            <FilteredInputSelect />
+                            <FilteredInputSelect
+                              data={[]}
+                              onChange={(t) => { }}
+                            />
                           </View>
                         ))}
                         <Button
