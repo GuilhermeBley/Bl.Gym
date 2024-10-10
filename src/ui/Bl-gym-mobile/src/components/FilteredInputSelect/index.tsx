@@ -5,10 +5,11 @@ import styles from './styles';
 interface FilteredInputSelectProps {
   data: string[];
   onChange: (text: string) => void;
+  [key: string]: any;
 }
 
 const FilteredInputSelect : React.FC<FilteredInputSelectProps> = (
-  { data, onChange }
+  { data, onChange, rest }
 ) => {
 
   const [inputText, setInputText] = useState('');
@@ -42,9 +43,9 @@ const FilteredInputSelect : React.FC<FilteredInputSelectProps> = (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Type to filter..."
         value={inputText}
         onChangeText={handleInputChange}
+        {...rest}
       />
       {showDropdown && (
         <FlatList

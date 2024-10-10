@@ -214,16 +214,11 @@ const GymTrainingCreationPage = () => {
                       <View>
                         {formikProps.values.trainingData.sets.map((set, index) => (
                           <View key={index}>
-                            <TextInput
-                              placeholder="Friend Name"
-                              value={set.set}
-                              onChangeText={handleChange(`friends[${index}].name`)}
-                              onBlur={handleBlur(`friends[${index}].name`)}
-                            />
 
                             <FilteredInputSelect
                               data={[]}
-                              onChange={(t) => { }}
+                              onChange={(t) => formikProps.handleChange()}
+                              placeHolder="Digite um treino..."
                             />
                           </View>
                         ))}
