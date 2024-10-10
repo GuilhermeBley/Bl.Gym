@@ -20,7 +20,7 @@ interface TrainingGymCreationModel {
   gymId: string,
   trainingStudentId: string,
   studentName: string,
-  trainingData: TrainingCreationModel
+  sections: TrainingCreationModel[]
 }
 
 interface StyledInputProps {
@@ -53,10 +53,7 @@ const GymTrainingCreationPage = () => {
     gymId: "",
     trainingStudentId: "",
     studentName: "",
-    trainingData: {
-      muscularGroup: '',
-      sets: []
-    } as TrainingCreationModel
+    sections: []
   };
 
   const [formData, setFormData] = useState(
@@ -205,20 +202,21 @@ const GymTrainingCreationPage = () => {
                     formikKey={"TrainingName"}
                     formikProps={formikProps}
                     label={"Nome do treino"}
-                    keyboardType="email-address" />
+                  />
 
                   {/* Trainings List */}
                   <FieldArray
                     name="Trainings"
                     render={(arrayHelpers) => (
                       <View>
-                        {formikProps.values.trainingData.sets.map((set, index) => (
+                        {formikProps.values.sections.map((section, index) => (
                           <View key={index}>
 
                             <FilteredInputSelect
                               data={[]}
                               onChange={(t) => formikProps.handleChange()}
                               placeHolder="Digite um treino..."
+                              value=""
                             />
                           </View>
                         ))}

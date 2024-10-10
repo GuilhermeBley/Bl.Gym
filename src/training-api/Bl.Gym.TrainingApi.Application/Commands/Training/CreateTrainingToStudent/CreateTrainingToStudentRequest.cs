@@ -3,7 +3,7 @@
 public record CreateTrainingToStudentRequest(
     Guid GymId,
     Guid StudentId,
-    IEnumerable<CreateTrainingToStudentSection> Sets)
+    IEnumerable<CreateTrainingToStudentSection> Sections)
     : IRequest<CreateTrainingToStudentResponse>;
 
 public record CreateTrainingToStudentSection(
