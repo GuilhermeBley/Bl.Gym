@@ -15,13 +15,11 @@ const FilteredInputSelect : React.FC<FilteredInputSelectProps> = (
   { data, formikKey, formikProps, label, rest }
 ) => {
 
-  const [inputText, setInputText] = useState('');
   const [filteredData, setFilteredData] = useState(data);
   const [showDropdown, setShowDropdown] = useState(false);
 
   // Function to filter data based on input
   const handleInputChange = (text: string) => {
-    setInputText(text);
     if (text) {
       const filtered = data.filter((item) => 
         item.toLowerCase().includes(text.toLowerCase())
@@ -38,7 +36,6 @@ const FilteredInputSelect : React.FC<FilteredInputSelectProps> = (
 
   // Function to handle item selection
   const handleSelectItem = (item: string) => {
-    setInputText(item); // Set the selected item in the input
     setShowDropdown(false); // Hide the dropdown after selection
   };
   

@@ -214,9 +214,10 @@ const GymTrainingCreationPage = () => {
 
                             <FilteredInputSelect
                               data={[]}
-                              onChange={(t) => formikProps.handleChange()}
+                              formikKey={`sections[${index}].street`}
+                              formikProps={formikProps}
+                              label="Adicione um treino"
                               placeHolder="Digite um treino..."
-                              value=""
                             />
                           </View>
                         ))}
@@ -231,10 +232,6 @@ const GymTrainingCreationPage = () => {
                 <View>
                   <Text>Selecione a academia e o estudante para continuar o processo.</Text>
                 </View>}
-
-              <View>
-                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingGymCreationModel]}</Text>
-              </View>
 
               <View style={styles.buttonContainer}>
                 {formikProps.isSubmitting ?
