@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { View, TextInput, FlatList, Text, TouchableOpacity } from 'react-native';
 import styles from './styles';
+import { FormikProps } from 'formik';
 
 interface FilteredInputSelectProps {
   data: string[];
-  onChange: (text: string) => void;
+  formikKey: string,
+  formikProps: FormikProps<any>;
+  label: string;
   [key: string]: any;
 }
 
 const FilteredInputSelect : React.FC<FilteredInputSelectProps> = (
-  { data, onChange, rest }
+  { data, formikKey, formikProps, label, rest }
 ) => {
 
   const [inputText, setInputText] = useState('');
@@ -30,7 +33,7 @@ const FilteredInputSelect : React.FC<FilteredInputSelectProps> = (
       setShowDropdown(false);
     }
 
-    onChange(text);
+    formikProps.handleChange(formikKey)
   };
 
   // Function to handle item selection
@@ -38,13 +41,24 @@ const FilteredInputSelect : React.FC<FilteredInputSelectProps> = (
     setInputText(item); // Set the selected item in the input
     setShowDropdown(false); // Hide the dropdown after selection
   };
+  
+  const inputStyles = styles.input;
+
+  const error = formikProps.touched[formikKey] && formikProps.errors[formikKey];
+  const errorMessage = typeof error === 'string' ? error : '';
+
+  if (errorMessage) {
+    inputStyles.borderColor = "red"
+  }
 
   return (
     <View style={styles.container}>
+      <Text>{label}</Text>
       <TextInput
-        style={styles.input}
-        value={inputText}
+        style={inputStyles}
+        value={formikProps.values[formikKey]}
         onChangeText={handleInputChange}
+        onBlur={formikProps.handleBlur(formikKey)}
         {...rest}
       />
       {showDropdown && (
@@ -59,6 +73,7 @@ const FilteredInputSelect : React.FC<FilteredInputSelectProps> = (
           )}
         />
       )}
+      {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
     </View>
   );
 };
