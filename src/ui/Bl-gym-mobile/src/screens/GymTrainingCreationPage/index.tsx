@@ -7,7 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
 import { getGymMembers, GetGymMembersResponse, TrainingCreationModel, TrainingSetCreationModel } from "./actions";
 import commonStyles from "../../styles/commonStyles";
-import FilteredInputSelect from "../../components/FilteredInputSelect";
+import CreateOrEditSectionComponent from "../../components/gym/CreateOrEditSectionComponent";
 
 interface FormDataModel {
   availableGyms: GetCurrentUserGymResponse[],
@@ -42,12 +42,15 @@ const validationSchema = yup.object().shape({
   gymId: yup.string()
     .required("Selecione uma academia."),
   trainingStudentId: yup.string()
-    .required("Insira um estudante.")
+    .required("Insira um estudante."),
+  sections: yup.array().of(
+    yup.object().shape({
+      muscularGroup: yup.string().required('O nome do treino é necessário.')
+    })
+  ).min(1, 'Adicione ao menos uma seção (A, B, C, ...).')
 });
 
 const GymTrainingCreationPage = () => {
-
-  const responseErrorsKey = "api-errors"
 
   const initialValues: TrainingGymCreationModel = {
     gymId: "",
@@ -211,14 +214,12 @@ const GymTrainingCreationPage = () => {
                       <View>
                         {formikProps.values.sections.map((section, index) => (
                           <View key={index}>
-
-                            <FilteredInputSelect
-                              data={[]}
-                              formikKey={`sections[${index}].street`}
+                            <CreateOrEditSectionComponent
+                              sectionName={section.muscularGroup}
+                              section={formikProps.values.sections[index]}
                               formikProps={formikProps}
-                              label="Adicione um treino"
-                              placeHolder="Digite um treino..."
-                            />
+                              index={index}/>
+
                           </View>
                         ))}
                         <Button

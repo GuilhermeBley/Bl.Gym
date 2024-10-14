@@ -1,5 +1,20 @@
 import * as yup from 'yup';
 import { TrainingCreationModel } from "../../../screens/GymTrainingCreationPage/actions";
+import { View, Text } from 'react-native';
+import { FormikProps } from 'formik';
+import FilteredInputSelect from '../../FilteredInputSelect';
+import { useEffect, useState } from 'react';
+
+interface ComponentData {
+    trainingData: string[]   
+}
+
+interface CreateOrEditSectionComponentProps {
+    sectionName: string,
+    section: TrainingCreationModel | undefined,
+    index: number,
+    formikProps: FormikProps<any>
+}
 
 const validationSchema = yup.object().shape({
     muscularGroup: yup.string()
@@ -12,10 +27,37 @@ const validationSchema = yup.object().shape({
     ).min(1, 'Adicione ao menos um treino.')
 });
 
-const CreateOrEditSectionComponent = (
-    section: TrainingCreationModel | undefined
-) => {
-    section = section ?? ({muscularGroup: '', sets: [] });
+const CreateOrEditSectionComponent : React.FC<CreateOrEditSectionComponentProps> = ({sectionName, section, index, formikProps}) => {
+    section = section ?? ({ muscularGroup: '', sets: [] });
+    const [compoenentData, SetCompoenentData] = useState(
+        {
+            trainingData: [],
+        } as ComponentData
+    )
+    
+    useEffect(
+        () => {
+            
+
+            return () => {
+                // cancels the component data load
+            };
+        },
+        [])
+
+    return (
+        <View>
+            <Text>{sectionName}</Text>
+            
+            <FilteredInputSelect
+                data={[]}
+                formikKey={`sections[${index}].street`}
+                formikProps={formikProps}
+                label="Adicione um treino"
+                placeHolder="Digite um treino..."
+            />
+        </View>
+    )
 }
 
 export default CreateOrEditSectionComponent;
