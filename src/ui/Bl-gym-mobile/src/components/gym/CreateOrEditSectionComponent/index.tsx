@@ -5,15 +5,13 @@ import { FormikProps } from 'formik';
 import FilteredInputSelect from '../../FilteredInputSelect';
 import { useEffect, useState } from 'react';
 
-interface ComponentData {
-    trainingData: string[]   
-}
-
 interface CreateOrEditSectionComponentProps {
     sectionName: string,
     section: TrainingCreationModel | undefined,
     index: number,
-    formikProps: FormikProps<any>
+    formikProps: FormikProps<any>,
+    trainingData?: string[],
+    onLoadingMoreTrainingData?: () => Promise<any>
 }
 
 const validationSchema = yup.object().shape({
@@ -27,13 +25,15 @@ const validationSchema = yup.object().shape({
     ).min(1, 'Adicione ao menos um treino.')
 });
 
-const CreateOrEditSectionComponent : React.FC<CreateOrEditSectionComponentProps> = ({sectionName, section, index, formikProps}) => {
+const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> = ({
+    sectionName,
+    section,    
+    index,
+    formikProps,
+    trainingData = [],
+    onLoadingMoreTrainingData = () => { }
+}) => {
     section = section ?? ({ muscularGroup: '', sets: [] });
-    const [compoenentData, SetCompoenentData] = useState(
-        {
-            trainingData: [],
-        } as ComponentData
-    )
     
     useEffect(
         () => {
@@ -50,7 +50,7 @@ const CreateOrEditSectionComponent : React.FC<CreateOrEditSectionComponentProps>
             <Text>{sectionName}</Text>
             
             <FilteredInputSelect
-                data={[]}
+                data={trainingData}
                 formikKey={`sections[${index}].street`}
                 formikProps={formikProps}
                 label="Adicione um treino"
