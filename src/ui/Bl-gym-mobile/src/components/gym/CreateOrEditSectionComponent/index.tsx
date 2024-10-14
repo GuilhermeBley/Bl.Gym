@@ -34,16 +34,6 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
     onLoadingMoreTrainingData = () => { }
 }) => {
     section = section ?? ({ muscularGroup: '', sets: [] });
-    
-    useEffect(
-        () => {
-            
-
-            return () => {
-                // cancels the component data load
-            };
-        },
-        [])
 
     return (
         <View>
