@@ -39,6 +39,8 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
         <View>
             <Text>{sectionName}</Text>
             
+            <
+
             <FilteredInputSelect
                 data={trainingData}
                 formikKey={`sections[${index}].street`}
