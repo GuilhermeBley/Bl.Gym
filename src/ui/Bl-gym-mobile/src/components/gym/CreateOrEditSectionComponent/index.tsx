@@ -4,6 +4,8 @@ import { View, Text } from 'react-native';
 import { FormikProps } from 'formik';
 import FilteredInputSelect from '../../FilteredInputSelect';
 import { useEffect, useState } from 'react';
+import StyledInput from '../../StyledInputFormik';
+import StyledInputFormik from '../../StyledInputFormik';
 
 interface CreateOrEditSectionComponentProps {
     sectionName: string,
@@ -39,11 +41,14 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
         <View>
             <Text>{sectionName}</Text>
             
-            <
+            <StyledInputFormik
+                formikKey={"set"}
+                formikProps={formikProps} 
+                label={"Coloque as repetições"}/>
 
             <FilteredInputSelect
                 data={trainingData}
-                formikKey={`sections[${index}].street`}
+                formikKey={`sections[${index}].exerciseId`}
                 formikProps={formikProps}
                 label="Adicione um treino"
                 placeHolder="Digite um treino..."
