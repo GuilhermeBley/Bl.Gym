@@ -45,7 +45,14 @@ const validationSchema = yup.object().shape({
     .required("Insira um estudante."),
   sections: yup.array().of(
     yup.object().shape({
-      muscularGroup: yup.string().required('O nome do treino é necessário.')
+      muscularGroup: yup.string()
+        .required("Selecione uma academia."),
+      sets: yup.array().of(
+          yup.object().shape({
+              set: yup.string().required('A repetição é necessária.'),
+              exerciseId: yup.string().required('Exercício é obrigatório.'),
+          })
+      ).min(1, 'Adicione ao menos um treino.')
     })
   ).min(1, 'Adicione ao menos uma seção (A, B, C, ...).')
 });
@@ -218,7 +225,8 @@ const GymTrainingCreationPage = () => {
                               sectionName={section.muscularGroup}
                               section={formikProps.values.sections[index]}
                               formikProps={formikProps}
-                              index={index}/>
+                              formikKeySection={`sections[${index}].sets[{setIndex}].exerciseId`} 
+                              formikKeySet={`sections[${index}].sets[{setIndex}].set`} />
 
                           </View>
                         ))}

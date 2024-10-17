@@ -1,38 +1,26 @@
-import * as yup from 'yup';
 import { TrainingCreationModel } from "../../../screens/GymTrainingCreationPage/actions";
 import { View, Text } from 'react-native';
 import { FormikProps } from 'formik';
 import FilteredInputSelect from '../../FilteredInputSelect';
-import { useEffect, useState } from 'react';
-import StyledInput from '../../StyledInputFormik';
 import StyledInputFormik from '../../StyledInputFormik';
 
 interface CreateOrEditSectionComponentProps {
     sectionName: string,
     section: TrainingCreationModel | undefined,
-    index: number,
     formikProps: FormikProps<any>,
     trainingData?: string[],
+    formikKeySet: string,
+    formikKeySection: string,
     onLoadingMoreTrainingData?: () => Promise<any>
 }
-
-const validationSchema = yup.object().shape({
-    muscularGroup: yup.string()
-        .required("Selecione uma academia."),
-    sets: yup.array().of(
-        yup.object().shape({
-            set: yup.string().required('A repetição é necessária.'),
-            exerciseId: yup.string().required('Exercício é obrigatório.'),
-        })
-    ).min(1, 'Adicione ao menos um treino.')
-});
 
 const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> = ({
     sectionName,
     section,    
-    index,
     formikProps,
     trainingData = [],
+    formikKeySet = "set",
+    formikKeySection = "sections[i].exerciseId",
     onLoadingMoreTrainingData = () => { }
 }) => {
     section = section ?? ({ muscularGroup: '', sets: [] });
@@ -42,13 +30,13 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
             <Text>{sectionName}</Text>
             
             <StyledInputFormik
-                formikKey={"set"}
+                formikKey={formikKeySet}
                 formikProps={formikProps} 
                 label={"Coloque as repetições"}/>
 
             <FilteredInputSelect
                 data={trainingData}
-                formikKey={`sections[${index}].exerciseId`}
+                formikKey={formikKeySection}
                 formikProps={formikProps}
                 label="Adicione um treino"
                 placeHolder="Digite um treino..."
