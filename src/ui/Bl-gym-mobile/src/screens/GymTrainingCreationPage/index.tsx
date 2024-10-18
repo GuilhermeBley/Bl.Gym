@@ -30,6 +30,12 @@ interface StyledInputProps {
   [key: string]: any;
 }
 
+interface SectionComponentProps {
+  formikProps: FormikProps<TrainingGymCreationModel>;
+  trainingIndex: number,
+  section: TrainingCreationModel
+}
+
 interface StyledSelectProps {
   formikKey: string;
   formikProps: any;
@@ -48,10 +54,10 @@ const validationSchema = yup.object().shape({
       muscularGroup: yup.string()
         .required("Selecione uma academia."),
       sets: yup.array().of(
-          yup.object().shape({
-              set: yup.string().required('A repetição é necessária.'),
-              exerciseId: yup.string().required('Exercício é obrigatório.'),
-          })
+        yup.object().shape({
+          set: yup.string().required('A repetição é necessária.').min(3, "Insira uma série válida."),
+          exerciseId: yup.string().required('Exercício é obrigatório.').min(3, "Insira um exercício válido."),
+        })
       ).min(1, 'Adicione ao menos um treino.')
     })
   ).min(1, 'Adicione ao menos uma seção (A, B, C, ...).')
@@ -130,6 +136,41 @@ const GymTrainingCreationPage = () => {
         {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
       </View>
     );
+  }
+
+  const SectionComponent: React.FC<SectionComponentProps> = ({ formikProps, trainingIndex, section: training }) => {
+
+    return (
+      <View>
+
+        {/* Trainings List */}
+        <FieldArray
+          name={`sections[${trainingIndex}].sets`}
+          render={(arrayHelpers) => (
+            <View>
+              {formikProps.values.sections[trainingIndex].sets.map((set, setIndex) => (
+                <View key={setIndex}>
+
+                  <CreateOrEditSectionComponent
+                    sectionName={training.muscularGroup}
+                    section={formikProps.values.sections[trainingIndex]}
+                    formikProps={formikProps}
+                    formikKeySection={`sections[${trainingIndex}].sets[${setIndex}].exerciseId`}
+                    formikKeySet={`sections[${trainingIndex}].sets[${setIndex}].set`} />
+
+                </View>
+              ))}
+              <Button
+                title="Adicionar"
+                onPress={() => arrayHelpers.push({ exerciseId: "", set: "" } as TrainingSetCreationModel)}
+              />
+            </View>
+          )}
+        />
+
+
+      </View>
+    )
   }
 
   const resetFormData = () => {
@@ -214,19 +255,18 @@ const GymTrainingCreationPage = () => {
                     label={"Nome do treino"}
                   />
 
-                  {/* Trainings List */}
+                  {/* Trainings Sections List */}
                   <FieldArray
-                    name="Trainings"
+                    name="sections"
                     render={(arrayHelpers) => (
                       <View>
                         {formikProps.values.sections.map((section, index) => (
                           <View key={index}>
-                            <CreateOrEditSectionComponent
-                              sectionName={section.muscularGroup}
-                              section={formikProps.values.sections[index]}
+
+                            <SectionComponent
                               formikProps={formikProps}
-                              formikKeySection={`sections[${index}].sets[{setIndex}].exerciseId`} 
-                              formikKeySet={`sections[${index}].sets[{setIndex}].set`} />
+                              trainingIndex={index}
+                              section={section} />
 
                           </View>
                         ))}
