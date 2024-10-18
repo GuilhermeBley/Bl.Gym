@@ -4,30 +4,30 @@ import styles from './styles';
 import { FormikProps } from 'formik';
 
 interface FilteredInputSelectProps {
-  data: string[];
+  data: Map<string, string>,
   formikKey: string,
-  formikProps: FormikProps<any>;
-  label: string;
-  [key: string]: any;
+  formikProps: FormikProps<any>,
+  label: string,
+  [key: string]: any,
 }
 
 const FilteredInputSelect : React.FC<FilteredInputSelectProps> = (
   { data, formikKey, formikProps, label, rest }
 ) => {
 
-  const [filteredData, setFilteredData] = useState(data);
+  const [filteredData, setFilteredData] = useState(data.entries().next().value); // getting the first element
   const [showDropdown, setShowDropdown] = useState(false);
 
   // Function to filter data based on input
-  const handleInputChange = (text: string) => {
-    if (text) {
-      const filtered = data.filter((item) => 
-        item.toLowerCase().includes(text.toLowerCase())
-      );
+  const handleInputChange = (value: string) => {
+    if (value) {
+      const filtered = data.entries().filter((item) => 
+        item[1].toLowerCase().includes(value.toLowerCase())
+      ).next().value;
       setFilteredData(filtered);
       setShowDropdown(true);
     } else {
-      setFilteredData(data);
+      setFilteredData(data.entries().next().value);
       setShowDropdown(false);
     }
 

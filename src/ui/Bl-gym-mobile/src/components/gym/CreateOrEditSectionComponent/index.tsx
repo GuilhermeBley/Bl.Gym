@@ -8,7 +8,7 @@ interface CreateOrEditSectionComponentProps {
     sectionName: string,
     section: TrainingCreationModel | undefined,
     formikProps: FormikProps<any>,
-    trainingData?: string[],
+    trainingData?: Map<string, string>,
     formikKeySet: string,
     formikKeySection: string,
     onLoadingMoreTrainingData?: () => Promise<any>
@@ -18,9 +18,9 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
     sectionName,
     section,    
     formikProps,
-    trainingData = [],
-    formikKeySet = "set",
-    formikKeySection = "sections[i].exerciseId",
+    trainingData = new Map<string, string>(),
+    formikKeySet,
+    formikKeySection,
     onLoadingMoreTrainingData = () => { }
 }) => {
     section = section ?? ({ muscularGroup: '', sets: [] });
