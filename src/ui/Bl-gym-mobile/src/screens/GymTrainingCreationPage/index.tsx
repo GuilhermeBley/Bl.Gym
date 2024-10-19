@@ -1,19 +1,23 @@
 import { FieldArray, Formik, FormikHelpers, FormikProps } from "formik";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressable } from "react-native";
 import * as yup from 'yup';
 import { styles } from "./styles";
 import { Picker } from '@react-native-picker/picker';
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
-import { getGymMembers, GetGymMembersResponse, TrainingCreationModel, TrainingSetCreationModel } from "./actions";
+import { GetAvailableExercisesItemResponse, getGymExercisesByPage, getGymMembers, GetGymMembersResponse, getGymsAvailables, TrainingCreationModel, TrainingSetCreationModel } from "./actions";
 import commonStyles from "../../styles/commonStyles";
 import CreateOrEditSectionComponent from "../../components/gym/CreateOrEditSectionComponent";
+import axios from "axios";
+import { UserContext } from "../../contexts/UserContext";
 
-interface FormDataModel {
+interface PageDataModel {
   availableGyms: GetCurrentUserGymResponse[],
   availableUsers: GetGymMembersResponse[],
   selectedGym: string | undefined,
-  selectedStudent: string | undefined
+  selectedStudent: string | undefined,
+  availableTrainings: GetAvailableExercisesItemResponse[],
+  isLoadingInitialData: boolean
 }
 
 interface TrainingGymCreationModel {
@@ -72,14 +76,54 @@ const GymTrainingCreationPage = () => {
     sections: []
   };
 
-  const [formData, setFormData] = useState(
+  const [pageData, setPageData] = useState(
     {
       availableGyms: [],
       availableUsers: [],
       selectedGym: undefined,
-      selectedStudent: undefined
-    } as FormDataModel
+      selectedStudent: undefined,
+      availableTrainings: [],
+      isLoadingInitialData: true
+    } as PageDataModel
   );
+
+  const userContext = useContext(UserContext);
+
+  useEffect(() => {
+    const source = axios.CancelToken.source();
+
+    const fetchData = async () => {
+      // TODO: GET ALL USER GYM's
+
+      var result = await getGymsAvailables(
+        userContext.user.id,
+        source.token);
+
+      if (result.Success) {
+
+        setPageData(previous => ({
+          ...previous,
+          Gyms: result.Data.Gyms,
+          startedWithError: false,
+        }));
+
+        return;
+      }
+    }
+
+    fetchData()
+      .finally(() => {
+        setPageData(previous => ({
+          ...previous,
+          isLoadingInitialData: false
+        }));
+      });
+
+    return () => {
+      source.cancel();
+    }
+
+  }, [])
 
   const StyledSelect: React.FC<StyledSelectProps> = ({ formikKey, formikProps, label, options, ...rest }) => {
     const inputStyles = styles.input;
@@ -156,12 +200,13 @@ const GymTrainingCreationPage = () => {
                     section={formikProps.values.sections[trainingIndex]}
                     formikProps={formikProps}
                     formikKeySection={`sections[${trainingIndex}].sets[${setIndex}].exerciseId`}
-                    formikKeySet={`sections[${trainingIndex}].sets[${setIndex}].set`} />
+                    formikKeySet={`sections[${trainingIndex}].sets[${setIndex}].set`}
+                    trainingData={new Map(pageData.availableTrainings.map(item => [item.id, item.name]))} />
 
                 </View>
               ))}
               <Button
-                title="Adicionar"
+                title="+ Exercício"
                 onPress={() => arrayHelpers.push({ exerciseId: "", set: "" } as TrainingSetCreationModel)}
               />
             </View>
@@ -174,7 +219,7 @@ const GymTrainingCreationPage = () => {
   }
 
   const resetFormData = () => {
-    setFormData(previous => ({
+    setPageData(previous => ({
       ...previous,
       selectedGym: undefined,
       selectedStudent: undefined,
@@ -190,6 +235,8 @@ const GymTrainingCreationPage = () => {
       return;
     }
 
+    // TODO: GET GYM TRAININGS
+
     var membersResult = await getGymMembers(selectedGymId);
 
     if (membersResult.ContainsError) {
@@ -197,7 +244,7 @@ const GymTrainingCreationPage = () => {
       return;
     }
 
-    setFormData(previous => ({
+    setPageData(previous => ({
       ...previous,
       selectedGym: selectedGymId,
       availableUsers: membersResult.Data
@@ -231,7 +278,7 @@ const GymTrainingCreationPage = () => {
                 formikKey={"gymId"}
                 formikProps={formikProps}
                 label={"Academia"}
-                options={formData.availableGyms.map(e =>
+                options={pageData.availableGyms.map(e =>
                   ({ label: e.Name, value: e.Id })
                 )}
                 autoFocus
@@ -241,12 +288,12 @@ const GymTrainingCreationPage = () => {
                 formikKey={"studentId"}
                 formikProps={formikProps}
                 label={"Selecione o estudante"}
-                options={formData.availableGyms.map(e =>
+                options={pageData.availableGyms.map(e =>
                   ({ label: e.Name, value: e.Id })
                 )}
-                editable={!formData.selectedGym} />
+                editable={!pageData.selectedGym} />
 
-              {formData.selectedGym ?
+              {pageData.selectedGym ?
                 <View>
 
                   <StyledInput
