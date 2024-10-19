@@ -235,20 +235,36 @@ const GymTrainingCreationPage = () => {
       return;
     }
 
-    // TODO: GET GYM TRAININGS
+    var setTrainingsAsync = async () => {
+      var gymTrainingsResult = await getGymExercisesByPage(selectedGymId, 0, undefined);
 
-    var membersResult = await getGymMembers(selectedGymId);
-
-    if (membersResult.ContainsError) {
-      resetFormData();
-      return;
+      if (gymTrainingsResult.ContainsError)
+      {
+        return;
+      }
+  
+      setPageData(previous => ({
+        ...previous,
+        availableTrainings: gymTrainingsResult.Data
+      }));
     }
 
-    setPageData(previous => ({
-      ...previous,
-      selectedGym: selectedGymId,
-      availableUsers: membersResult.Data
-    }));
+    var setMembersAsync = async () => {
+      var membersResult = await getGymMembers(selectedGymId);
+
+      if (membersResult.ContainsError) {
+        resetFormData();
+        return;
+      }
+  
+      setPageData(previous => ({
+        ...previous,
+        selectedGym: selectedGymId,
+        availableUsers: membersResult.Data
+      }));
+    }
+
+    await Promise.all([setMembersAsync, setTrainingsAsync]);
   }
 
   const handleSubmit = async (
