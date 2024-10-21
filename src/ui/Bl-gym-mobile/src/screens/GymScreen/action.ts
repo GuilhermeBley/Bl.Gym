@@ -12,7 +12,7 @@ export interface GetCurrentUserGymResponse{
 };
 
 interface GetCurrentUserGymsResponse {
-    Gyms: GetCurrentUserGymResponse[]
+    gyms: GetCurrentUserGymResponse[]
 };
 
 export const handleGyms = (

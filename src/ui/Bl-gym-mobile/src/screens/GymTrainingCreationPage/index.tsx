@@ -103,7 +103,7 @@ const GymTrainingCreationPage = () => {
 
         setPageData(previous => ({
           ...previous,
-          Gyms: result.Data.Gyms,
+          Gyms: result.Data.gyms,
           startedWithError: false,
         }));
 
