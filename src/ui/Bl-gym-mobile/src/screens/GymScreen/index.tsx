@@ -87,8 +87,21 @@ const GymScreen = () => {
 
         if (result.ContainsError) {
             setPageData(previous => ({ ...previous, errors: result.Errors }))
+            setModalVisible(false);
+            return;
         }
 
+        var resultGyms = await handleGyms(userContext.user.id)
+
+        if (resultGyms.Success) {
+
+            setPageData(previous => ({
+                ...previous,
+                Gyms: result.Data.Gyms,
+            }));
+
+            return;
+        }
         setModalVisible(false);
     }
 
