@@ -56,7 +56,7 @@ const GymScreen = () => {
                 setPageData(previous => ({
                     ...previous,
                     Gyms: result.Data.gyms,
-                    startedWithError: false,
+                    startedWithError: false
                 }));
 
                 return;
@@ -131,12 +131,19 @@ const GymScreen = () => {
 
     return (
         <SafeAreaView>
-            <FlatList
-                data={pageData.Gyms}
-                renderItem={(info) => GymCardComponent(info.item)}
-                keyExtractor={(item) => item.Id}>
 
-            </FlatList>
+            {pageData.isLoadingInitialData ? 
+                <View>
+                    <ActivityIndicator/>
+                </View> : 
+                <View>
+                    <FlatList
+                        data={pageData.Gyms}
+                        renderItem={(info) => GymCardComponent(info.item)}
+                        keyExtractor={(item) => item.Id}>
+
+                    </FlatList>
+                </View>}
 
             {userContext.user.isInRole(ManageAnyGym)
                 ? (
