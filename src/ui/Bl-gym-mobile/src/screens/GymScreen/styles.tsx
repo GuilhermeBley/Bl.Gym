@@ -26,11 +26,11 @@ export const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 14,
-    color: '#666',
+    color: '#080000',
   },
   roleText: {
     fontSize: 10,
-    color: '#666',
+    color: '#080000',
   },
   addGymButton: {
 
