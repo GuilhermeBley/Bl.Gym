@@ -5,7 +5,7 @@ import { handleGyms } from "../GymScreen/action";
 export const handleTrainingCreation = (
     trainingStudentId: string,
     gymId: string,
-    trainingData: TrainingCreationModel 
+    trainingData: TrainingCreationModel[] 
 ) => {
     return axios.post(
         "Training",

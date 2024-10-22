@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { styles } from "./styles";
 import { Picker } from '@react-native-picker/picker';
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
-import { GetAvailableExercisesItemResponse, getGymExercisesByPage, getGymMembers, GetGymMembersResponse, getGymsAvailables, TrainingCreationModel, TrainingSetCreationModel } from "./actions";
+import { GetAvailableExercisesItemResponse, getGymExercisesByPage, getGymMembers, GetGymMembersResponse, getGymsAvailables, handleTrainingCreation, TrainingCreationModel, TrainingSetCreationModel } from "./actions";
 import commonStyles from "../../styles/commonStyles";
 import CreateOrEditSectionComponent from "../../components/gym/CreateOrEditSectionComponent";
 import axios from "axios";
@@ -68,6 +68,7 @@ const validationSchema = yup.object().shape({
 });
 
 const GymTrainingCreationPage = () => {
+  const responseErrorsKey = "api-errors"
 
   const initialValues: TrainingGymCreationModel = {
     gymId: "",
@@ -271,7 +272,15 @@ const GymTrainingCreationPage = () => {
     formikHelper: FormikHelpers<any>,
     data: TrainingGymCreationModel
   ) => {
+    var result = await handleTrainingCreation(
+      data.trainingStudentId,
+      data.gymId,
+      data.sections,
+    )
 
+    result.Errors.forEach(error => {
+      formikHelper.setFieldError(responseErrorsKey, error)
+    });
   }
 
   return (
@@ -351,6 +360,10 @@ const GymTrainingCreationPage = () => {
                   <Pressable style={commonStyles.PrimaryButton} onPress={() => formikProps.handleSubmit()}>
                     <Text style={commonStyles.PrimaryButtonText}>Criar usuário</Text>
                   </Pressable>}
+              </View>
+
+              <View>
+                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingCreationModel]}</Text>
               </View>
             </React.Fragment>
           );
