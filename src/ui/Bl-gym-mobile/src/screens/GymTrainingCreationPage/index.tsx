@@ -1,4 +1,4 @@
-import { FieldArray, Formik, FormikHelpers, FormikProps } from "formik";
+import { FieldArray, Formik, FormikErrors, FormikHelpers, FormikProps } from "formik";
 import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressable } from "react-native";
 import * as yup from 'yup';
@@ -363,7 +363,7 @@ const GymTrainingCreationPage = () => {
               </View>
 
               <View>
-                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingCreationModel]}</Text>
+                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingGymCreationModel]?.toString()}</Text>
               </View>
             </React.Fragment>
           );
