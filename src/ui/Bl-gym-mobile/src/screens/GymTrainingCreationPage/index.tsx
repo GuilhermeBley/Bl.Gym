@@ -10,6 +10,8 @@ import commonStyles from "../../styles/commonStyles";
 import CreateOrEditSectionComponent from "../../components/gym/CreateOrEditSectionComponent";
 import axios from "axios";
 import { UserContext } from "../../contexts/UserContext";
+import StyledInputFormik from "../../components/StyledInputFormik";
+import StyledSelectInputFormik from "../../components/StyledSelectInputFormik";
 
 interface PageDataModel {
   availableGyms: GetCurrentUserGymResponse[],
@@ -27,25 +29,10 @@ interface TrainingGymCreationModel {
   sections: TrainingCreationModel[]
 }
 
-interface StyledInputProps {
-  formikKey: string,
-  formikProps: FormikProps<any>;
-  label: string;
-  [key: string]: any;
-}
-
 interface SectionComponentProps {
   formikProps: FormikProps<TrainingGymCreationModel>;
   trainingIndex: number,
   section: TrainingCreationModel
-}
-
-interface StyledSelectProps {
-  formikKey: string;
-  formikProps: any;
-  label: string;
-  options: { label: string; value: string }[];
-  [key: string]: any;
 }
 
 const validationSchema = yup.object().shape({
@@ -125,63 +112,6 @@ const GymTrainingCreationPage = () => {
     }
 
   }, [])
-
-  const StyledSelect: React.FC<StyledSelectProps> = ({ formikKey, formikProps, label, options, ...rest }) => {
-    const inputStyles = styles.input;
-
-    const error = formikProps.touched[formikKey] && formikProps.errors[formikKey];
-    const errorMessage = typeof error === 'string' ? error : '';
-
-    if (errorMessage) {
-      inputStyles.borderColor = 'red';
-    }
-
-    return (
-      <View style={styles.inputContainer}>
-        <Text>{label}</Text>
-        <View style={[inputStyles, { paddingHorizontal: 5 }]}>
-          <Picker
-            selectedValue={formikProps.values[formikKey]}
-            onValueChange={formikProps.handleChange(formikKey)}
-            onBlur={formikProps.handleBlur(formikKey)}
-            {...rest}
-          >
-            {options.map((option) => (
-              <Picker.Item key={option.value} label={option.label} value={option.value} />
-            ))}
-          </Picker>
-        </View>
-        {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
-      </View>
-    );
-  };
-
-  const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
-    const inputStyles = styles.input;
-
-    const error = formikProps.touched[formikKey] && formikProps.errors[formikKey];
-    const errorMessage = typeof error === 'string' ? error : '';
-
-    if (errorMessage) {
-      inputStyles.borderColor = "red"
-    }
-
-    return (
-      <View style={styles.inputContainer}>
-        <Text>{label}</Text>
-        <TextInput
-          style={inputStyles}
-          value={formikProps.values[formikKey]}
-          onChangeText={formikProps.handleChange(formikKey)}
-          onBlur={formikProps.handleBlur(formikKey)}
-          {...rest}
-        >
-
-        </TextInput>
-        {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
-      </View>
-    );
-  }
 
   const SectionComponent: React.FC<SectionComponentProps> = ({ formikProps, trainingIndex, section: training }) => {
 
@@ -299,7 +229,7 @@ const GymTrainingCreationPage = () => {
         {formikProps => {
           return (
             <React.Fragment>
-              <StyledSelect
+              <StyledSelectInputFormik
                 formikKey={"gymId"}
                 formikProps={formikProps}
                 label={"Academia"}
@@ -309,7 +239,7 @@ const GymTrainingCreationPage = () => {
                 autoFocus
                 onValueChange={handleGymSelect} />
 
-              <StyledSelect
+              <StyledSelectInputFormik
                 formikKey={"studentId"}
                 formikProps={formikProps}
                 label={"Selecione o estudante"}
@@ -321,7 +251,7 @@ const GymTrainingCreationPage = () => {
               {pageData.selectedGym ?
                 <View>
 
-                  <StyledInput
+                  <StyledInputFormik
                     formikKey={"TrainingName"}
                     formikProps={formikProps}
                     label={"Nome do treino"}
