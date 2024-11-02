@@ -30,4 +30,6 @@ public enum CoreExceptionCode
     UserAlreadyLoggedInGym = 400_14,
     InvalidRefreshTokenLength = 400_15,
     InvalidExpirationTokenDate = 400_16,
+    InvalidObservationLength = 400_17,
+    InvalidStartAndEndDate = 400_18
 }
