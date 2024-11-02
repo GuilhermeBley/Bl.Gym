@@ -24,7 +24,6 @@ public class TrainingUserPeriod
         ResultBuilder result = new();
 
         result.AddIf(
-            (startedAt is null && endedAt is not null) ||
             (endedAt <= startedAt),
             CoreExceptionCode.InvalidStartAndEndDate);
 
