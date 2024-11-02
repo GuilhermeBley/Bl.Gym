@@ -18,7 +18,7 @@ public class TrainingUserPeriod
     private TrainingUserPeriod() { }
 
     public Result Update(
-        DateTime? startedAt,
+        DateTime startedAt,
         DateTime? endedAt)
     {
         ResultBuilder result = new();
