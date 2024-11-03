@@ -1,4 +1,6 @@
-﻿namespace Bl.Gym.TrainingApi.Application.Model.Training;
+﻿using Bl.Gym.TrainingApi.Domain.Entities.Training;
+
+namespace Bl.Gym.TrainingApi.Application.Model.Training;
 
 /// <summary>
 /// This model represents an relation between User and Training Section.
@@ -15,4 +17,19 @@ public class TrainingUserPeriodModel
 
     public DateTime UpdatedAt { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    public static TrainingUserPeriodModel MapFromEntity(TrainingUserPeriod entity)
+    {
+        return new()
+        {
+            CreatedAt = entity.CreatedAt,
+            Id = entity.Id,
+            EndedAt = entity.EndedAt,
+            Observation = entity.Observation,
+            SectionId = entity.SectionId,
+            StartedAt = entity.StartedAt,
+            UpdatedAt = entity.UpdatedAt,
+            UserId = entity.UserId,
+        };
+    }
 }
