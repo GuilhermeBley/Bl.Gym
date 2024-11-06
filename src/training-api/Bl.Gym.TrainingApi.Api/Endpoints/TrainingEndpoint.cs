@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Bl.Gym.TrainingApi.Api.Endpoints;
 
@@ -76,6 +77,18 @@ public class TrainingEndpoint
                     new Application.Commands.Training.GetAvailableExercises.GetAvailableExercisesRequest(gymId, skip, take));
 
             return Results.Ok(result);
+        }).RequireAuthorization();
+
+        builder.MapPost("Training/section/{sectionId}/period", async (
+            HttpContext context,
+            Guid sectionId,
+            [FromServices] IMediator mediator) =>
+        {
+            var result =
+            await mediator.Send(
+                    new Application.Commands.Training.StartTrainingPeriod.StartTrainingPeriodRequest(sectionId));
+
+            return Results.Created($"Training/section/{sectionId}/period", result);
         }).RequireAuthorization();
     }
 }
