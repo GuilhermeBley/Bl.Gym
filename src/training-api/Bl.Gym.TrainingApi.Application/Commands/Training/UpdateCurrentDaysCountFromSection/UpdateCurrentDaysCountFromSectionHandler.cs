@@ -4,6 +4,7 @@ using Bl.Gym.TrainingApi.Application.Services;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Training.UpdateCurrentDaysCountFromSection;
 
+[Obsolete("Use 'FinishTrainingPeriodHandler'.")]
 internal class UpdateCurrentDaysCountFromSectionHandler
     : IRequestHandler<UpdateCurrentDaysCountFromSectionRequest, Guid>
 {
