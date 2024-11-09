@@ -1,4 +1,6 @@
-﻿using Bl.Gym.TrainingApi.Domain.Entities.Training;
+﻿using Bl.Gym.TrainingApi.Domain.Entities.Identity;
+using Bl.Gym.TrainingApi.Domain.Entities.Training;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Bl.Gym.TrainingApi.Application.Model.Training;
 
@@ -17,6 +19,20 @@ public class TrainingUserPeriodModel
 
     public DateTime UpdatedAt { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    public TrainingUserPeriod MapToEntity()
+    {
+        return TrainingUserPeriod.Create(
+            id: Id,
+            userId: UserId,
+            sectionId: SectionId,
+            startedAt: StartedAt,
+            endedAt: EndedAt,
+            observation: Observation,
+            updatedAt: UpdatedAt,
+            createdAt: CreatedAt)
+            .RequiredResult;
+    }
 
     public static TrainingUserPeriodModel MapFromEntity(TrainingUserPeriod entity)
     {

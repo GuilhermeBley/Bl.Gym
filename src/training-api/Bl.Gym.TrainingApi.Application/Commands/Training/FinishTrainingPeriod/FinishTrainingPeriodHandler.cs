@@ -39,7 +39,9 @@ public class FinishTrainingPeriodHandler
             .FirstOrDefaultAsync(cancellationToken)
             ?? throw CoreException.CreateByCode(CoreExceptionCode.NotFound);
 
-        var periodEntity = null; // TODO: create entity and set as finished
+        var periodEntity = periodToUpdate.MapToEntity();
+
+        periodEntity.Update(periodEntity.StartedAt ?? DateTime.UtcNow, DateTime.UtcNow);
 
         await _gymChecker.ThrowIfUserIsntInTheSectionAsync(user.RequiredUserId(), periodToUpdate.SectionId, cancellationToken);
 
@@ -76,15 +78,15 @@ public class FinishTrainingPeriodHandler
             .Where(e => e.ConcurrencyStamp == entityToUpdate.ConcurrencyStamp)
             .ExecuteUpdateAsync(setter => setter.SetProperty(p => p.CurrentDaysCount, entityToUpdate.CurrentDaysCount));
 
+        periodToUpdate.EndedAt = periodEntity.EndedAt;
+        periodToUpdate.UpdatedAt = periodEntity.UpdatedAt;
+        periodToUpdate.StartedAt = periodEntity.StartedAt;
+        periodToUpdate.Observation = periodEntity.Observation;
+
         if (affetedRows != 0)
             throw CoreException.CreateByCode(CoreExceptionCode.ThisEntityWasAlreadyUpdateByAnotherSource);
 
-        //
-        // TODO: Update field according to entity
-        //
-        periodToUpdate.UpdatedAt = DateTime.UtcNow;
-        periodToUpdate.EndedAt = DateTime.UtcNow;
-
+        await _context.SaveChangesAsync();
         await transaction.CommitAsync();
 
         return new();
