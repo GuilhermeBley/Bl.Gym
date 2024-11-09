@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Bl.Gym.TrainingApi.Api.Endpoints;
 
@@ -50,21 +49,6 @@ public class TrainingEndpoint
             return Results.Ok(result);
         }).RequireAuthorization();
 
-        builder.MapPatch("Training/{sectionId}/update-current-training-days", async (
-            HttpContext context, 
-            IMediator mediator, 
-            Guid sectionId,
-            [FromBody] Application.Commands.Training.UpdateCurrentDaysCountFromSection.UpdateCurrentDaysCountFromSectionRequest request) =>
-        {
-            if (sectionId != request.SectionId)
-                return Results.Unauthorized();
-
-            var result =
-                await mediator.Send(request);
-
-            return Results.Ok(result);
-        }).RequireAuthorization();
-
         builder.MapGet("Training/exercises/gym/{gymId}", async (
             HttpContext context,
             Guid gymId,
@@ -87,6 +71,18 @@ public class TrainingEndpoint
             var result =
             await mediator.Send(
                     new Application.Commands.Training.StartTrainingPeriod.StartTrainingPeriodRequest(sectionId));
+
+            return Results.Created($"Training/section/{sectionId}/period", result);
+        }).RequireAuthorization();
+
+        builder.MapPost("Training/section/{sectionId}/period/finish", async (
+            HttpContext context,
+            Guid sectionId,
+            [FromServices] IMediator mediator) =>
+        {
+            var result =
+                await mediator.Send(
+                        new Application.Commands.Training.FinishTrainingPeriod.FinishTrainingPeriodRequest(sectionId));
 
             return Results.Created($"Training/section/{sectionId}/period", result);
         }).RequireAuthorization();
