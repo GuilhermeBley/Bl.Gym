@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressable } from "react-native";
 import * as yup from 'yup';
 import { styles } from "./styles";
-import { Picker } from '@react-native-picker/picker';
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
 import { GetAvailableExercisesItemResponse, getGymExercisesByPage, getGymMembers, GetGymMembersResponse, getGymsAvailables, handleTrainingCreation, TrainingCreationModel, TrainingSetCreationModel } from "./actions";
 import commonStyles from "../../styles/commonStyles";
@@ -234,7 +233,7 @@ const GymTrainingCreationPage = () => {
                 formikProps={formikProps}
                 label={"Academia"}
                 options={pageData.availableGyms.map(e =>
-                  ({ label: e.Name, value: e.Id })
+                  ({ label: e.name, value: e.id })
                 )}
                 autoFocus
                 onValueChange={handleGymSelect} />
@@ -244,7 +243,7 @@ const GymTrainingCreationPage = () => {
                 formikProps={formikProps}
                 label={"Selecione o estudante"}
                 options={pageData.availableGyms.map(e =>
-                  ({ label: e.Name, value: e.Id })
+                  ({ label: e.name, value: e.id })
                 )}
                 editable={!pageData.selectedGym} />
 
