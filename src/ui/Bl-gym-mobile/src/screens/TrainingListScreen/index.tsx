@@ -6,10 +6,10 @@ import { handleTrainings } from "./action";
 import { UserContext } from "../../contexts/UserContext";
 import axios from "axios";
 import { TrainingContext } from "../../contexts/TrainingContext";
-import { TRAINING_SCREEN } from "../../routes/RoutesConstant";
+import { TRAINING_CREATION_SCREEN, TRAINING_SCREEN } from "../../routes/RoutesConstant";
 import commonStyles from "../../styles/commonStyles";
 
-interface TrainingDataState{
+interface TrainingDataState {
     trainings: TrainingSummaryModel[],
     errors: string[],
     startedWithError: boolean,
@@ -30,7 +30,7 @@ const TrainingListScreen = ({ navigation }: any) => {
     const userContext = useContext(UserContext);
     const trainingContext = useContext(TrainingContext);
 
-    const [pageData, setPageData] = 
+    const [pageData, setPageData] =
         useState<TrainingDataState>({
             trainings: [],
             errors: [],
@@ -43,15 +43,15 @@ const TrainingListScreen = ({ navigation }: any) => {
 
         const fetchData = async () => {
             var result = await handleTrainings(userContext.user.id, source.token)
-            
-            if (result.Success){
-                
+
+            if (result.Success) {
+
                 setPageData(previous => ({
                     ...previous,
                     trainings: result.Data,
                     startedWithError: false,
                 }));
-                
+
                 return;
             }
 
@@ -60,14 +60,14 @@ const TrainingListScreen = ({ navigation }: any) => {
                 errors: [...previous.errors, "Falha ao coletar dados dos treinos."],
                 startedWithError: true
             }));
-        } 
+        }
 
         fetchData()
             .finally(() => {
                 setPageData(previous => ({
                     ...previous,
                     isLoadingInitialData: false
-                }));  
+                }));
             });
 
         return () => {
@@ -85,7 +85,7 @@ const TrainingListScreen = ({ navigation }: any) => {
         navigation.navigate(TRAINING_SCREEN)
     }
 
-    const TrainingCardComponent = (item : TrainingSummaryModel) => {
+    const TrainingCardComponent = (item: TrainingSummaryModel) => {
         return (
             <View style={styles.card}>
                 <Pressable
@@ -102,7 +102,7 @@ const TrainingListScreen = ({ navigation }: any) => {
         );
     }
 
-    if (pageData.isLoadingInitialData){
+    if (pageData.isLoadingInitialData) {
         return (
             <SafeAreaView style={styles.containerCenter}>
                 <View>
@@ -112,35 +112,32 @@ const TrainingListScreen = ({ navigation }: any) => {
         );
     }
 
-    if (pageData.startedWithError){
+    if (pageData.startedWithError) {
         return (
             <SafeAreaView style={styles.containerCenter}>
                 <View>
-                    <Text  style={styles.errorText}>Falha ao inicializar página.</Text>
+                    <Text style={styles.errorText}>Falha ao inicializar página.</Text>
                 </View>
             </SafeAreaView>
         );
     }
 
-    return(
+    return (
         <SafeAreaView style={styles.container}>
-            
+
             <FlatList
                 data={pageData.trainings}
                 renderItem={(info) => TrainingCardComponent(info.item)}
                 keyExtractor={(item) => item.TrainingId}
             />
 
-            {userContext.user.isInRole("sample-check") /* Checks if can manage the gym*/
-                ? (
-                    <Pressable
-                        onPress={() => { /* Open modal creation*/ }}
-                        style={commonStyles.PrimaryButton}>
-                        <Text style={commonStyles.PrimaryButtonText}>
-                            + Novo treino
-                        </Text>
-                    </Pressable>)
-                : (<View></View>)/* Don't show nothing */}
+            <Pressable
+                onPress={() => navigation.navigate(TRAINING_CREATION_SCREEN)}
+                style={commonStyles.PrimaryButton}>
+                <Text style={commonStyles.PrimaryButtonText}>
+                    + Novo treino
+                </Text>
+            </Pressable>
         </SafeAreaView>
     )
 };
