@@ -4,11 +4,11 @@ import TryGetResultFromResponse from "../../api/ResponseReader"
 import { GymCreateModel } from "../../components/gym/CreateGymModalWithManageAnyGymRole"
 
 export interface GetCurrentUserGymResponse{
-    Id: string,
-    Name: string,
-    Description: string,
-    CreatedAt: Date,
-    Role: string,
+    id: string,
+    name: string,
+    description: string,
+    createdAt: Date,
+    role: string,
 };
 
 interface GetCurrentUserGymsResponse {

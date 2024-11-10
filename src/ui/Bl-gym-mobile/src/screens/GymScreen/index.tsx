@@ -22,13 +22,13 @@ const GymCardComponent = (item: GetCurrentUserGymResponse) => {
             <View
                 style={styles.cardContent}>
                 <Text style={styles.cardTitle}>
-                    {item.Name}
+                    {item.name}
                 </Text>
                 <Text style={styles.cardText}>
-                    {item.Description}
+                    {item.description}
                 </Text>
                 <Text style={styles.roleText}>
-                    {item.Role}
+                    {item.role}
                 </Text>
             </View>
         </View>
@@ -129,6 +129,8 @@ const GymScreen = () => {
         );
     }
 
+    console.debug(`showing: ${pageData.Gyms.map(e => e.id)}`)
+
     return (
         <SafeAreaView>
 
@@ -140,7 +142,7 @@ const GymScreen = () => {
                     <FlatList
                         data={pageData.Gyms}
                         renderItem={(info) => GymCardComponent(info.item)}
-                        keyExtractor={(item) => item.Id}>
+                        keyExtractor={(item) => item.id}>
 
                     </FlatList>
                 </View>}
