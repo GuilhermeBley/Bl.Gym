@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
-import { GetCurrentUserGymResponse, handleCreateGym, handleGyms } from "./action";
+import { GetCurrentUserGymResponse, handleCreateGym, handleGyms, translateGymRoleGroup } from "./action";
 import axios from "axios";
 import commonStyles from '../../styles/commonStyles'
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,12 +23,12 @@ const GymCardComponent = (item: GetCurrentUserGymResponse) => {
                 style={styles.cardContent}>
                 <Text style={styles.cardTitle}>
                     {item.name}
+                    <Text style={styles.cardText}>
+                        ({translateGymRoleGroup(item.role)})
+                    </Text>
                 </Text>
                 <Text style={styles.cardText}>
-                    {item.description}
-                </Text>
-                <Text style={styles.roleText}>
-                    {item.role}
+                    {item.description ?? "Nenhuma descrição adicionada..."}
                 </Text>
             </View>
         </View>

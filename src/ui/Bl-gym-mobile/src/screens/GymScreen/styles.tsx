@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    paddingRight: 4,
     marginBottom: 8,
   },
   cardText: {
