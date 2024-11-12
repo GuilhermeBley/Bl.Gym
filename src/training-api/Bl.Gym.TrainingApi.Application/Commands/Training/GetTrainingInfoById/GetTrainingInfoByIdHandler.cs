@@ -67,6 +67,19 @@ public class GetTrainingInfoByIdHandler
                 /*CreatedAt: */exercises.CreatedAt))
             .ToListAsync(cancellationToken);
 
+        var periodsTrained = await
+            _context
+            .TrainingsPeriod
+            .AsNoTracking()
+            .Where(e => e.SectionId == sectionById.SectionId)
+            .Select(e => new GetTrainingInfoByIdResponsePeriod(
+                /*Id*/ e.Id,
+                /*StartedAt*/ e.StartedAt,
+                /*EndedAt*/ e.EndedAt,
+                /*Obs*/ e.Observation,
+                /*Completed*/ e.EndedAt != null))
+            .ToListAsync(cancellationToken);
+
         sectionById = sectionById with
         {
             //
@@ -78,6 +91,7 @@ public class GetTrainingInfoByIdHandler
         return new GetTrainingInfoByIdResponse(
             Section: sectionById,
             Status: trainingGym.Status.ToString(),
+            Periods: periodsTrained,
             CreatedAt: trainingGym.CreatedAt
         );
     }

@@ -8,6 +8,7 @@ namespace Bl.Gym.TrainingApi.Application.Commands.Training.GetTrainingInfoById;
 /// <param name="Sections"></param>
 public record GetTrainingInfoByIdResponse(
     GetTrainingInfoByIdResponseSection Section,
+    IEnumerable<GetTrainingInfoByIdResponsePeriod> Periods,
     string Status,
     DateTimeOffset CreatedAt);
 
@@ -22,6 +23,14 @@ public record GetTrainingInfoByIdResponseSection(
     Guid ConcurrencyStamp,
     IEnumerable<GetTrainingInfoByIdResponseExerciseSet> Sets,
     DateTimeOffset CreatedAt)
+    ;
+
+public record GetTrainingInfoByIdResponsePeriod(
+    Guid Id,
+    DateTime? StartedAt,
+    DateTime? EndedAt,
+    string? Obs,
+    bool Completed)
     ;
 
 public record GetTrainingInfoByIdResponseExerciseSet(
