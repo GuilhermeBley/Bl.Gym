@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Training.GetTrainingInfoById;
 
+/// <summary>
+/// Get all the data about the training section by ID.
+/// </summary>
 public class GetTrainingInfoByIdHandler
     : IRequestHandler<GetTrainingInfoByIdRequest, GetTrainingInfoByIdResponse>
 {
