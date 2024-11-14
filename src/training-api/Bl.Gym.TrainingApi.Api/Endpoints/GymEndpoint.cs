@@ -52,9 +52,6 @@ public class GymEndpoint
 
             return Results.Ok(result);
 
-        }).RequireAuthorization(cfg =>
-        {
-            cfg.RequireRole(Domain.Security.UserClaim.ManageGymGroup.Value);
-        });
+        }).RequireAuthorization();
     }
 }

@@ -25,12 +25,12 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
   },
   cardText: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 12,
+    color: '#080000',
   },
   roleText: {
     fontSize: 10,
-    color: '#666',
+    color: '#080000',
   },
   addGymButton: {
 

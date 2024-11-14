@@ -18,6 +18,7 @@ public abstract class TrainingContext
     public DbSet<Model.Training.GymExerciseModel> Exercises { get; set; }
     public DbSet<Model.Training.GymGroupModel> GymGroups { get; set; }
     public DbSet<Model.Training.UserTrainingSheetModel> UserTrainingSheets { get; set; }   
+    public DbSet<Model.Training.TrainingUserPeriodModel> TrainingsPeriod { get; set; }   
 
     public TrainingContext(DbContextOptions options)
         : base(options)

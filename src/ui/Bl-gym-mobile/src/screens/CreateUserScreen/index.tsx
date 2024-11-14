@@ -5,6 +5,7 @@ import { handleCreateUser } from './action';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { LOGIN_SCREEN } from '../../routes/RoutesConstant';
+import StyledInputFormik from '../../components/StyledInputFormik';
 
 interface UserCreateModel {
   firstName: string,
@@ -13,13 +14,6 @@ interface UserCreateModel {
   password: string,
   confirmPassword: string,
   phoneNumber: string | number | null,
-}
-
-interface StyledInputProps {
-  formikKey: string,
-  formikProps: FormikProps<any>;
-  label: string;
-  [key: string]: any;
 }
 
 const validationSchema = yup.object().shape({
@@ -59,33 +53,6 @@ const CreateUserScreen = ({ navigator }: any) => {
     phoneNumber: null,
   };
 
-  const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
-    const inputStyles = styles.input;
-
-    const error = formikProps.touched[formikKey] && formikProps.errors[formikKey];
-    const errorMessage = typeof error === 'string' ? error : '';
-
-    if (errorMessage) {
-      inputStyles.borderColor = "red"
-    }
-
-    return (
-      <View style={styles.inputContainer}>
-        <Text>{label}</Text>
-        <TextInput
-          style={inputStyles}
-          value={formikProps.values[formikKey]}
-          onChangeText={formikProps.handleChange(formikKey)}
-          onBlur={formikProps.handleBlur(formikKey)}
-          {...rest}
-        >
-
-        </TextInput>
-        {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
-      </View>
-    );
-  }
-
   const handleSubmit = async (formikHelper: FormikHelpers<UserCreateModel>, data: UserCreateModel) => {
     var result = await handleCreateUser(data.firstName, data.lastName, data.email, data.password, data.phoneNumber?.toString() ?? null)
     console.debug(result);
@@ -116,36 +83,36 @@ const CreateUserScreen = ({ navigator }: any) => {
         {formikProps => {
           return (
             <React.Fragment>
-              <StyledInput
+              <StyledInputFormik
                 formikKey={"firstName"}
                 formikProps={formikProps}
                 label={"Primeiro nome"}
                 autoFocus />
 
-              <StyledInput
+              <StyledInputFormik
                 formikKey={"lastName"}
                 formikProps={formikProps}
                 label={"Sobrenome"} />
 
-              <StyledInput
+              <StyledInputFormik
                 formikKey={"email"}
                 formikProps={formikProps}
                 label={"E-mail"}
                 keyboardType="email-address" />
 
-              <StyledInput
+              <StyledInputFormik
                 formikKey={"password"}
                 formikProps={formikProps}
                 label={"Senha"}
                 secureTextEntry />
 
-              <StyledInput
+              <StyledInputFormik
                 formikKey={"confirmPassword"}
                 formikProps={formikProps}
                 label={"Confirme a senha"}
                 secureTextEntry />
 
-              <StyledInput
+              <StyledInputFormik
                 formikKey={"phoneNumber"}
                 formikProps={formikProps}
                 label={"phoneNumber"}

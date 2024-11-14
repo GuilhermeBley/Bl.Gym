@@ -60,7 +60,7 @@ public class CreateTrainingToStudentHandler
         var studentSheet = UserTrainingSheet.CreateNow(
             request.StudentId,
             request.GymId,
-            request.Sets.Select(section =>
+            request.Sections.Select(section =>
             {
                 var setEntity = TrainingSection.CreateNew(
                     Guid.NewGuid(),

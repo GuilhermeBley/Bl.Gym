@@ -1,11 +1,12 @@
-import axios, { CancelToken } from "axios"
+import { CancelToken } from "axios"
+import axios from "../../api/GymApi";
 import TryGetResultFromResponse from "../../api/ResponseReader";
 import { handleGyms } from "../GymScreen/action";
 
 export const handleTrainingCreation = (
     trainingStudentId: string,
     gymId: string,
-    trainingData: TrainingCreationModel 
+    trainingData: TrainingCreationModel[] 
 ) => {
     return axios.post(
         "Training",
@@ -34,6 +35,8 @@ export const getGymMembers = (
     gymId: string,
     cancellationToken: CancelToken | undefined = undefined) => {
     
+    console.debug(`Requesting in gym/{gymId}/members`);
+
     return axios.get<GetGymMembersResponse>(
         "gym/{gymId}/members".replace("{gymId}", gymId),
         { cancelToken: cancellationToken }
@@ -53,6 +56,8 @@ export const getGymExercisesByPage = (
     cancellationToken: CancelToken | undefined = undefined) => { 
         
     const maxPageSize = 1000;
+
+    console.debug(`Training/exercises/gym/{gymId}?skip={skip}&take={take}`);
 
     return axios.get<GetAvailableExercisesResponse>(
         "Training/exercises/gym/{gymId}?skip={skip}&take={take}"
