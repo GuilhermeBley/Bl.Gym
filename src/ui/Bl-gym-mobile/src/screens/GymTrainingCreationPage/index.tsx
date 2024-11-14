@@ -4,7 +4,16 @@ import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressab
 import * as yup from 'yup';
 import { styles } from "./styles";
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
-import { GetAvailableExercisesItemResponse, getGymExercisesByPage, getGymMembers, GetGymMembersResponse, getGymsAvailables, handleTrainingCreation, TrainingCreationModel, TrainingSetCreationModel } from "./actions";
+import { 
+  GetAvailableExercisesItemResponse, 
+  getGymExercisesByPage, 
+  getGymMembers, 
+  GetGymMembersItemResponse, 
+  getGymsAvailables, 
+  handleTrainingCreation, 
+  TrainingCreationModel, 
+  TrainingSetCreationModel 
+} from "./actions";
 import commonStyles from "../../styles/commonStyles";
 import CreateOrEditSectionComponent from "../../components/gym/CreateOrEditSectionComponent";
 import axios from "axios";
@@ -14,7 +23,7 @@ import StyledSelectInputFormik from "../../components/StyledSelectInputFormik";
 
 interface PageDataModel {
   availableGyms: GetCurrentUserGymResponse[],
-  availableUsers: GetGymMembersResponse[],
+  availableUsers: GetGymMembersItemResponse[],
   selectedGym: string | undefined,
   selectedStudent: string | undefined,
   availableTrainings: GetAvailableExercisesItemResponse[],
@@ -90,7 +99,7 @@ const GymTrainingCreationPage = () => {
 
         setPageData(previous => ({
           ...previous,
-          Gyms: result.Data.gyms,
+          availableGyms: result.Data.gyms,
           startedWithError: false,
         }));
 
@@ -194,7 +203,8 @@ const GymTrainingCreationPage = () => {
       }));
     }
 
-    await Promise.all([setMembersAsync, setTrainingsAsync]);
+    console.debug('Requesting setMembersAsync and setTrainingsAsync')
+    await Promise.all([setMembersAsync(), setTrainingsAsync()]);
   }
 
   const handleSubmit = async (
@@ -242,8 +252,8 @@ const GymTrainingCreationPage = () => {
                 formikKey={"studentId"}
                 formikProps={formikProps}
                 label={"Selecione o estudante"}
-                options={pageData.availableGyms.map(e =>
-                  ({ label: e.name, value: e.id })
+                options={pageData.availableUsers.map(e =>
+                  ({ label: (e.name + ' ' + e.lastName), value: e.userId })
                 )}
                 editable={!pageData.selectedGym} />
 
@@ -287,7 +297,7 @@ const GymTrainingCreationPage = () => {
                 {formikProps.isSubmitting ?
                   <ActivityIndicator /> :
                   <Pressable style={commonStyles.PrimaryButton} onPress={() => formikProps.handleSubmit()}>
-                    <Text style={commonStyles.PrimaryButtonText}>Criar usuário</Text>
+                    <Text style={commonStyles.PrimaryButtonText}>Criar treino</Text>
                   </Pressable>}
               </View>
 
