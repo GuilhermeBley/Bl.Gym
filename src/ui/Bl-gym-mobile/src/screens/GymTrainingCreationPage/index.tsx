@@ -257,7 +257,7 @@ const GymTrainingCreationPage = () => {
                 )}
                 editable={!pageData.selectedGym} />
 
-              {pageData.selectedGym ?
+              {pageData.selectedStudent ?
                 <View>
 
                   <StyledInputFormik
