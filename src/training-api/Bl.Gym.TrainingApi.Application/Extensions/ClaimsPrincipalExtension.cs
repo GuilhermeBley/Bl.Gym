@@ -34,7 +34,6 @@ public static class ClaimsPrincipalExtension
     /// </summary>
     /// <exception cref="UnauthorizedAccessException"></exception>
     /// <exception cref="ForbbidenCoreException"></exception>
-    [Obsolete("Gym ID won't be provided by current claim.")]
     public static Guid RequiredGymId(this ClaimsPrincipal principal)
         => GetGymId(principal)
         ?? throw new ForbbidenCoreException();
@@ -42,7 +41,6 @@ public static class ClaimsPrincipalExtension
     /// <summary>
     /// Get the gym ID or null.
     /// </summary>
-    [Obsolete("Gym ID won't be provided by current claim.")]
     public static Guid? GetGymId(this ClaimsPrincipal principal)
     {
         var claim = principal

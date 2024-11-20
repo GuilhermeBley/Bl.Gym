@@ -60,14 +60,10 @@ public class LoginToSpecificGymHandler
 
         var gymSecurityClaims = gymClaims
             .Select(c => new Claim(c.ClaimType, c.ClaimValue))
-            .ToArray()
-            .Concat(new[] 
-            { 
-                Domain.Security.UserClaim.CreateGymClaim(request.GymId),
-                Domain.Security.UserClaim.CreateUserNameClaim(user.RequiredUserName()),
-                Domain.Security.UserClaim.CreateUserEmailClaim(user.RequiredUserEmail()),
-                Domain.Security.UserClaim.CreateUserIdClaim(user.RequiredUserId()),
-            });
+            //
+            // Adding current user roles
+            //
+            .Concat(user.Claims);
 
         return new LoginToSpecificGymResponse(
             user.RequiredUserName(),
