@@ -81,9 +81,10 @@ function TryGetResultFromResponse<T = any>(
     })
 
     return {
-        Data: response.data,
+        Data: null,
         Errors: errors,
-        Success: true
+        Success: false,
+        ContainsError: true
     } as GymApiResponse<T>
 }
 
