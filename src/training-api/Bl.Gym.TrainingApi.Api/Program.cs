@@ -93,6 +93,8 @@ builder.Services
         });
 builder.Services.AddAuthorization(cfg =>
 {
+    cfg.AddPolicy(UserGymPolicy.POLICY_NAME, builder => 
+        builder.RequireClaim(UserGymPolicy.REQUIRE_CLAIM_TYPE));
     cfg.AddPolicy(TrainingPolicy.POLICY_NAME, builder => 
         builder.RequireClaim(TrainingPolicy.REQUIRE_CLAIM_TYPE));
     cfg.AddPolicy(ForgotPasswordPolicy.POLICY_NAME, builder => 
