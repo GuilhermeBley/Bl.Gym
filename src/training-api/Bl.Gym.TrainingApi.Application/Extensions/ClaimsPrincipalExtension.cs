@@ -116,6 +116,26 @@ public static class ClaimsPrincipalExtension
     /// </summary>
     /// <exception cref="UnauthorizedCoreException"></exception>
     /// <exception cref="ForbbidenCoreException"></exception>
+    public static void ThrowIfIsnInTheGym(this ClaimsPrincipal principal, Guid gymId)
+    {
+        ThrowIfIsntLogged(principal);
+
+        var claim = principal.Claims.FirstOrDefault(
+            e => e.Type == Domain.Security.UserClaim.DEFAULT_GYM_ID);
+
+        if (claim is null ||
+            !Guid.TryParse(claim.Value, out var claimGymId) ||
+            claimGymId != gymId)
+        {
+            throw new ForbbidenCoreException($"Your current claim is not assigned to gym {gymId}.");
+        }
+    }
+
+    /// <summary>
+    /// This method checks if the user is logged and if it contains the role.
+    /// </summary>
+    /// <exception cref="UnauthorizedCoreException"></exception>
+    /// <exception cref="ForbbidenCoreException"></exception>
     public static void ThrowIfDoesntContainRole(this ClaimsPrincipal principal, Claim roleClaim)
     {
         ThrowIfIsntLogged(principal);
