@@ -7,6 +7,7 @@ import axios from "../api/GymApi";
 class UserContextModel{
     id: string;
     name: string;
+    gymId: string | undefined;
     email: string;
     refreshToken: string | undefined;
     roles: string[];
@@ -16,12 +17,14 @@ class UserContextModel{
     constructor(
         id: string,
         name: string, 
+        gymId: string | undefined,
         email: string, 
         roles: string[], 
         authorized: boolean, 
         dueDate: Date | undefined = undefined) {
         this.id = id;
         this.name = name;
+        this.gymId = gymId,
         this.email = email;
         this.roles = roles;
         this.authorized = authorized;
@@ -29,7 +32,7 @@ class UserContextModel{
     }
 
     isInRole(rolesToCheck: string | string[]): boolean {
-//
+
         if (!this.authorized)
             return false;
 
@@ -40,6 +43,11 @@ class UserContextModel{
             return this.roles.includes(rolesToCheck);
         }
         return rolesToCheck.every(role => this.roles.includes(role));
+    }
+
+    isAuthorizedInGym() {
+        return typeof (this.gymId) == 'string' &&
+            this.gymId.length > 10;
     }
 
     isAuthorized(){
@@ -65,7 +73,7 @@ interface UserContextProps{
 }
 
 const unauthorizedUser = new UserContextModel(
-    "", "", "", [], false
+    "", "", undefined, "", [], false
 );
 
 const PageNotProperlyLoadedComponent = () => {
@@ -145,6 +153,7 @@ export default function UserContextProvider({children} : any){
                 new UserContextModel(
                     decoded.nameidentifier,
                     (decoded.firstname + ' ' + decoded.lastname),
+                    decoded.gymId,
                     decoded.emailaddress,
                     getRolesFromDecoded(decoded),
                     true,
