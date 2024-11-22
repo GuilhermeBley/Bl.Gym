@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "../../api/GymApi";
-import { Axios, AxiosError } from "axios";
+import { Axios, AxiosError, CancelToken } from "axios";
 
 export enum LoginResultStatus {
     Success,
@@ -16,13 +16,17 @@ interface LoginResult {
 
 export const handleRefreshToken = async (
     refreshToken: string,
-    userId: string
+    userId: string,
+    cancellationToken: CancelToken | undefined = undefined
 ) => {
     return await axios.patch(
         'user/refresh',
         {
             UserId: userId,
             RefreshToken: refreshToken
+        },
+        {
+            cancelToken: cancellationToken
         })
         .then((response) => {
             return {

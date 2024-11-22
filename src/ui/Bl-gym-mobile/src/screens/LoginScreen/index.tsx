@@ -8,6 +8,7 @@ import { Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CREATE_USER_SCREEN, HOME_SCREEN } from "../../routes/RoutesConstant";
+import axios from "axios"
 
 interface StyledInputProps {
   formikKey: string,
@@ -85,7 +86,14 @@ const LoginScreen = ({ navigation }: any) => {
 
   useEffect(() => {
 
+    let cts = axios.CancelToken.source();
+
+    let timeout = setTimeout(() => {
+      cts.cancel("Request timed out");
+    }, 1000 * 60);
+
     let fetchInitialData = async () => {
+
       setPageData(previous => ({
         ...previous,
         isRunningFirstLoading: true
@@ -97,7 +105,7 @@ const LoginScreen = ({ navigation }: any) => {
         user.dueDate !== undefined &&
         user.isExpirated()
       ) {
-        let response = await handleRefreshToken(user.refreshToken, user.id);
+        let response = await handleRefreshToken(user.refreshToken, user.id, cts.token);
 
         if (response.Status !== LoginResultStatus.Success) {
           console.debug("Failed to refresh token.");
