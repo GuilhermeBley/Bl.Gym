@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import LoginScreen from '../screens/LoginGymScreen';
+import LoginGymScreen from '../screens/LoginGymScreen';
 
 import { LOGIN_GYM_SCREEN } from './RoutesConstant';
 
