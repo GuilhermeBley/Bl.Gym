@@ -3,13 +3,15 @@ import AuthContainer from '../containers/AuthContainer';
 
 import SelectGymTabs from "./SelectGymTabs";
 import AuthStack from "./AuthStack";
+import AuthGymStack from "./AuthGymStack";
 
 const Router = () => {
 
     return (
         <NavigationContainer>
             <AuthContainer
-                authorizedContent={(<SelectGymTabs/>)}
+                authorizedContent={(<AuthGymStack/>)}
+                authorizedGymContent={(<SelectGymTabs/>)}
                 unauthorizedContent={(<AuthStack/>)}
             />
         </NavigationContainer>

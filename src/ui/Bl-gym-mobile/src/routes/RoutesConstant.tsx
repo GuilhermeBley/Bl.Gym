@@ -1,6 +1,7 @@
 export const LOGIN_SCREEN = "Login";
 export const CREATE_USER_SCREEN = "CreateUser";
 
+export const LOGIN_GYM_SCREEN = "LoginGym";
 
 export const HOME_SCREEN = "Home";
 export const TRAINING_HOME_SCREEN = "Training Home";
