@@ -8,31 +8,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { ManageAnyGym } from "../../Constants/roleConstants";
 import CreateGymModalWithManageAnyGymRole, { GymCreateModel } from "../../components/gym/CreateGymModalWithManageAnyGymRole";
+import GymCardComponent from "../../components/GymCardComponent";
 
 interface PageDataProps {
     Gyms: GetCurrentUserGymResponse[],
     errors: string[],
     startedWithError: boolean,
     isLoadingInitialData: boolean
-}
-
-const GymCardComponent = (item: GetCurrentUserGymResponse) => {
-    return (
-        <View style={styles.card}>
-            <View
-                style={styles.cardContent}>
-                <Text style={styles.cardTitle}>
-                    {item.name}
-                    <Text style={styles.cardText}>
-                        ({translateGymRoleGroup(item.role)})
-                    </Text>
-                </Text>
-                <Text style={styles.cardText}>
-                    {item.description ?? "Nenhuma descrição adicionada..."}
-                </Text>
-            </View>
-        </View>
-    );
 }
 
 const GymScreen = () => {
