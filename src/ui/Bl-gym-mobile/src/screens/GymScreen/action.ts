@@ -17,7 +17,7 @@ export interface GetCurrentUserGymResponse{
     role: string,
 };
 
-interface GetCurrentUserGymsResponse {
+export interface GetCurrentUserGymsResponse {
     gyms: GetCurrentUserGymResponse[]
 };
 

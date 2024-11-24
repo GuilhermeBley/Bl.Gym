@@ -1,10 +1,18 @@
 
 import axios from "../../api/GymApi";
 import { Axios, AxiosError, CancelToken } from "axios";
+import { GetCurrentUserGymsResponse, handleGyms } from "../GymScreen/action";
+import TryGetResultFromResponse from "../../api/ResponseReader";
 
 export enum LoginResultStatus {
     Success,
     FailedToLogin
+}
+
+export const getGyms = (
+    userId: string,
+    cancellationToken: CancelToken | undefined = undefined) => {
+    return handleGyms(userId, cancellationToken);
 }
 
 export const handleLogin = async (
