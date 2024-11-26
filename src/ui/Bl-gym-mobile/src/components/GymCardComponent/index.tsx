@@ -10,6 +10,12 @@ export interface GymCardInfo{
     role: string,
 };
 
+const gymRoleGroupTranslations: { [key: string]: string }[] = [
+    { "Student": "Estudante" },
+    { "Instructor": "Instrutor" },
+    { "GymGroupOwner": "Administrador" },
+]
+
 const GymCardComponent = (item: GymCardInfo) => {
     return (
         <View style={styles.card}>
