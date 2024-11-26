@@ -1,8 +1,9 @@
 import { View, Text } from "react-native";
 import { styles } from "./styles";
+import React from "react";
 
 
-export interface GymCardInfo{
+export interface GymCardInfo {
     id: string,
     name: string,
     description: string,
@@ -16,7 +17,14 @@ const gymRoleGroupTranslations: { [key: string]: string }[] = [
     { "GymGroupOwner": "Administrador" },
 ]
 
-const GymCardComponent = (item: GymCardInfo) => {
+type GymCardComponentProps = {
+    item: GymCardInfo;
+    onClick?: () => void;
+};
+
+const GymCardComponent: React.FC<GymCardComponentProps> = ({
+    item, onClick
+}) => {
     return (
         <View style={styles.card}>
             <View

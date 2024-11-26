@@ -123,7 +123,7 @@ const GymScreen = () => {
                 <View>
                     <FlatList
                         data={pageData.Gyms}
-                        renderItem={(info) => GymCardComponent(info.item)}
+                        renderItem={(info) => <GymCardComponent item={info.item}></GymCardComponent>}
                         keyExtractor={(item) => item.id}>
 
                     </FlatList>
