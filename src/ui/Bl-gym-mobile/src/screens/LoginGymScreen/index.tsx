@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GymCardComponent, { GymCardInfo } from "../../components/GymCardComponent";
 import { getGyms, handleLogin, LoginResultStatus } from "./action";
@@ -98,9 +98,10 @@ const LoginGymScreen = () => {
                     <ActivityIndicator/>
                 </View> : 
                 <View>
+                    <Pressable onPress={}></Pressable>
                     <FlatList
                         data={pageData.Gyms}
-                        renderItem={(info) => <GymCardComponent item={info.item} onClick={}></GymCardComponent>}
+                        renderItem={(info) => <GymCardComponent item={info.item} onClick={ (item) => handleGymLogin(item.id)}></GymCardComponent>}
                         keyExtractor={(item) => item.id}>
 
                     </FlatList>

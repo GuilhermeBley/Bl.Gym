@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable, GestureResponderEvent } from "react-native";
 import { styles } from "./styles";
 import React from "react";
 
@@ -19,7 +19,7 @@ const gymRoleGroupTranslations: { [key: string]: string }[] = [
 
 type GymCardComponentProps = {
     item: GymCardInfo;
-    onClick?: () => void;
+    onClick?: ((item: GymCardInfo) => void) | ((item: GymCardInfo) => Promise<void>) | undefined;
 };
 
 const GymCardComponent: React.FC<GymCardComponentProps> = ({
@@ -27,18 +27,20 @@ const GymCardComponent: React.FC<GymCardComponentProps> = ({
 }) => {
     return (
         <View style={styles.card}>
-            <View
-                style={styles.cardContent}>
-                <Text style={styles.cardTitle}>
-                    {item.name}
-                    <Text style={styles.cardText}>
-                        ({translateGymRoleGroup(item.role)})
+            <Pressable onPress={() => { if(onClick) return onClick(item) }}>
+                <View
+                    style={styles.cardContent}>
+                    <Text style={styles.cardTitle}>
+                        {item.name}
+                        <Text style={styles.cardText}>
+                            ({translateGymRoleGroup(item.role)})
+                        </Text>
                     </Text>
-                </Text>
-                <Text style={styles.cardText}>
-                    {item.description ?? "Nenhuma descrição adicionada..."}
-                </Text>
-            </View>
+                    <Text style={styles.cardText}>
+                        {item.description ?? "Nenhuma descrição adicionada..."}
+                    </Text>
+                </View>
+            </Pressable>
         </View>
     );
 }
