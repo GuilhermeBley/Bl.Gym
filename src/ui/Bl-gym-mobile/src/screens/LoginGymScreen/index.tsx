@@ -5,8 +5,9 @@ import GymCardComponent, { GymCardInfo } from "../../components/GymCardComponent
 import { getGyms, handleLogin, LoginResultStatus } from "./action";
 import { UserContext } from "../../contexts/UserContext";
 import axios from 'axios';
+import { HOME_SCREEN } from "../../routes/RoutesConstant";
 
-const LoginGymScreen = () => {
+const LoginGymScreen = ({ navigator } : any) => {
 
     const [pageData, setPageData] = useState<{
         isLoadingInitialData: boolean
@@ -36,6 +37,8 @@ const LoginGymScreen = () => {
             {
                 await userCtx.login(result.Token, result.RefreshToken);
     
+                navigator.navigate(HOME_SCREEN);
+
                 return;
             }
 
@@ -98,10 +101,13 @@ const LoginGymScreen = () => {
                     <ActivityIndicator/>
                 </View> : 
                 <View>
-                    <Pressable onPress={}></Pressable>
                     <FlatList
                         data={pageData.Gyms}
-                        renderItem={(info) => <GymCardComponent item={info.item} onClick={ (item) => handleGymLogin(item.id)}></GymCardComponent>}
+                        renderItem={(info) =>
+                            <GymCardComponent
+                                item={info.item}
+                                onClick={(item) => handleGymLogin(item.id)}>
+                            </GymCardComponent>}
                         keyExtractor={(item) => item.id}>
 
                     </FlatList>
