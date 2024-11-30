@@ -35,7 +35,7 @@ const LoginGymScreen = ({ navigator } : any) => {
     
             if (result.Status == LoginResultStatus.Success)
             {
-                await userCtx.login(result.Token, result.RefreshToken);
+                await login(result.Token, result.RefreshToken);
     
                 navigator.navigate(HOME_SCREEN);
 
@@ -55,7 +55,7 @@ const LoginGymScreen = ({ navigator } : any) => {
         }
     }
 
-    const userCtx = useContext(UserContext);
+    const { user, login } = useContext(UserContext);
 
     useEffect(() => {
 
@@ -65,7 +65,7 @@ const LoginGymScreen = ({ navigator } : any) => {
 
             try
             {
-                var gymsResult = await getGyms(userCtx.user.id);
+                var gymsResult = await getGyms(user.id);
     
                 if (!gymsResult.Success)
                 {
