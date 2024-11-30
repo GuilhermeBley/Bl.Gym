@@ -72,7 +72,8 @@ public class LoginToSpecificGymHandler
             //
             // Adding current user roles
             //
-            .Concat(user.Claims);
+            .Concat(user.Claims)
+            .Concat([Domain.Security.UserClaim.CreateGymClaim(request.GymId)]);
 
         return new LoginToSpecificGymResponse(
             Username: user.RequiredUserName(),
