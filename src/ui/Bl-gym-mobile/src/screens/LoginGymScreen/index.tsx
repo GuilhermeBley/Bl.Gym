@@ -5,9 +5,8 @@ import GymCardComponent, { GymCardInfo } from "../../components/GymCardComponent
 import { getGyms, handleLogin, LoginResultStatus } from "./action";
 import { UserContext } from "../../contexts/UserContext";
 import axios from 'axios';
-import { HOME_SCREEN } from "../../routes/RoutesConstant";
 
-const LoginGymScreen = ({ navigator } : any) => {
+const LoginGymScreen = () => {
 
     const [pageData, setPageData] = useState<{
         isLoadingInitialData: boolean
@@ -36,8 +35,6 @@ const LoginGymScreen = ({ navigator } : any) => {
             if (result.Status == LoginResultStatus.Success)
             {
                 await login(result.Token, result.RefreshToken);
-    
-                navigator.navigate(HOME_SCREEN);
 
                 return;
             }
