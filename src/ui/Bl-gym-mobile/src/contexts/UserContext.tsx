@@ -69,7 +69,8 @@ class UserContextModel{
 interface UserContextProps{
     user: UserContextModel,
     login: (jwtToken: string, refreshToken: string) => Promise<void>,
-    logout: () => Promise<void>
+    logout: () => Promise<void>,
+    trySwapLoginGym: () => Promise<boolean>
 }
 
 const unauthorizedUser = new UserContextModel(
@@ -99,7 +100,8 @@ const getRolesFromDecoded = (decoded: any) => {
 export const UserContext = createContext<UserContextProps>({
     user: unauthorizedUser,
     login: (token, _) => Promise.resolve(),
-    logout: () => Promise.resolve()
+    logout: () => Promise.resolve(),
+    trySwapLoginGym: () => Promise.resolve(true)
 });
 
 export default function UserContextProvider({children} : any){
@@ -178,6 +180,17 @@ export default function UserContextProvider({children} : any){
         }
     }
 
+    const trySwapLoginGym = async () => {
+        if (!user.isAuthorizedInGym())
+        {
+            return false;
+        }
+
+        user.gymId = undefined;
+
+        return true;
+    }
+
     const logout = async () => {
         await storeAuthorization('')
         await storeRefreshToken('')
@@ -185,7 +198,7 @@ export default function UserContextProvider({children} : any){
     }
     
     return(
-        <UserContext.Provider value={{ user, login, logout }}>
+        <UserContext.Provider value={{ user, login, logout, trySwapLoginGym }}>
             {pageStatus.authorizationLoaded ? children : PageNotProperlyLoadedComponent()}
         </UserContext.Provider>
     );
