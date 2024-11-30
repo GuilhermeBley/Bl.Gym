@@ -1,5 +1,6 @@
 ﻿using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Security.Claims;
@@ -58,6 +59,14 @@ public class LoginToSpecificGymHandler
             throw CoreException.CreateByCode(CoreExceptionCode.Unauthorized);
         }
 
+        var refreshTokenObj = 
+            await _context
+            .RefreshAuthentications
+            .Where(e => e.UserId == userId)
+            .Select(e => new { e.RefreshToken })
+            .FirstOrDefaultAsync(cancellationToken)
+            ?? throw new UnauthorizedCoreException("Invalid refresh token.");
+
         var gymSecurityClaims = gymClaims
             .Select(c => new Claim(c.ClaimType, c.ClaimValue))
             //
@@ -66,9 +75,12 @@ public class LoginToSpecificGymHandler
             .Concat(user.Claims);
 
         return new LoginToSpecificGymResponse(
-            user.RequiredUserName(),
-            user.RequiredUserEmail(),
-            request.GymId,
-            gymSecurityClaims.ToImmutableArray());
+            Username: user.RequiredUserName(),
+            Email: user.RequiredUserEmail(),
+            FirstName: user.RequiredFirstName(),
+            LastName: user.RequiredLastName(),
+            RefreshToken: refreshTokenObj.RefreshToken,
+            GymId: request.GymId,
+            Claims: gymSecurityClaims.ToImmutableArray());
     }
 }

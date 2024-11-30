@@ -63,6 +63,38 @@ public static class ClaimsPrincipalExtension
         ?? throw new UnauthorizedAccessException();
 
     /// <summary>
+    /// Get the user email, if null, it throws an exception.
+    /// </summary>
+    /// <exception cref="UnauthorizedAccessException"></exception>
+    public static string RequiredFirstName(this ClaimsPrincipal principal)
+    {
+        var claim = principal
+            .Claims
+            .FirstOrDefault(claim => claim.Type == Domain.Security.UserClaim.DEFAULT_FIRST_NAME);
+
+        if (claim is null)
+            throw new UnauthorizedCoreException();
+
+        return claim.Value;
+    }
+
+    /// <summary>
+    /// Get the user email, if null, it throws an exception.
+    /// </summary>
+    /// <exception cref="UnauthorizedAccessException"></exception>
+    public static string RequiredLastName(this ClaimsPrincipal principal)
+    {
+        var claim = principal
+            .Claims
+            .FirstOrDefault(claim => claim.Type == Domain.Security.UserClaim.DEFAULT_LAST_NAME);
+
+        if (claim is null)
+            throw new UnauthorizedCoreException();
+
+        return claim.Value;
+    }
+
+    /// <summary>
     /// Get the user email or null.
     /// </summary>
     /// <exception cref="UnauthorizedAccessException"></exception>
