@@ -3,6 +3,7 @@ using Bl.Gym.TrainingApi.Api.Services;
 using MediatR;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Bl.Gym.TrainingApi.Api.Endpoints;
 
@@ -43,6 +44,44 @@ public class UserEndpoint
                     Token = tokenResult
                 });
         });
+
+        builder.MapPost("user/login/gym", async (
+            [FromBody]Application.Commands.Identity.LoginToSpecificGym.LoginToSpecificGymRequest request,
+            IMediator mediator,
+            HttpContext context,
+            TokenGeneratorService tokenGenerator) =>
+        {
+            // Extract the JWT token from the user's claims
+            var expClaim = context.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Exp);
+
+            if (expClaim == null || !long.TryParse(expClaim.Value, out long expSeconds))
+            {
+                return Results.BadRequest();
+            }
+
+            //
+            // Always keep the same expiration date.
+            //
+            var expirationDate = DateTimeOffset.FromUnixTimeSeconds(expSeconds).UtcDateTime;
+
+            var response = await mediator.Send(request);
+
+            var tokenResult = tokenGenerator.Generate(
+                response.Claims.ToArray(),
+                expirationDate);
+
+            return Results.Ok(
+                new
+                {
+                    response.RefreshToken,
+                    response.Email,
+                    response.Username,
+                    response.FirstName,
+                    response.LastName,
+                    response.GymId,
+                    Token = tokenResult
+                });
+        }).RequireAuthorization();
 
         builder.MapPost("user/change-password/request", async (
             [FromBody] Application.Commands.Identity.RequestToChangePassword.RequestToChangePasswordRequest request,

@@ -34,7 +34,6 @@ public static class ClaimsPrincipalExtension
     /// </summary>
     /// <exception cref="UnauthorizedAccessException"></exception>
     /// <exception cref="ForbbidenCoreException"></exception>
-    [Obsolete("Gym ID won't be provided by current claim.")]
     public static Guid RequiredGymId(this ClaimsPrincipal principal)
         => GetGymId(principal)
         ?? throw new ForbbidenCoreException();
@@ -42,7 +41,6 @@ public static class ClaimsPrincipalExtension
     /// <summary>
     /// Get the gym ID or null.
     /// </summary>
-    [Obsolete("Gym ID won't be provided by current claim.")]
     public static Guid? GetGymId(this ClaimsPrincipal principal)
     {
         var claim = principal
@@ -109,6 +107,26 @@ public static class ClaimsPrincipalExtension
             return false;
         
         return principal.IsInRole(roleClaim.Value);
+    }
+
+    /// <summary>
+    /// This method checks if the user is logged and if it contains the role.
+    /// </summary>
+    /// <exception cref="UnauthorizedCoreException"></exception>
+    /// <exception cref="ForbbidenCoreException"></exception>
+    public static void ThrowIfIsnInTheGym(this ClaimsPrincipal principal, Guid gymId)
+    {
+        ThrowIfIsntLogged(principal);
+
+        var claim = principal.Claims.FirstOrDefault(
+            e => e.Type == Domain.Security.UserClaim.DEFAULT_GYM_ID);
+
+        if (claim is null ||
+            !Guid.TryParse(claim.Value, out var claimGymId) ||
+            claimGymId != gymId)
+        {
+            throw new ForbbidenCoreException($"Your current claim is not assigned to gym {gymId}.");
+        }
     }
 
     /// <summary>

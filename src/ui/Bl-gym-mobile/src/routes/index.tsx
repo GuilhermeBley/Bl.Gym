@@ -1,15 +1,17 @@
 import { NavigationContainer } from "@react-navigation/native";
 import AuthContainer from '../containers/AuthContainer';
 
-import SelectGymTabs from "./SelectGymTabs";
+import AuthorizedGymTabs from "./AuthorizedGymTabs";
 import AuthStack from "./AuthStack";
+import AuthGymStack from "./AuthGymStack";
 
 const Router = () => {
 
     return (
         <NavigationContainer>
             <AuthContainer
-                authorizedContent={(<SelectGymTabs/>)}
+                authorizedContent={(<AuthGymStack/>)}
+                authorizedGymContent={(<AuthorizedGymTabs/>)}
                 unauthorizedContent={(<AuthStack/>)}
             />
         </NavigationContainer>

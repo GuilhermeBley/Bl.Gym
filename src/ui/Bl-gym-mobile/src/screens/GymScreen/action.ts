@@ -3,12 +3,6 @@ import { AxiosError, CancelToken } from "axios"
 import TryGetResultFromResponse from "../../api/ResponseReader"
 import { GymCreateModel } from "../../components/gym/CreateGymModalWithManageAnyGymRole"
 
-const gymRoleGroupTranslations: { [key: string]: string }[] = [
-    { "Student": "Estudante" },
-    { "Instructor": "Instrutor" },
-    { "GymGroupOwner": "Administrador" },
-]
-
 export interface GetCurrentUserGymResponse{
     id: string,
     name: string,
@@ -17,7 +11,7 @@ export interface GetCurrentUserGymResponse{
     role: string,
 };
 
-interface GetCurrentUserGymsResponse {
+export interface GetCurrentUserGymsResponse {
     gyms: GetCurrentUserGymResponse[]
 };
 
@@ -56,13 +50,4 @@ export const handleCreateGym = (
             console.debug(error);
             return TryGetResultFromResponse(error.response);
         })
-}
-
-export function translateGymRoleGroup(roleName: string) {
-    let entry = gymRoleGroupTranslations.find(item => {
-        const itemKey = Object.keys(item)[0];
-        return itemKey.toLowerCase() === roleName.toLowerCase();
-    });
-
-    return entry ? Object.values(entry)[0] : undefined;
 }

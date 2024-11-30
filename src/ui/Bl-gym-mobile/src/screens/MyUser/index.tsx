@@ -12,7 +12,7 @@ interface PageData {
 
 const MyUser = ({ navigation }: any) => {
 
-  const { user, logout } = useContext(UserContext);
+  const { user, logout, trySwapLoginGym } = useContext(UserContext);
   const [pageData, setPageData] = useState({
     isRunningFirstLoading: false
   } as PageData)
@@ -67,9 +67,14 @@ const MyUser = ({ navigation }: any) => {
         <View style={styles.line} />
       </View>
 
+      <Pressable style={styles.logoutGymButton} onPress={trySwapLoginGym}>
+        <Text style={styles.logoutText}>Alterar de academia</Text>
+      </Pressable>
+
       <Pressable style={styles.logoutButton} onPress={onLogout}>
         <Text style={styles.logoutText}>Sair</Text>
       </Pressable>
+      
     </SafeAreaView>
   );
 };

@@ -4,15 +4,15 @@ import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressab
 import * as yup from 'yup';
 import { styles } from "./styles";
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
-import { 
-  GetAvailableExercisesItemResponse, 
-  getGymExercisesByPage, 
-  getGymMembers, 
-  GetGymMembersItemResponse, 
-  getGymsAvailables, 
-  handleTrainingCreation, 
-  TrainingCreationModel, 
-  TrainingSetCreationModel 
+import {
+  GetAvailableExercisesItemResponse,
+  getGymExercisesByPage,
+  getGymMembers,
+  GetGymMembersItemResponse,
+  getGymsAvailables,
+  handleTrainingCreation,
+  TrainingCreationModel,
+  TrainingSetCreationModel
 } from "./actions";
 import commonStyles from "../../styles/commonStyles";
 import CreateOrEditSectionComponent from "../../components/gym/CreateOrEditSectionComponent";
@@ -177,11 +177,10 @@ const GymTrainingCreationPage = () => {
     var setTrainingsAsync = async () => {
       var gymTrainingsResult = await getGymExercisesByPage(selectedGymId, 0, undefined);
 
-      if (gymTrainingsResult.ContainsError)
-      {
+      if (gymTrainingsResult.ContainsError) {
         return;
       }
-  
+
       setPageData(previous => ({
         ...previous,
         availableTrainings: gymTrainingsResult.Data
@@ -195,7 +194,7 @@ const GymTrainingCreationPage = () => {
         resetFormData();
         return;
       }
-  
+
       setPageData(previous => ({
         ...previous,
         selectedGym: selectedGymId,
@@ -255,9 +254,9 @@ const GymTrainingCreationPage = () => {
                 options={pageData.availableUsers.map(e =>
                   ({ label: (e.name + ' ' + e.lastName), value: e.userId })
                 )}
-                editable={!pageData.selectedGym} />
+                editable={pageData.availableUsers.length > 0} />
 
-              {pageData.selectedGym ?
+              {pageData.selectedStudent && pageData.selectedGym ?
                 <View>
 
                   <StyledInputFormik

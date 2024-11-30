@@ -23,7 +23,7 @@ function HomeStackNavigator() {
   );
 }
 
-function SelectGymTabs() {
+function AuthorizedGymTabs() {
   return (
     <Tab.Navigator initialRouteName={HOME_SCREEN}>
       <Tab.Screen name={HOME_SCREEN} component={HomeStackNavigator} options={{ headerShown: false }} />
@@ -33,4 +33,4 @@ function SelectGymTabs() {
   );
 }
 
-export default SelectGymTabs;
+export default AuthorizedGymTabs;

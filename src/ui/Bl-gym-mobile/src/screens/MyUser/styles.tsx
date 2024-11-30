@@ -25,8 +25,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 10,
   },
+  logoutGymButton: {
+    backgroundColor: colors.warning,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 5,
+  },
   logoutButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.danger,
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 5,

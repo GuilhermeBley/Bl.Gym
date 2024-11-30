@@ -7,6 +7,7 @@ import axios from "../api/GymApi";
 class UserContextModel{
     id: string;
     name: string;
+    gymId: string | undefined;
     email: string;
     refreshToken: string | undefined;
     roles: string[];
@@ -16,12 +17,14 @@ class UserContextModel{
     constructor(
         id: string,
         name: string, 
+        gymId: string | undefined,
         email: string, 
         roles: string[], 
         authorized: boolean, 
         dueDate: Date | undefined = undefined) {
         this.id = id;
         this.name = name;
+        this.gymId = gymId,
         this.email = email;
         this.roles = roles;
         this.authorized = authorized;
@@ -29,7 +32,7 @@ class UserContextModel{
     }
 
     isInRole(rolesToCheck: string | string[]): boolean {
-//
+
         if (!this.authorized)
             return false;
 
@@ -40,6 +43,11 @@ class UserContextModel{
             return this.roles.includes(rolesToCheck);
         }
         return rolesToCheck.every(role => this.roles.includes(role));
+    }
+
+    isAuthorizedInGym() {
+        return typeof (this.gymId) == 'string' &&
+            this.gymId.length > 10;
     }
 
     isAuthorized(){
@@ -61,11 +69,12 @@ class UserContextModel{
 interface UserContextProps{
     user: UserContextModel,
     login: (jwtToken: string, refreshToken: string) => Promise<void>,
-    logout: () => Promise<void>
+    logout: () => Promise<void>,
+    trySwapLoginGym: () => Promise<boolean>
 }
 
 const unauthorizedUser = new UserContextModel(
-    "", "", "", [], false
+    "", "", undefined, "", [], false
 );
 
 const PageNotProperlyLoadedComponent = () => {
@@ -91,7 +100,8 @@ const getRolesFromDecoded = (decoded: any) => {
 export const UserContext = createContext<UserContextProps>({
     user: unauthorizedUser,
     login: (token, _) => Promise.resolve(),
-    logout: () => Promise.resolve()
+    logout: () => Promise.resolve(),
+    trySwapLoginGym: () => Promise.resolve(true)
 });
 
 export default function UserContextProvider({children} : any){
@@ -145,6 +155,7 @@ export default function UserContextProvider({children} : any){
                 new UserContextModel(
                     decoded.nameidentifier,
                     (decoded.firstname + ' ' + decoded.lastname),
+                    decoded.gymId,
                     decoded.emailaddress,
                     getRolesFromDecoded(decoded),
                     true,
@@ -169,6 +180,17 @@ export default function UserContextProvider({children} : any){
         }
     }
 
+    const trySwapLoginGym = async () => {
+        if (!user.isAuthorizedInGym())
+        {
+            return false;
+        }
+
+        user.gymId = undefined;
+
+        return true;
+    }
+
     const logout = async () => {
         await storeAuthorization('')
         await storeRefreshToken('')
@@ -176,7 +198,7 @@ export default function UserContextProvider({children} : any){
     }
     
     return(
-        <UserContext.Provider value={{ user, login, logout }}>
+        <UserContext.Provider value={{ user, login, logout, trySwapLoginGym }}>
             {pageStatus.authorizationLoaded ? children : PageNotProperlyLoadedComponent()}
         </UserContext.Provider>
     );

@@ -40,7 +40,7 @@ public class CreateTrainingToStudentHandler
 
         user.ThrowIfDoesntContainRole(Domain.Security.UserClaim.ManageTraining);
 
-        await _gymChecker.ThrowIfUserIsntInTheGymAsync(user.RequiredUserId(), request.GymId, cancellationToken);
+        user.ThrowIfIsnInTheGym(request.GymId);
 
         if (!await _gymChecker.IsUserInTheGymAsync(request.StudentId, request.GymId, cancellationToken))
             throw CommonCoreException.CreateByCode(CoreExceptionCode.UserIsntMemberOfThisGym);

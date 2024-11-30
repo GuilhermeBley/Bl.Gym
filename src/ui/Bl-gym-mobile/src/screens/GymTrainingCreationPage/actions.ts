@@ -35,7 +35,7 @@ export const getGymMembers = (
     gymId: string,
     cancellationToken: CancelToken | undefined = undefined) => {
     
-    console.debug(`Requesting in gym/{gymId}/members`);
+    console.debug(`Requesting in gym/${gymId}/members`);
 
     return axios.get<GetGymMembersResponse>(
         "gym/{gymId}/members".replace("{gymId}", gymId),

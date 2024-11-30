@@ -1,38 +1,20 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
-import { GetCurrentUserGymResponse, handleCreateGym, handleGyms, translateGymRoleGroup } from "./action";
+import { GetCurrentUserGymResponse, handleCreateGym, handleGyms } from "./action";
 import axios from "axios";
 import commonStyles from '../../styles/commonStyles'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { ManageAnyGym } from "../../Constants/roleConstants";
 import CreateGymModalWithManageAnyGymRole, { GymCreateModel } from "../../components/gym/CreateGymModalWithManageAnyGymRole";
+import GymCardComponent from "../../components/GymCardComponent";
 
 interface PageDataProps {
     Gyms: GetCurrentUserGymResponse[],
     errors: string[],
     startedWithError: boolean,
     isLoadingInitialData: boolean
-}
-
-const GymCardComponent = (item: GetCurrentUserGymResponse) => {
-    return (
-        <View style={styles.card}>
-            <View
-                style={styles.cardContent}>
-                <Text style={styles.cardTitle}>
-                    {item.name}
-                    <Text style={styles.cardText}>
-                        ({translateGymRoleGroup(item.role)})
-                    </Text>
-                </Text>
-                <Text style={styles.cardText}>
-                    {item.description ?? "Nenhuma descrição adicionada..."}
-                </Text>
-            </View>
-        </View>
-    );
 }
 
 const GymScreen = () => {
@@ -141,7 +123,7 @@ const GymScreen = () => {
                 <View>
                     <FlatList
                         data={pageData.Gyms}
-                        renderItem={(info) => GymCardComponent(info.item)}
+                        renderItem={(info) => <GymCardComponent item={info.item}></GymCardComponent>}
                         keyExtractor={(item) => item.id}>
 
                     </FlatList>
