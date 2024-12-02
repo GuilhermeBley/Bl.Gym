@@ -35,11 +35,6 @@ public class LoginToSpecificGymHandler
 
         var userId = user.RequiredUserId();
 
-        var gymId = user.GetGymId();
-
-        if (gymId is not null)
-            throw CoreException.CreateByCode(CoreExceptionCode.UserAlreadyLoggedInGym);
-
         var gymClaims = await
             (from gymRole in _context.UserTrainingRoles.AsNoTracking()
              join claim in _context.RoleClaims.AsNoTracking()

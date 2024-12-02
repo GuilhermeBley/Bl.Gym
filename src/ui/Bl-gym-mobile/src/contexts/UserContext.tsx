@@ -155,7 +155,7 @@ export default function UserContextProvider({children} : any){
                 new UserContextModel(
                     decoded.nameidentifier,
                     (decoded.firstname + ' ' + decoded.lastname),
-                    decoded.gymId,
+                    decoded.gymidentifier,
                     decoded.emailaddress,
                     getRolesFromDecoded(decoded),
                     true,
@@ -186,7 +186,15 @@ export default function UserContextProvider({children} : any){
             return false;
         }
 
-        user.gymId = undefined;
+        setUser(new UserContextModel(
+            /*id*/ user.id,
+            /*name*/ user.name,
+            /*gymId*/ undefined, // setting equals to undefined to logout the gym
+            /*email*/ user.email,
+            /*roles*/ user.roles,
+            /*authorized*/ user.authorized,
+            /*dueDate*/ user.dueDate
+        ));
 
         return true;
     }

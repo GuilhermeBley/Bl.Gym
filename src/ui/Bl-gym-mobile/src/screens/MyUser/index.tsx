@@ -67,14 +67,14 @@ const MyUser = ({ navigation }: any) => {
         <View style={styles.line} />
       </View>
 
-      <Pressable style={styles.logoutGymButton} onPress={trySwapLoginGym}>
+      <Pressable style={[styles.logoutGymButton, { marginBottom: 20 }]} onPress={trySwapLoginGym}>
         <Text style={styles.logoutText}>Alterar de academia</Text>
       </Pressable>
 
       <Pressable style={styles.logoutButton} onPress={onLogout}>
         <Text style={styles.logoutText}>Sair</Text>
       </Pressable>
-      
+
     </SafeAreaView>
   );
 };
