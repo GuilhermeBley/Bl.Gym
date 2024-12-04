@@ -33,7 +33,7 @@ const validationSchema = yup.object().shape({
 const LoginScreen = ({ navigation }: any) => {
 
   const [buttonErrorMessage, setButtonErrorMessage] = useState("");
-  const { login, user, logout } = useContext(UserContext);
+  const { login, user } = useContext(UserContext);
   const [pageData, setPageData] = useState({
     isRunningFirstLoading: false
   } as PageData)
@@ -112,6 +112,7 @@ const LoginScreen = ({ navigation }: any) => {
           return;
         }
     
+        console.debug(`Trying to login with token ${response.Token.length}`)
         await login(response.Token, response.RefreshToken)
       }
       else{
