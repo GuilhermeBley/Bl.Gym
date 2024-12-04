@@ -34,6 +34,10 @@ public class LoginToSpecificGymHandler
         var user = await _identityProvider.GetCurrentAsync(cancellationToken);
 
         var userId = user.RequiredUserId();
+        var userEmail = user.RequiredUserEmail();
+        var firstName = user.RequiredFirstName();
+        var lastName = user.RequiredLastName();
+        var userName = user.RequiredUserName();
 
         var gymClaims = await
             (from gymRole in _context.UserTrainingRoles.AsNoTracking()
@@ -64,11 +68,15 @@ public class LoginToSpecificGymHandler
 
         var gymSecurityClaims = gymClaims
             .Select(c => new Claim(c.ClaimType, c.ClaimValue))
-            //
-            // Adding current user roles
-            //
-            .Concat(user.Claims)
             .Concat([Domain.Security.UserClaim.CreateGymClaim(request.GymId)]);
+
+        var claims = Domain.Security.UserClaim.CreateBasicUserClaims(
+            userId: userId,
+            email: userEmail,
+            userName: userName,
+            firstName: firstName,
+            lastName: lastName,
+            others: gymSecurityClaims);
 
         return new LoginToSpecificGymResponse(
             Username: user.RequiredUserName(),
@@ -77,6 +85,6 @@ public class LoginToSpecificGymHandler
             LastName: user.RequiredLastName(),
             RefreshToken: refreshTokenObj.RefreshToken,
             GymId: request.GymId,
-            Claims: gymSecurityClaims.ToImmutableArray());
+            Claims: claims);
     }
 }

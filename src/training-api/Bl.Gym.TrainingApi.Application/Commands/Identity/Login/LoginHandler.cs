@@ -84,14 +84,13 @@ public class LoginHandler
 
         var userRoles = await GetUserClaimAsync(userFound.Id, cancellationToken);
 
-        var claims =
-            new[] {
-                Domain.Security.UserClaim.CreateUserEmailClaim(userFound.Email),
-                Domain.Security.UserClaim.CreateUserIdClaim(userFound.Id),
-                Domain.Security.UserClaim.CreateUserNameClaim(userFound.UserName),
-                Domain.Security.UserClaim.CreateFirstNameClaim(userFound.FirstName),
-                Domain.Security.UserClaim.CreateLastNameClaim(userFound.LastName),
-            }.Concat(userRoles);
+        var claims = Domain.Security.UserClaim.CreateBasicUserClaims(
+            userId: userFound.Id,
+            email: userFound.Email,
+            userName: userFound.UserName,
+            firstName: userFound.FirstName,
+            lastName: userFound.LastName,
+            userRoles);
 
         return new(
             RefreshToken: refreshTokenCreated.RefreshToken,

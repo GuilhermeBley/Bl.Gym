@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 
 namespace Bl.Gym.TrainingApi.Domain.Security;
 
@@ -53,4 +55,63 @@ public static class UserClaim
         => new(DEFAULT_USER_EMAIL, email);
     public static Claim CreateGymClaim(Guid gymId)
         => new(DEFAULT_GYM_ID, gymId.ToString());
+
+    public static IReadOnlyList<Claim> CreateBasicUserClaims(
+        Guid userId,
+        string email,
+        string userName,
+        string firstName,
+        string lastName,
+        IEnumerable<Claim> others)
+        => CreateBasicUserClaims(userId, email, userName, firstName, lastName, others.ToArray());
+
+    /// <summary>
+    /// Creates a new immutable array with all the specified claims with no duplications.
+    /// </summary>
+    public static IReadOnlyList<Claim> CreateBasicUserClaims(
+        Guid userId,
+        string email,
+        string userName,
+        string firstName,
+        string lastName,
+        params Claim[] others)
+    {
+        Claim[] claims = [
+            CreateUserEmailClaim(email),
+            CreateUserIdClaim(userId),
+            CreateUserNameClaim(userName),
+            CreateFirstNameClaim(firstName),
+            CreateLastNameClaim(lastName),
+        ];
+
+        var nonDuplicatedClaims = claims
+            .Concat(others)
+            .ToHashSet(new ClaimEquatable());
+
+        return nonDuplicatedClaims.ToImmutableArray();
+    }
+
+    private class ClaimEquatable
+        : IEqualityComparer<Claim>
+    {
+        public bool Equals(Claim? x, Claim? y)
+        {
+            if (x is null ||  y is null) return false;
+
+            var keyX = GetKey(x);
+            var keyY = GetKey(y);
+
+            return keyX.Equals(keyY, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public int GetHashCode([DisallowNull] Claim obj)
+        {
+            var key = GetKey(obj);
+
+            return key.GetHashCode(StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string GetKey(Claim obj)
+            => string.Concat(obj.Type, obj.Value);
+    }
 }
