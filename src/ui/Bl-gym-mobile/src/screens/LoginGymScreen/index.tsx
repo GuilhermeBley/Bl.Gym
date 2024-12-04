@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, View } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GymCardComponent, { GymCardInfo } from "../../components/GymCardComponent";
 import { getGyms, handleLogin, LoginResultStatus } from "./action";
 import { UserContext } from "../../contexts/UserContext";
 import axios from 'axios';
+import styles from "./styles";
 
 const LoginGymScreen = () => {
 
@@ -52,7 +53,7 @@ const LoginGymScreen = () => {
         }
     }
 
-    const { user, login } = useContext(UserContext);
+    const { user, login, logout } = useContext(UserContext);
 
     useEffect(() => {
 
@@ -74,7 +75,7 @@ const LoginGymScreen = () => {
 
                 setPageData(prev => ({
                     ...prev,
-                    Gyms: gymsResult.Data.gyms
+                    Gyms: gymsResult?.Data?.gyms ?? []
                 }));
             }
             finally
@@ -99,7 +100,7 @@ const LoginGymScreen = () => {
                 </View> : 
                 <View>
                     <FlatList
-                        data={pageData.Gyms}
+                        data={pageData.Gyms ?? []}
                         renderItem={(info) =>
                             <GymCardComponent
                                 item={info.item}
@@ -109,6 +110,11 @@ const LoginGymScreen = () => {
 
                     </FlatList>
                 </View>}
+
+                
+            <Pressable style={styles.logoutButton} onPress={logout}>
+                <Text style={styles.logoutText}>Sair</Text>
+            </Pressable>
         </SafeAreaView>
     );
 }

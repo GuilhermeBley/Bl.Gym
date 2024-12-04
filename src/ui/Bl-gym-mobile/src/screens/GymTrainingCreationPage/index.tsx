@@ -181,9 +181,14 @@ const GymTrainingCreationPage = () => {
         return;
       }
 
+      let filteredGyms = gymTrainingsResult
+        .Data
+        .availableExercises
+        .filter(e => e.id == userContext.user.id);
+
       setPageData(previous => ({
         ...previous,
-        availableTrainings: gymTrainingsResult.Data
+        availableTrainings: filteredGyms
       }));
     }
 
@@ -245,7 +250,8 @@ const GymTrainingCreationPage = () => {
                   ({ label: e.name, value: e.id })
                 )}
                 autoFocus
-                onValueChange={handleGymSelect} />
+                onValueChange={handleGymSelect}
+                editable={false} /*Keep not editable, supports just new students to the current gym*/ />
 
               <StyledSelectInputFormik
                 formikKey={"studentId"}
@@ -289,7 +295,7 @@ const GymTrainingCreationPage = () => {
                   />
                 </View> :
                 <View>
-                  <Text>Selecione a academia e o estudante para continuar o processo.</Text>
+                  <Text>Selecione o estudante para continuar o processo.</Text>
                 </View>}
 
               <View style={styles.buttonContainer}>

@@ -67,11 +67,11 @@ export const getGymExercisesByPage = (
         { cancelToken: cancellationToken }
     ).then((response) => {
 
-        return TryGetResultFromResponse(response);
+        return TryGetResultFromResponse<GetAvailableExercisesResponse>(response);
     })
     .catch((error) => {
         console.debug(error)
-        return TryGetResultFromResponse(error.response);
+        return TryGetResultFromResponse<GetAvailableExercisesResponse>(error.response);
     });
 }
 
