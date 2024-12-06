@@ -20,14 +20,15 @@ const gymRoleGroupTranslations: { [key: string]: string }[] = [
 type GymCardComponentProps = {
     item: GymCardInfo;
     onClick?: ((item: GymCardInfo) => void) | ((item: GymCardInfo) => Promise<void>) | undefined;
+    isLoading?: boolean
 };
 
 const GymCardComponent: React.FC<GymCardComponentProps> = ({
-    item, onClick
+    item, onClick, isLoading = false
 }) => {
     return (
         <View style={styles.card}>
-            <Pressable onPress={() => { if(onClick) return onClick(item) }}>
+            <Pressable onPress={() => { if(onClick && !isLoading) return onClick(item) }} disabled={isLoading}>
                 <View
                     style={styles.cardContent}>
                     <Text style={styles.cardTitle}>

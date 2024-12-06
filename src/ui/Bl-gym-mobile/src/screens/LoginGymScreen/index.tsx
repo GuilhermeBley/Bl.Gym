@@ -25,6 +25,9 @@ const LoginGymScreen = () => {
         gymId: string
     ) => {
 
+        if (pageData.isLoadingLogin)
+            return;
+
         try{
             setPageData(prev => ({
                 ...prev,
@@ -104,7 +107,8 @@ const LoginGymScreen = () => {
                         renderItem={(info) =>
                             <GymCardComponent
                                 item={info.item}
-                                onClick={(item) => handleGymLogin(item.id)}>
+                                onClick={(item) => handleGymLogin(item.id)}
+                                isLoading={pageData.isLoadingLogin}>
                             </GymCardComponent>}
                         keyExtractor={(item) => item.id}>
 
