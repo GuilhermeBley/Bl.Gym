@@ -6,6 +6,7 @@ import { getGyms, handleLogin, LoginResultStatus } from "./action";
 import { UserContext } from "../../contexts/UserContext";
 import axios from 'axios';
 import styles from "./styles";
+import MiddleFloatLoadingScreen from "../../components/MiddleFloatLoadingScreen";
 
 const LoginGymScreen = () => {
 
@@ -97,6 +98,11 @@ const LoginGymScreen = () => {
 
     return (
         <SafeAreaView>
+
+            {pageData.isLoadingLogin 
+                ? <MiddleFloatLoadingScreen/>
+                : <View></View>}
+
             {pageData.isLoadingInitialData ? 
                 <View>
                     <ActivityIndicator/>
