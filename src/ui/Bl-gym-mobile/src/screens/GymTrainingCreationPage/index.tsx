@@ -91,8 +91,14 @@ const GymTrainingCreationPage = () => {
     const fetchData = async () => {
       // TODO: GET ALL USER GYM's
 
+      if (!userContext.user.gymId)
+      {
+        return;
+      }
+
       var result = await getGymsAvailables(
         userContext.user.id,
+        userContext.user.gymId,
         source.token);
 
       if (result.Success) {
@@ -251,7 +257,7 @@ const GymTrainingCreationPage = () => {
                 )}
                 autoFocus
                 onValueChange={handleGymSelect}
-                editable={false} /*Keep not editable, supports just new students to the current gym*/ />
+                enabled={false} /*Keep not editable, supports just new students to the current gym*/ />
 
               <StyledSelectInputFormik
                 formikKey={"studentId"}
