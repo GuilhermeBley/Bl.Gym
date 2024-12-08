@@ -31,5 +31,7 @@ public enum CoreExceptionCode
     InvalidRefreshTokenLength = 400_15,
     InvalidExpirationTokenDate = 400_16,
     InvalidObservationLength = 400_17,
-    InvalidStartAndEndDate = 400_18
+    InvalidStartAndEndDate = 400_18,
+    InvalidExpiration = 400_19,
+    InvalidRoleGroup = 400_20,
 }
