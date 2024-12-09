@@ -49,7 +49,7 @@ public class UserGymInvitation
     {
         dateTimeProvider ??= new DateTimeProvider();
 
-        return ExpiresAt > dateTimeProvider.UtcNow;
+        return  dateTimeProvider.UtcNow > ExpiresAt;
     }
 
     public static Result<UserGymInvitation> Create(
