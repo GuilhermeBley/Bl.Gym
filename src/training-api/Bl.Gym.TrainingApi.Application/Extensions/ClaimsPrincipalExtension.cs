@@ -39,6 +39,20 @@ public static class ClaimsPrincipalExtension
         ?? throw new ForbbidenCoreException();
 
     /// <summary>
+    /// This method ensures that the <paramref name="gymIdToCheck"/> is the same of the current user.
+    /// </summary>
+    /// <exception cref="ForbbidenCoreException"></exception>
+    public static void EnsureGymId(this ClaimsPrincipal principal, Guid gymIdToCheck)
+    {
+        var currentGymId = principal.RequiredGymId();
+
+        if (gymIdToCheck == currentGymId)
+            return;
+
+        throw new ForbbidenCoreException();
+    }
+
+    /// <summary>
     /// Get the gym ID or null.
     /// </summary>
     public static Guid? GetGymId(this ClaimsPrincipal principal)
