@@ -3,6 +3,6 @@
 public interface IEmailService
 {
     Task SendGymInvitationEmailAsync(
-        string email,
+        Domain.Entities.Identity.UserGymInvitation invite,
         CancellationToken cancellationToken = default);
 }
