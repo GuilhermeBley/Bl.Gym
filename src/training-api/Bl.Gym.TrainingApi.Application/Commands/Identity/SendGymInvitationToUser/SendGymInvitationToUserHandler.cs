@@ -4,7 +4,6 @@ using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
 using Bl.Gym.TrainingApi.Application.Services;
 using Bl.Gym.TrainingApi.Domain.Entities.Identity;
-using System;
 
 namespace Bl.Gym.TrainingApi.Application.Commands.Identity.SendGymInvitationToUser;
 

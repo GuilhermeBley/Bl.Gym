@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Bl.Gym.TrainingApi.Api.Model.Gym;
 using Bl.Gym.TrainingApi.Api.Services;
 using MediatR;
 using Microsoft.AspNetCore.Components.Forms;
@@ -14,7 +15,7 @@ public class UserEndpoint
         bool isDevelopment)
     {
         builder.MapPost("user", async (
-            [FromBody]Application.Commands.Identity.CreateUser.CreateUserRequest request,
+            [FromBody] Application.Commands.Identity.CreateUser.CreateUserRequest request,
             IMediator mediator) =>
         {
             var response = await mediator.Send(request);
@@ -23,7 +24,7 @@ public class UserEndpoint
         });
 
         builder.MapPost("user/login", async (
-            [FromBody]Application.Commands.Identity.Login.LoginRequest request,
+            [FromBody] Application.Commands.Identity.Login.LoginRequest request,
             IMediator mediator,
             TokenGeneratorService tokenGenerator) =>
         {
@@ -46,7 +47,7 @@ public class UserEndpoint
         });
 
         builder.MapPost("user/login/gym", async (
-            [FromBody]Application.Commands.Identity.LoginToSpecificGym.LoginToSpecificGymRequest request,
+            [FromBody] Application.Commands.Identity.LoginToSpecificGym.LoginToSpecificGymRequest request,
             IMediator mediator,
             HttpContext context,
             TokenGeneratorService tokenGenerator) =>
@@ -86,7 +87,8 @@ public class UserEndpoint
         builder.MapPost("user/change-password/request", async (
             [FromBody] Application.Commands.Identity.RequestToChangePassword.RequestToChangePasswordRequest request,
             [FromServices] IMediator mediator
-        ) => {
+        ) =>
+        {
 
             await Task.CompletedTask;
         });
@@ -98,7 +100,8 @@ public class UserEndpoint
             var response = await mediator.Send(request);
 
             return Results.Ok();
-        }).RequireAuthorization(cfg => {
+        }).RequireAuthorization(cfg =>
+        {
             cfg.AddAuthenticationSchemes(Bl.Gym.TrainingApi.Api.Policies.ForgotPasswordPolicy.Scheme);
             cfg.RequireRole(Policies.ForgotPasswordPolicy.RequireRole.Value);
         });
@@ -122,6 +125,20 @@ public class UserEndpoint
                     response.Username,
                     Token = tokenResult
                 });
+        });
+
+        builder.MapPost("user/gym/{gymId}/invite", async (
+            string gymId,
+            [FromBody] InviteUserToGymRequestModel model,
+            [FromServices] IMediator mediator,
+            [FromServices] InvitationTokenGenerator tokenGenerator) =>
+        {
+            var response = await mediator.Send(
+                Application.Commands.Identity.SendGymInvitationToUser.SendGymInvitationToUserRequest(
+                    Email: model.Email,
+                    GymId: gymId));
+
+            return Results.Ok();
         });
 
         if (isDevelopment)
