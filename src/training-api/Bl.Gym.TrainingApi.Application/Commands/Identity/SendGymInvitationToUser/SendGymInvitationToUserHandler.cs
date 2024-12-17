@@ -56,6 +56,7 @@ public class SendGymInvitationToUserHandler
 
         await _emailService.SendGymInvitationEmailAsync(
             invitation,
+            request.Provider(invitation.Claims, invitation.ExpiresAt),
             cancellationToken);
 
         await transaction.CommitAsync();

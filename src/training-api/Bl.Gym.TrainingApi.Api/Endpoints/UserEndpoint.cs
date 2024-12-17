@@ -128,15 +128,21 @@ public class UserEndpoint
         });
 
         builder.MapPost("user/gym/{gymId}/invite", async (
-            string gymId,
+            Guid gymId,
             [FromBody] InviteUserToGymRequestModel model,
             [FromServices] IMediator mediator,
             [FromServices] InvitationTokenGenerator tokenGenerator) =>
         {
             var response = await mediator.Send(
-                Application.Commands.Identity.SendGymInvitationToUser.SendGymInvitationToUserRequest(
+                new Application.Commands.Identity.SendGymInvitationToUser.SendGymInvitationToUserRequest(
                     Email: model.Email,
-                    GymId: gymId));
+                    GymId: gymId,
+                    Provider: (claims, expiresAt) => 
+                    {
+                        var token = tokenGenerator.Generate(claims, expiresAt);
+
+                        return new Uri("https://myfakeredirecturl/" + token);
+                    }));
 
             return Results.Ok();
         });
