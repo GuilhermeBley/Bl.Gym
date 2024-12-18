@@ -46,6 +46,7 @@ builder.Services.AddScoped<Bl.Gym.TrainingApi.Application.Providers.IIdentityPro
 
 builder.Services.AddInfrastructure(typeof(Program).Assembly);
 builder.Services.AddSingleton<TokenGeneratorService>();
+builder.Services.AddSingleton<InvitationTokenGenerator>();
 
 builder.Services.Configure<Bl.Gym.TrainingApi.Infrastructure.Options.PostgreSqlOption>(
     builder.Configuration.GetSection(Bl.Gym.TrainingApi.Infrastructure.Options.PostgreSqlOption.SECTION));
