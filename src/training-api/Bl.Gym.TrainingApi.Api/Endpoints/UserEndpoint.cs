@@ -1,8 +1,7 @@
-﻿using Azure.Core;
+﻿using Bl.Gym.TrainingApi.Api.Extensions;
 using Bl.Gym.TrainingApi.Api.Model.Gym;
 using Bl.Gym.TrainingApi.Api.Services;
 using MediatR;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -130,6 +129,7 @@ public class UserEndpoint
         builder.MapPost("user/gym/{gymId}/invite", async (
             Guid gymId,
             [FromBody] InviteUserToGymRequestModel model,
+            [FromServices] HttpContext context,
             [FromServices] IMediator mediator,
             [FromServices] InvitationTokenGenerator tokenGenerator) =>
         {
@@ -141,8 +141,22 @@ public class UserEndpoint
                     {
                         var token = tokenGenerator.Generate(claims, expiresAt);
 
-                        return new Uri("https://myfakeredirecturl/" + token);
+                        return new Uri(context.GetBaseUrl() + $"/user/gym/{gymId}/invite/accept?token=" + token);
                     }));
+
+            return Results.Ok();
+        });
+
+        builder.MapPost("user/gym/{gymId}/invite/accept", async (
+            Guid gymId,
+            string token,
+            [FromBody] InviteUserToGymRequestModel model,
+            [FromServices] IMediator mediator,
+            [FromServices] InvitationTokenGenerator tokenGenerator) =>
+        {
+            //
+            // TODO: Accept user invitation
+            //
 
             return Results.Ok();
         });
