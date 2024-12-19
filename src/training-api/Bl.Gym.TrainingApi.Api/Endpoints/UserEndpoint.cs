@@ -1,5 +1,6 @@
 ﻿using Bl.Gym.TrainingApi.Api.Extensions;
 using Bl.Gym.TrainingApi.Api.Model.Gym;
+using Bl.Gym.TrainingApi.Api.Policies;
 using Bl.Gym.TrainingApi.Api.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -158,7 +159,10 @@ public class UserEndpoint
             // TODO: Accept user invitation
             //
 
-            return Results.Ok();
+            return Results.Redirect("");
+        }).RequireAuthorization(cfg =>
+        {
+            cfg.AuthenticationSchemes = [GymInvitationPolicy.AuthenticationScheme];
         });
 
         if (isDevelopment)
