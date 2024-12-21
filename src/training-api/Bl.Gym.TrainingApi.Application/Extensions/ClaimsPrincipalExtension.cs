@@ -39,6 +39,15 @@ public static class ClaimsPrincipalExtension
         ?? throw new ForbbidenCoreException();
 
     /// <summary>
+    /// Get the gym invitation ID, if null, it throws an exception.
+    /// </summary>
+    /// <exception cref="UnauthorizedAccessException"></exception>
+    /// <exception cref="ForbbidenCoreException"></exception>
+    public static Guid RequiredGymInvitationId(this ClaimsPrincipal principal)
+        => GymInvitationId(principal)
+        ?? throw new ForbbidenCoreException();
+
+    /// <summary>
     /// This method ensures that the <paramref name="gymIdToCheck"/> is the same of the current user.
     /// </summary>
     /// <exception cref="ForbbidenCoreException"></exception>
@@ -60,6 +69,22 @@ public static class ClaimsPrincipalExtension
         var claim = principal
             .Claims
             .FirstOrDefault(claim => claim.Type == Domain.Security.UserClaim.DEFAULT_GYM_ID);
+
+        if (claim is null ||
+            !Guid.TryParse(claim.Value, out var id))
+            return null;
+
+        return id;
+    }
+
+    /// <summary>
+    /// Get the gym invitation ID or null.
+    /// </summary>
+    public static Guid? GymInvitationId(this ClaimsPrincipal principal)
+    {
+        var claim = principal
+            .Claims
+            .FirstOrDefault(claim => claim.Type == Domain.Security.UserClaim.DEFAULT_GYM_INVITATION_ID);
 
         if (claim is null ||
             !Guid.TryParse(claim.Value, out var id))

@@ -150,16 +150,24 @@ public class UserEndpoint
 
         builder.MapPost("user/gym/{gymId}/invite/accept", async (
             Guid gymId,
-            string token,
+            HttpContext context,
             [FromBody] InviteUserToGymRequestModel model,
             [FromServices] IMediator mediator,
-            [FromServices] InvitationTokenGenerator tokenGenerator) =>
+            [FromServices] InvitationTokenGenerator tokenGenerator,
+            CancellationToken cancellationToken) =>
         {
-            //
-            // TODO: Accept user invitation
-            //
+            var invitationId =
+                context.User.RequiredGymInvitationId();
 
-            return Results.Redirect("");
+            var response = await mediator.Send(
+                new Application.Commands.Identity.AcceptGymInvitation.AcceptGymInvitationRequest(invitationId),
+                cancellationToken);
+
+            if (response.Status == Application.Commands.Identity.AcceptGymInvitation.AcceptGymInvitationStatusResponse.Accepted)
+                return Results.Ok();
+
+            return Results.BadRequest();
+
         }).RequireAuthorization(cfg =>
         {
             cfg.AuthenticationSchemes = [GymInvitationPolicy.AuthenticationScheme];
