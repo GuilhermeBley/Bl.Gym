@@ -1,4 +1,6 @@
-﻿namespace Bl.Gym.TrainingApi.Domain.Entities.Identity;
+﻿using System.Security.Claims;
+
+namespace Bl.Gym.TrainingApi.Domain.Entities.Identity;
 
 /// <summary>
 /// Class represents an entity whose responsibility is to store all user invitations to gyms.
@@ -12,9 +14,19 @@ public class UserGymInvitation
     public Guid GymId { get; private set; }
     public DateTime ExpiresAt { get; private set; }
     public string RoleName { get; private set; } = string.Empty;
+    public IReadOnlyList<Claim> Claims { get; private set; } = [];
     public DateTime CreatedAt { get; private set; }
 
     private UserGymInvitation() { }
+
+    
+
+    public bool IsExpired(IDateTimeProvider? dateTimeProvider = null)
+    {
+        dateTimeProvider ??= new DateTimeProvider();
+
+        return  dateTimeProvider.UtcNow > ExpiresAt;
+    }
 
     public override bool Equals(object? obj)
     {
@@ -27,6 +39,7 @@ public class UserGymInvitation
                GymId.Equals(invitation.GymId) &&
                ExpiresAt == invitation.ExpiresAt &&
                RoleName == invitation.RoleName &&
+               EqualityComparer<IReadOnlyList<Claim>>.Default.Equals(Claims, invitation.Claims) &&
                CreatedAt == invitation.CreatedAt;
     }
 
@@ -41,15 +54,9 @@ public class UserGymInvitation
         hash.Add(GymId);
         hash.Add(ExpiresAt);
         hash.Add(RoleName);
+        hash.Add(Claims);
         hash.Add(CreatedAt);
         return hash.ToHashCode();
-    }
-
-    public bool IsExpired(IDateTimeProvider? dateTimeProvider = null)
-    {
-        dateTimeProvider ??= new DateTimeProvider();
-
-        return  dateTimeProvider.UtcNow > ExpiresAt;
     }
 
     public static Result<UserGymInvitation> Create(
@@ -81,7 +88,11 @@ public class UserGymInvitation
                 Id = id,
                 InvitedByUserId = invitedByUserId,
                 UserEmail = userEmail,
-
+                Claims = [
+                    Security.UserClaim.CreateUserEmailClaim(userEmail),
+                    Security.UserClaim.CreateGymClaim(gymId),
+                    Security.UserClaim.CreateGymInvitationId(gymId),
+                ]
             });
     }
 }

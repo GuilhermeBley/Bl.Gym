@@ -13,6 +13,7 @@ public static class UserClaim
     public const string DEFAULT_USER_ID = "nameidentifier";
     public const string DEFAULT_USER_EMAIL = "emailaddress";
     public const string DEFAULT_GYM_ID = "gymidentifier";
+    public const string DEFAULT_GYM_INVITATION_ID = "gyminvitationid";
 
     /// <summary>
     /// Student that can see its own training sheets.
@@ -55,6 +56,8 @@ public static class UserClaim
         => new(DEFAULT_USER_EMAIL, email);
     public static Claim CreateGymClaim(Guid gymId)
         => new(DEFAULT_GYM_ID, gymId.ToString());
+    public static Claim CreateGymInvitationId(Guid invitationId)
+        => new(DEFAULT_GYM_INVITATION_ID, invitationId.ToString());
 
     public static IReadOnlyList<Claim> CreateBasicUserClaims(
         Guid userId,
