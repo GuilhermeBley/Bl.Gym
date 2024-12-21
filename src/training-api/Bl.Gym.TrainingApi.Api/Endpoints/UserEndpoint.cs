@@ -163,6 +163,7 @@ public class UserEndpoint
         }).RequireAuthorization(cfg =>
         {
             cfg.AuthenticationSchemes = [GymInvitationPolicy.AuthenticationScheme];
+            cfg.RequireClaim(Domain.Security.UserClaim.DEFAULT_GYM_INVITATION_ID);
         });
 
         if (isDevelopment)
