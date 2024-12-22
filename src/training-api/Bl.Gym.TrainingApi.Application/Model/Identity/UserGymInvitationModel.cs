@@ -10,6 +10,7 @@ public class UserGymInvitationModel
     public Guid GymId { get; set; }
     public DateTime ExpiresAt { get; set; }
     public string RoleName { get; set; } = string.Empty;
+    public bool Accepted { get; set; } = false;
     public DateTime CreatedAt { get; set; }
 
     public static UserGymInvitationModel MapFromEntity(

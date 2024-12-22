@@ -151,7 +151,25 @@ public class UserEndpoint
         builder.MapPost("user/gym/{gymId}/invite/accept", async (
             Guid gymId,
             HttpContext context,
-            [FromBody] InviteUserToGymRequestModel model,
+            [FromBody] AcceptUserInvitationLoggedModel model,
+            [FromServices] IMediator mediator,
+            [FromServices] InvitationTokenGenerator tokenGenerator,
+            CancellationToken cancellationToken) =>
+        {
+            var response = await mediator.Send(
+                new Application.Commands.Identity.AcceptGymInvitation.AcceptGymInvitationRequest(model.UserInvitationId),
+                cancellationToken);
+
+            if (response.Status == Application.Commands.Identity.AcceptGymInvitation.AcceptGymInvitationStatusResponse.Accepted)
+                return Results.Ok();
+
+            return Results.BadRequest();
+
+        }).RequireAuthorization(); // just use the common authentication for the user.
+
+        builder.MapGet("user/gym/{gymId}/invite/accept-by-email", async (
+            Guid gymId,
+            HttpContext context,
             [FromServices] IMediator mediator,
             [FromServices] InvitationTokenGenerator tokenGenerator,
             CancellationToken cancellationToken) =>
