@@ -18,7 +18,7 @@ const validationSchema = Yup.object().shape({
         .required('Email is required'),
 });
 
-const InviteUserModal : React.FC<InviteUserModalProps> = ({
+const InviteUserComponent : React.FC<InviteUserModalProps> = ({
     onSuccessfullyInvited
 }) => {
 
@@ -27,12 +27,9 @@ const InviteUserModal : React.FC<InviteUserModalProps> = ({
         { setSubmitting, resetForm }: FormikHelpers<FormValues>
     ) => {
         try {
-            //
-            // TODO: send API call
-            //
+            await onSuccessfullyInvited(values.email);
 
             resetForm(); // Reset the form
-            await onSuccessfullyInvited(values.email);
         } catch (error) {
             Alert.alert('Error', 'Failed to send invitation. Please try again later.');
         } finally {
@@ -86,4 +83,4 @@ const InviteUserModal : React.FC<InviteUserModalProps> = ({
     );
 }
 
-export default InviteUserModal;
+export default InviteUserComponent;
