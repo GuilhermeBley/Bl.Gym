@@ -85,3 +85,5 @@ const InviteUserModal : React.FC<InviteUserModalProps> = ({
         </View>
     );
 }
+
+export default InviteUserModal;
