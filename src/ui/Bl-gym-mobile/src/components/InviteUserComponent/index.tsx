@@ -4,8 +4,9 @@ import { Formik, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import styles from "./styles";
 
-interface InviteUserModalProps {
+interface InviteUserComponentProps {
     onSuccessfullyInvited: (email: string) => Promise<void>,
+    gymName: string
 }
 
 interface FormValues {
@@ -18,8 +19,9 @@ const validationSchema = Yup.object().shape({
         .required('Email is required'),
 });
 
-const InviteUserComponent : React.FC<InviteUserModalProps> = ({
-    onSuccessfullyInvited
+const InviteUserComponent : React.FC<InviteUserComponentProps> = ({
+    onSuccessfullyInvited,
+    gymName
 }) => {
 
     const handleSendInvite = async (
@@ -39,7 +41,7 @@ const InviteUserComponent : React.FC<InviteUserModalProps> = ({
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Invite a User to Your Gym</Text>
+            <Text style={styles.title}>Invite a User to {gymName}</Text>
 
             <Formik
             initialValues={{ email: '' }}
