@@ -69,7 +69,7 @@ public class TrainingEndpoint
             [FromServices] IMediator mediator) =>
         {
             var result =
-            await mediator.Send(
+                await mediator.Send(
                     new Application.Commands.Training.StartTrainingPeriod.StartTrainingPeriodRequest(sectionId));
 
             return Results.Created($"Training/section/{sectionId}/period", result);

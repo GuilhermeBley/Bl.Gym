@@ -35,6 +35,10 @@ public class SendGymInvitationToUserHandler
 
         currentUser.EnsureGymId(request.GymId);
 
+        currentUser.ThrowIfDoesntContainRole(
+            Domain.Security.UserClaim.ManageGymGroup
+        );
+
         var invitation = UserGymInvitation.Create(
             id: Guid.Empty,
             invitedByUserId: userId,

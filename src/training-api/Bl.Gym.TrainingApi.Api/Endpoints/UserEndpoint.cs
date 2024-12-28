@@ -146,6 +146,8 @@ public class UserEndpoint
                     }));
 
             return Results.Ok();
+        }).RequireAuthorization(cfg => {
+            cfg.RequireRole(Domain.Security.UserClaim.ManageGymGroup.Value);
         });
 
         builder.MapPost("user/gym/{gymId}/invite/accept", async (
