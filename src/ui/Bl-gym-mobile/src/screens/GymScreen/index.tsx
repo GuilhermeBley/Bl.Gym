@@ -6,15 +6,18 @@ import axios from "axios";
 import commonStyles from '../../styles/commonStyles'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
-import { ManageAnyGym } from "../../Constants/roleConstants";
+import { ManageAnyGym, ManageGymGroup } from "../../Constants/roleConstants";
 import CreateGymModalWithManageAnyGymRole, { GymCreateModel } from "../../components/gym/CreateGymModalWithManageAnyGymRole";
 import GymCardComponent from "../../components/GymCardComponent";
+import SimpleModal from "../../components/SimpleModal";
+import InviteUserComponent from "../../components/InviteUserComponent";
 
 interface PageDataProps {
     Gyms: GetCurrentUserGymResponse[],
     errors: string[],
     startedWithError: boolean,
-    isLoadingInitialData: boolean
+    isLoadingInitialData: boolean,
+    showInviteUserModal: boolean
 }
 
 const GymScreen = () => {
@@ -24,7 +27,8 @@ const GymScreen = () => {
         Gyms: [],
         errors: [],
         startedWithError: false,
-        isLoadingInitialData: true
+        isLoadingInitialData: true,
+        showInviteUserModal: false
     })
 
     useEffect(() => {
@@ -116,10 +120,10 @@ const GymScreen = () => {
     return (
         <SafeAreaView>
 
-            {pageData.isLoadingInitialData ? 
+            {pageData.isLoadingInitialData ?
                 <View>
-                    <ActivityIndicator/>
-                </View> : 
+                    <ActivityIndicator />
+                </View> :
                 <View>
                     <FlatList
                         data={pageData.Gyms}
@@ -140,6 +144,30 @@ const GymScreen = () => {
                     </Pressable>)
                 : (<View></View>)/* Don't show nothing */}
 
+            {userContext.user.isInRole(ManageGymGroup)
+                ? (
+                    <Pressable
+                        style={commonStyles.PrimaryButton}
+                        onPress={() => setPageData(previous => ({
+                            ...previous,
+                            showInviteUserModal: true
+                        }))}>
+                        <Text style={commonStyles.PrimaryButtonText}>
+                            Convidar membro
+                        </Text>
+                    </Pressable>)
+                : (<View></View>)/* Don't show nothing */}
+
+            <SimpleModal
+                children={<InviteUserComponent
+                    gymName={pageData.Gyms.filter(e => e.id == userContext.user.gymId).map(e => e.name)[0]}
+                    onSuccessfullyInvited={() => Promise.resolve(setPageData(previous => ({
+                        ...previous,
+                        showInviteUserModal: false
+                    })))}/>}
+                visible={pageData.showInviteUserModal}
+            />
+
             <CreateGymModalWithManageAnyGymRole
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
@@ -148,6 +176,7 @@ const GymScreen = () => {
             {pageData.errors.map(error => (
                 <Text style={styles.footerErrorMessages}>{error}</Text>
             ))}
+
 
         </SafeAreaView>
     );

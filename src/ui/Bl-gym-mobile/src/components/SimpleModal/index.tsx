@@ -4,7 +4,7 @@ import styles from './styles';
 
 interface ModalProps {
   visible: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   title?: string;
   children: React.ReactNode;
 }
