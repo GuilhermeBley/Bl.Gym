@@ -22,6 +22,7 @@ public class GetCurrentUserGymsHandler
         var user = await _identityProvider.GetCurrentAsync(cancellationToken);
 
         var userId = user.RequiredUserId();
+        var userEmail = user.RequiredUserEmail();
 
         if (userId != request.UserId)
             throw CoreException.CreateByCode(CoreExceptionCode.Unauthorized);
@@ -32,12 +33,19 @@ public class GetCurrentUserGymsHandler
                  on new { GymId = gym.Id, UserId = userId } equals new { GymId = userRole.GymGroupId, userRole.UserId }
              join role in _trainingContext.Roles.AsNoTracking()
                  on userRole.RoleId equals role.Id
+             join invite in _trainingContext.UserGymInvitations.AsNoTracking()
+                on new { GymId = gym.Id, Email = userEmail } equals new { invite.GymId, Email = invite.UserEmail }
+            into invites
+            from inviteNotRequired in invites.DefaultIfEmpty()
+            where inviteNotRequired.Accepted == false
+            where inviteNotRequired.ExpiresAt > DateTime.UtcNow
              select new GetCurrentUserGymResponse(
                  gym.Id,
                  gym.Name,
                  gym.Description,
                  gym.CreatedAt,
-                 role.Name))
+                 role.Name,
+                 inviteNotRequired != null))
             .ToListAsync(cancellationToken);
 
         return new GetCurrentUserGymsResponse(gyms);

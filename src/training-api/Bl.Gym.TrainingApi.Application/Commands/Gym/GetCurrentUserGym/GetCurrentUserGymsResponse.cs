@@ -5,7 +5,8 @@ public record GetCurrentUserGymResponse(
     string Name,
     string Description,
     DateTimeOffset CreatedAt,
-    string Role);
+    string Role,
+    bool IsInvite);
 
 public record GetCurrentUserGymsResponse(
     IEnumerable<GetCurrentUserGymResponse> Gyms);
