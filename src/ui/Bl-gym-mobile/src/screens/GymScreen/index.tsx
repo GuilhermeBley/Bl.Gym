@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
-import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
-import { GetCurrentUserGymResponse, handleCreateGym, handleGyms } from "./action";
+import { ActivityIndicator, Alert, FlatList, Pressable, Text, View } from "react-native";
+import { GetCurrentUserGymResponse, handleAcceptGymInvitation, handleCreateGym, handleGyms } from "./action";
 import axios from "axios";
 import commonStyles from '../../styles/commonStyles'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { ManageAnyGym, ManageGymGroup } from "../../Constants/roleConstants";
 import CreateGymModalWithManageAnyGymRole, { GymCreateModel } from "../../components/gym/CreateGymModalWithManageAnyGymRole";
-import GymCardComponent from "../../components/GymCardComponent";
+import GymCardComponent, { GymCardInfo } from "../../components/GymCardComponent";
 import SimpleModal from "../../components/SimpleModal";
 import InviteUserComponent from "../../components/InviteUserComponent";
 
@@ -117,6 +117,31 @@ const GymScreen = () => {
 
     console.debug(`showing: ${pageData.Gyms.map(e => e.id)}`)
 
+    const handleGymClick = (item: GymCardInfo) => {
+        if (item.isInvite)
+            handleGymInviteClick(item);
+    }
+
+    const handleGymInviteClick = (item: GymCardInfo) => {
+        return Alert.alert(
+            'Gym invitation',
+            `Are you sure you want to accept the gym invitation from ${item.name}?`,
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancelled'),
+                    style: 'cancel', 
+                },
+                {
+                    text: 'Accept',
+                    // TODO: ADD GYM INVITATION ID TO THE MODELS
+                    onPress: async () => handleAcceptGymInvitation(item.id),
+                },
+            ],
+            { cancelable: true }
+        );
+    }
+
     return (
         <SafeAreaView>
 
@@ -127,7 +152,7 @@ const GymScreen = () => {
                 <View>
                     <FlatList
                         data={pageData.Gyms}
-                        renderItem={(info) => <GymCardComponent item={info.item}></GymCardComponent>}
+                        renderItem={(info) => <GymCardComponent item={info.item} onClick={handleGymClick}></GymCardComponent>}
                         keyExtractor={(item) => item.id}>
 
                     </FlatList>
@@ -164,7 +189,7 @@ const GymScreen = () => {
                     onSuccessfullyInvited={() => Promise.resolve(setPageData(previous => ({
                         ...previous,
                         showInviteUserModal: false
-                    })))}/>}
+                    })))} />}
                 visible={pageData.showInviteUserModal}
             />
 

@@ -3,7 +3,7 @@ import { AxiosError, CancelToken } from "axios"
 import TryGetResultFromResponse from "../../api/ResponseReader"
 import { GymCreateModel } from "../../components/gym/CreateGymModalWithManageAnyGymRole"
 
-export interface GetCurrentUserGymResponse{
+export interface GetCurrentUserGymResponse {
     id: string,
     name: string,
     description: string,
@@ -51,4 +51,25 @@ export const handleCreateGym = (
             console.debug(error);
             return TryGetResultFromResponse(error.response);
         })
+}
+
+export const handleAcceptGymInvitation = async (
+    gymId: string,
+    cancellationToken: CancelToken | undefined = undefined
+) => {
+    return axios
+        .post(
+            "user/gym/{gymId}/invite/accept".replace("{gymId}", gymId),
+            {
+                UserInvitationId: 1
+            },
+            { cancelToken: cancellationToken })
+        .then(response => {
+            return TryGetResultFromResponse(response);
+        })
+        .catch((error: AxiosError<GetCurrentUserGymsResponse>) => {
+            console.debug('api -> user/gym/{gymId}/invite/accept')
+            console.debug(error);
+            return TryGetResultFromResponse(error.response);
+        });
 }
