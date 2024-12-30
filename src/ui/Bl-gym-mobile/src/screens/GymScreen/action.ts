@@ -9,6 +9,7 @@ export interface GetCurrentUserGymResponse{
     description: string,
     createdAt: Date,
     role: string,
+    isInvite: boolean
 };
 
 export interface GetCurrentUserGymsResponse {
