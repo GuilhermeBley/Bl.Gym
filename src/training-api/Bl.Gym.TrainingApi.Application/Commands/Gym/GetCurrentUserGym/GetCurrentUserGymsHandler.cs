@@ -45,6 +45,7 @@ public class GetCurrentUserGymsHandler
                  gym.Description,
                  gym.CreatedAt,
                  role.Name,
+                 inviteNotRequired.Id,
                  inviteNotRequired != null))
             .ToListAsync(cancellationToken);
 

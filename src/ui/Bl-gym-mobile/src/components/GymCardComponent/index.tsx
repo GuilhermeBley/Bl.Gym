@@ -9,6 +9,7 @@ export interface GymCardInfo {
     description: string,
     createdAt: Date,
     role: string,
+    inviteId: string,
     isInvite: boolean
 };
 

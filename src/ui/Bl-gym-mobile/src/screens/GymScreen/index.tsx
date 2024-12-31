@@ -134,8 +134,7 @@ const GymScreen = () => {
                 },
                 {
                     text: 'Accept',
-                    // TODO: ADD GYM INVITATION ID TO THE MODELS
-                    onPress: async () => handleAcceptGymInvitation(item.id),
+                    onPress: async () => await handleAcceptGymInvitation(item.inviteId),
                 },
             ],
             { cancelable: true }

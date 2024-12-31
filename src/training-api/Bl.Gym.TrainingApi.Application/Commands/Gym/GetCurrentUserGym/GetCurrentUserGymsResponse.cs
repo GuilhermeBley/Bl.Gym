@@ -6,6 +6,7 @@ public record GetCurrentUserGymResponse(
     string Description,
     DateTimeOffset CreatedAt,
     string Role,
+    Guid InviteId,
     bool IsInvite);
 
 public record GetCurrentUserGymsResponse(
