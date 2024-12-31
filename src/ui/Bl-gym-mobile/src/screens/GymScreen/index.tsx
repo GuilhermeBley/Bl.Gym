@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { ActivityIndicator, Alert, FlatList, Pressable, Text, View } from "react-native";
 import { GetCurrentUserGymResponse, handleAcceptGymInvitation, handleCreateGym, handleGyms } from "./action";
-import axios from "axios";
+import axios, { CancelToken } from "axios";
 import commonStyles from '../../styles/commonStyles'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
@@ -35,24 +35,7 @@ const GymScreen = () => {
         const source = axios.CancelToken.source();
 
         const fetchData = async () => {
-            var result = await handleGyms(userContext.user.id, source.token)
-
-            if (result.Success) {
-
-                setPageData(previous => ({
-                    ...previous,
-                    Gyms: result.Data.gyms,
-                    startedWithError: false
-                }));
-
-                return;
-            }
-
-            setPageData(previous => ({
-                ...previous,
-                startedWithError: true,
-                errors: result.Errors
-            }));
+            await handleGetAvailableGym(source.token);
         }
 
         fetchData()
@@ -95,6 +78,47 @@ const GymScreen = () => {
         setModalVisible(true)
     }
 
+    const handleGymInviteAndReloadPage = (inviteId: string) => {
+        setPageData(prev => ({
+            ...prev,
+            isLoadingInitialData: true
+        }));
+        
+        return handleAcceptGymInvitation(inviteId)
+            .then(response => {
+                return handleGetAvailableGym();
+            })
+            .finally(() => {
+                setPageData(prev => ({
+                    ...prev,
+                    isLoadingInitialData: false
+                }));
+            });
+    }
+
+    const handleGetAvailableGym = (token: CancelToken | undefined = undefined) => {
+        return handleGyms(userContext.user.id, token)
+            .then(result => {
+
+                if (result.Success) {
+        
+                    setPageData(previous => ({
+                        ...previous,
+                        Gyms: result.Data.gyms,
+                        startedWithError: false
+                    }));
+        
+                    return;
+                }
+        
+                setPageData(previous => ({
+                    ...previous,
+                    startedWithError: true,
+                    errors: result.Errors
+                }));
+            });
+    }
+
     if (pageData.isLoadingInitialData) {
         return (
             <SafeAreaView style={styles.containerCenter}>
@@ -134,7 +158,7 @@ const GymScreen = () => {
                 },
                 {
                     text: 'Accept',
-                    onPress: async () => await handleAcceptGymInvitation(item.inviteId),
+                    onPress: async () => await handleGymInviteAndReloadPage(item.inviteId),
                 },
             ],
             { cancelable: true }
