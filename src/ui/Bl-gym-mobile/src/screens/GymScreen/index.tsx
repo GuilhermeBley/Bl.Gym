@@ -201,7 +201,7 @@ const GymScreen = () => {
                             showInviteUserModal: true
                         }))}>
                         <Text style={commonStyles.PrimaryButtonText}>
-                            Convidar membro
+                            Invite new member
                         </Text>
                     </Pressable>)
                 : (<View></View>)/* Don't show nothing */}
