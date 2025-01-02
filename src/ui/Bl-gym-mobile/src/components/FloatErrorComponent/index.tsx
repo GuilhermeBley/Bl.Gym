@@ -1,28 +1,20 @@
-import React, { useState } from "react";
-import { View, Text, Button } from "react-native";
+import React from "react";
+import { View, Text, Button, StyleSheet } from "react-native";
+import { useErrorContext } from "../../contexts/ErrorContext";
 import styles from "./styles";
 
-interface Error {
-  type: "Warning" | "Error" | "Critical";
-  message: string;
-}
+const FloatErrorComponent: React.FC = () => {
+  const {
+    errors,
+    currentErrorIndex,
+    closeCurrentError,
+  } = useErrorContext();
 
-interface FloatErrorViewerProps {
-  errors: Error[];
-}
+  if (errors.length === 0) {
+    return <View></View>;
+  }
 
-const FloatErrorViewer: React.FC<FloatErrorViewerProps> = ({ errors }) => {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-
-  const nextError = () => {
-    setCurrentIndex((prev) => (prev + 1) % errors.length);
-  };
-
-  const prevError = () => {
-    setCurrentIndex((prev) => (prev - 1 + errors.length) % errors.length);
-  };
-
-  const currentError = errors[currentIndex];
+  const currentError = errors[currentErrorIndex];
 
   const getBackgroundColor = (type: "Warning" | "Error" | "Critical") => {
     switch (type) {
@@ -46,12 +38,10 @@ const FloatErrorViewer: React.FC<FloatErrorViewerProps> = ({ errors }) => {
     >
       <Text style={styles.message}>{currentError.message}</Text>
       <View style={styles.pagination}>
-        <Button title="Previous" onPress={prevError} />
-        <Text style={styles.pageIndicator}>
-          {currentIndex + 1} / {errors.length}
-        </Text>
-        <Button title="Next" onPress={nextError} />
+        <Button title="Close" onPress={closeCurrentError} />
       </View>
     </View>
   );
 };
+
+export default FloatErrorComponent;
