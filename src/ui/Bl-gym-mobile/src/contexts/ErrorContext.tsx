@@ -8,7 +8,7 @@ interface Error {
 interface ErrorContextType {
   errors: Error[];
   currentErrorIndex: number;
-  addError: (error: Error) => void;
+  addError: (error: Error | string | Error[] | string[]) => void;
   closeCurrentError: () => void;
   clearErrors: () => void;
 }
@@ -19,7 +19,21 @@ export const ErrorProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [errors, setErrors] = useState<Error[]>([]);
   const [currentErrorIndex, setCurrentErrorIndex] = useState<number>(0);
 
-  const addError = (error: Error) => {
+  const addError = (error: Error | string | Error[] | string[]) => {
+
+    if (Array.isArray(error)) {
+
+      if (error.every((item) => typeof item === "string"))
+        error = error.map(e => { return { type: "Error", message: e } as Error })
+
+      setErrors(error);
+
+      return;
+    }
+
+    if (typeof error === "string" )
+      error = { type: "Error", message: error } as Error
+
     setErrors((prev) => [...prev, error]);
   };
 
