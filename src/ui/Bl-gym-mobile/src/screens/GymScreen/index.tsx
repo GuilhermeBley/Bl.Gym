@@ -11,10 +11,10 @@ import CreateGymModalWithManageAnyGymRole, { GymCreateModel } from "../../compon
 import GymCardComponent, { GymCardInfo } from "../../components/GymCardComponent";
 import SimpleModal from "../../components/SimpleModal";
 import InviteUserComponent from "../../components/InviteUserComponent";
+import { useErrorContext } from "../../contexts/ErrorContext";
 
 interface PageDataProps {
     Gyms: GetCurrentUserGymResponse[],
-    errors: string[],
     startedWithError: boolean,
     isLoadingInitialData: boolean,
     showInviteUserModal: boolean
@@ -22,10 +22,10 @@ interface PageDataProps {
 
 const GymScreen = () => {
     const userContext = useContext(UserContext);
+    const { addError } = useErrorContext();
     const [modalVisible, setModalVisible] = useState(false)
     const [pageData, setPageData] = useState<PageDataProps>({
         Gyms: [],
-        errors: [],
         startedWithError: false,
         isLoadingInitialData: true,
         showInviteUserModal: false
@@ -55,7 +55,7 @@ const GymScreen = () => {
         var result = await handleCreateGym(model)
 
         if (result.ContainsError) {
-            setPageData(previous => ({ ...previous, errors: result.Errors }))
+            addError(result.Errors)
             setModalVisible(false);
             return;
         }
@@ -111,10 +111,10 @@ const GymScreen = () => {
                     return;
                 }
         
+                addError(result.Errors)
                 setPageData(previous => ({
                     ...previous,
-                    startedWithError: true,
-                    errors: result.Errors
+                    startedWithError: true
                 }));
             });
     }
@@ -220,10 +220,6 @@ const GymScreen = () => {
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
                 onSubmiting={handleGymCreation} />
-
-            {pageData.errors.map(error => (
-                <Text style={styles.footerErrorMessages}>{error}</Text>
-            ))}
 
 
         </SafeAreaView>
