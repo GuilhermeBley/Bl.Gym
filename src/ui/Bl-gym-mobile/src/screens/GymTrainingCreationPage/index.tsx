@@ -127,6 +127,7 @@ const GymTrainingCreationPage = () => {
         cancelToken);
   
       if (result.Success) {
+
         setPageData(previous => ({
           ...previous,
           availableGyms: result.Data.gyms,
@@ -201,6 +202,7 @@ const GymTrainingCreationPage = () => {
       var gymTrainingsResult = await getGymExercisesByPage(selectedGymId, 0, undefined);
 
       if (gymTrainingsResult.ContainsError) {
+        console.debug(`Failed to get trainings: ${gymTrainingsResult.Errors}`);
         return;
       }
 
@@ -220,8 +222,11 @@ const GymTrainingCreationPage = () => {
 
       if (membersResult.ContainsError) {
         resetFormData();
+        console.debug(`Failed to get users: ${membersResult.Errors}`);
         return;
       }
+
+      console.debug(`Users mapped: ${membersResult.Data.availableExercises}`);
 
       setPageData(previous => ({
         ...previous,
