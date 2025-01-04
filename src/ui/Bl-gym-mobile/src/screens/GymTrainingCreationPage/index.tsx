@@ -16,10 +16,11 @@ import {
 } from "./actions";
 import commonStyles from "../../styles/commonStyles";
 import CreateOrEditSectionComponent from "../../components/gym/CreateOrEditSectionComponent";
-import axios from "axios";
+import axios, { CancelToken } from "axios";
 import { UserContext } from "../../contexts/UserContext";
 import StyledInputFormik from "../../components/StyledInputFormik";
 import StyledSelectInputFormik from "../../components/StyledSelectInputFormik";
+import { useRoute } from "@react-navigation/native";
 
 interface PageDataModel {
   availableGyms: GetCurrentUserGymResponse[],
@@ -83,49 +84,65 @@ const GymTrainingCreationPage = () => {
     } as PageDataModel
   );
 
+  const route = useRoute<any>();
+  const { refreshKey } = route.params || {};
   const userContext = useContext(UserContext);
 
   useEffect(() => {
     const source = axios.CancelToken.source();
 
-    const fetchData = async () => {
-      // TODO: GET ALL USER GYM's
-
-      if (!userContext.user.gymId)
-      {
-        return;
-      }
-
-      var result = await getGymsAvailables(
-        userContext.user.id,
-        userContext.user.gymId,
-        source.token);
-
-      if (result.Success) {
-
-        setPageData(previous => ({
-          ...previous,
-          availableGyms: result.Data.gyms,
-          startedWithError: false,
-        }));
-
-        return;
-      }
+    handleInitialMembers(source.token);
+    
+    return () => {
+      source.cancel();
     }
+  }, [refreshKey]);
 
-    fetchData()
-      .finally(() => {
-        setPageData(previous => ({
-          ...previous,
-          isLoadingInitialData: false
-        }));
-      });
+  useEffect(() => {
+    const source = axios.CancelToken.source();
 
+    handleInitialMembers(source.token);
+    
     return () => {
       source.cancel();
     }
 
   }, [])
+
+  const handleInitialMembers = async (cancelToken: CancelToken | undefined = undefined) => {
+
+    setPageData(previous => ({
+      ...previous,
+      isLoadingInitialData: true
+    }));
+
+    try {
+      if (!userContext.user.gymId) {
+        return;
+      }
+  
+      var result = await getGymsAvailables(
+        userContext.user.id,
+        userContext.user.gymId,
+        cancelToken);
+  
+      if (result.Success) {
+        setPageData(previous => ({
+          ...previous,
+          availableGyms: result.Data.gyms,
+          startedWithError: false,
+        }));
+      }
+
+      await handleGymSelect(userContext.user.gymId);
+    }
+    finally{
+      setPageData(previous => ({
+        ...previous,
+        isLoadingInitialData: false
+      }));
+    }
+  }
 
   const SectionComponent: React.FC<SectionComponentProps> = ({ formikProps, trainingIndex, section: training }) => {
 
@@ -256,7 +273,6 @@ const GymTrainingCreationPage = () => {
                   ({ label: e.name, value: e.id })
                 )}
                 autoFocus
-                onValueChange={handleGymSelect}
                 enabled={false} /*Keep not editable, supports just new students to the current gym*/ />
 
               <StyledSelectInputFormik
