@@ -10,6 +10,7 @@ interface ModalProps {
 }
 
 const CustomModal: React.FC<ModalProps> = ({ visible, title, children, onClose = () => { } }) => {
+
   return (
     <Modal
       transparent={true}
@@ -21,7 +22,7 @@ const CustomModal: React.FC<ModalProps> = ({ visible, title, children, onClose =
         <View style={styles.modalContainer}>
           {title && <Text style={styles.title}>{title}</Text>}
           <View style={styles.content}>{children}</View>
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <TouchableOpacity style={styles.closeButton} onPress={() => { onClose(); }}>
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
         </View>

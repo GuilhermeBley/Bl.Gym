@@ -207,12 +207,17 @@ const GymScreen = () => {
                 : (<View></View>)/* Don't show nothing */}
 
             <SimpleModal
+                onClose={() => setPageData(previous => ({
+                    ...previous,
+                    showInviteUserModal: false
+                }))}
                 children={<InviteUserComponent
                     gymName={pageData.Gyms.filter(e => e.id == userContext.user.gymId).map(e => e.name)[0]}
                     onSuccessfullyInvited={() => Promise.resolve(setPageData(previous => ({
                         ...previous,
                         showInviteUserModal: false
-                    })))} />}
+                    })))
+                } />}
                 visible={pageData.showInviteUserModal}
             />
 
