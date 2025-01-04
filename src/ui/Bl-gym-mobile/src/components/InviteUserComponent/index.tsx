@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import { Formik, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import styles from "./styles";
+import commonStyles from "../../styles/commonStyles";
 
 interface InviteUserComponentProps {
     onSuccessfullyInvited: (email: string) => Promise<void>,
@@ -19,7 +20,7 @@ const validationSchema = Yup.object().shape({
         .required('Email is required'),
 });
 
-const InviteUserComponent : React.FC<InviteUserComponentProps> = ({
+const InviteUserComponent: React.FC<InviteUserComponentProps> = ({
     onSuccessfullyInvited,
     gymName
 }) => {
@@ -40,46 +41,46 @@ const InviteUserComponent : React.FC<InviteUserComponentProps> = ({
     };
 
     return (
-        <View style={styles.container}>
+        <View>
             <Text style={styles.title}>Invite a User to {gymName}</Text>
 
             <Formik
-            initialValues={{ email: '' }}
-            validationSchema={validationSchema}
-            onSubmit={handleSendInvite}
+                initialValues={{ email: '' }}
+                validationSchema={validationSchema}
+                onSubmit={handleSendInvite}
             >
-            {({
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                values,
-                errors,
-                touched,
-                isSubmitting,
-            }) => (
-                <>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter email address"
-                    value={values.email}
-                    onChangeText={handleChange('email')}
-                    onBlur={handleBlur('email')}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                />
-                {touched.email && errors.email && (
-                    <Text style={styles.errorText}>{errors.email}</Text>
-                )}
+                {({
+                    handleChange,
+                    handleBlur,
+                    handleSubmit,
+                    values,
+                    errors,
+                    touched,
+                    isSubmitting,
+                }) => (
+                    <View>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter email address"
+                            value={values.email}
+                            onChangeText={handleChange('email')}
+                            onBlur={handleBlur('email')}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                        />
+                        {touched.email && errors.email && (
+                            <Text style={styles.errorText}>{errors.email}</Text>
+                        )}
 
-                <TouchableOpacity
-                    style={[styles.button, isSubmitting && styles.buttonDisabled]}
-                    onPress={handleSubmit as () => void}
-                    disabled={isSubmitting}
-                >
-                    <Text style={styles.buttonText}>{isSubmitting ? 'Sending...' : 'Send Invite'}</Text>
-                </TouchableOpacity>
-                </>
-            )}
+                        <TouchableOpacity
+                            style={[commonStyles.PrimaryButton]}
+                            onPress={handleSubmit as () => void}
+                            disabled={isSubmitting}
+                        >
+                            <Text style={commonStyles.PrimaryButtonText}>{isSubmitting ? 'Sending...' : 'Send Invite'}</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
             </Formik>
         </View>
     );
