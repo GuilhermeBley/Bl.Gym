@@ -1,4 +1,5 @@
 ﻿
+using Bl.Gym.TrainingApi.Application.Commands.Identity.CreateUser;
 using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
 using Bl.Gym.TrainingApi.Application.Services;

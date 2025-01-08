@@ -80,12 +80,12 @@ public class GymRoleCheckerService
     {
         var claims =
             await (
-            from userRole in _context.UserTrainingRoles.AsNoTracking()
-            join role in _context.Roles.AsNoTracking()
+            from userRole in _context.UserTrainingRoles
+            join role in _context.Roles
                 on userRole.RoleId equals role.Id
-            join claim in _context.RoleClaims.AsNoTracking()
+            join claim in _context.RoleClaims
                 on role.Id equals claim.RoleId
-            where userRole.Id == userId && userRole.GymGroupId == gymId
+            where userRole.UserId == userId && userRole.GymGroupId == gymId
             select new Claim(claim.ClaimType, claim.ClaimValue))
             .ToListAsync(cancellationToken);
 
