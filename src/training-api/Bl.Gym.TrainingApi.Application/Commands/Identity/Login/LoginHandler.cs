@@ -128,10 +128,10 @@ public class LoginHandler
         CancellationToken cancellationToken = default)
     {
         var claims = await 
-            (from userRole in _context.UserRoles.AsNoTracking()
-            join role in _context.Roles.AsNoTracking()
+            (from userRole in _context.UserRoles
+            join role in _context.Roles
                 on userRole.RoleId equals role.Id
-            join claim in _context.RoleClaims.AsNoTracking()
+            join claim in _context.RoleClaims
                 on role.Id equals claim.RoleId
             where userRole.UserId == userId
             select new {
@@ -139,6 +139,7 @@ public class LoginHandler
                 claim.ClaimType,
                 claim.ClaimValue
             })
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
 
         return claims.Select(c => 

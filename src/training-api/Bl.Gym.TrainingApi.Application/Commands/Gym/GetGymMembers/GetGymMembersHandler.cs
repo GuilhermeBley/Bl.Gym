@@ -48,6 +48,7 @@ public class GetGymMembersHandler
                  /*Name*/user.FirstName,
                  /*LastName*/user.LastName,
                  /*RoleName*/ role.Name))
+            .AsNoTracking()
             .ToArrayAsync(cancellationToken);
 
         return new(results);

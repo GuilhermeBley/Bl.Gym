@@ -67,6 +67,7 @@ public class TryAddDefaultRoleClaimsHandler
                     await _trainingContext
                     .RoleClaims
                     .AsNoTracking()
+                    .Where(e => e.RoleId == role.Id)
                     .Where(e => e.ClaimValue == claim.Value)
                     .Where(e => e.ClaimType == claim.Type)
                     .AnyAsync(cancellationToken);
