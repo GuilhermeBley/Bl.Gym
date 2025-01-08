@@ -1,54 +1,41 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
-import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
-import { GetCurrentUserGymResponse, handleCreateGym, handleGyms } from "./action";
-import axios from "axios";
+import { ActivityIndicator, Alert, FlatList, Pressable, Text, View } from "react-native";
+import { GetCurrentUserGymResponse, handleAcceptGymInvitation, handleCreateGym, handleGyms } from "./action";
+import axios, { CancelToken } from "axios";
 import commonStyles from '../../styles/commonStyles'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
-import { ManageAnyGym } from "../../Constants/roleConstants";
+import { ManageAnyGym, ManageGymGroup } from "../../Constants/roleConstants";
 import CreateGymModalWithManageAnyGymRole, { GymCreateModel } from "../../components/gym/CreateGymModalWithManageAnyGymRole";
-import GymCardComponent from "../../components/GymCardComponent";
+import GymCardComponent, { GymCardInfo } from "../../components/GymCardComponent";
+import SimpleModal from "../../components/SimpleModal";
+import InviteUserComponent from "../../components/InviteUserComponent";
+import { useErrorContext } from "../../contexts/ErrorContext";
 
 interface PageDataProps {
     Gyms: GetCurrentUserGymResponse[],
-    errors: string[],
     startedWithError: boolean,
-    isLoadingInitialData: boolean
+    isLoadingInitialData: boolean,
+    showInviteUserModal: boolean
 }
 
 const GymScreen = () => {
     const userContext = useContext(UserContext);
+    const { addError } = useErrorContext();
     const [modalVisible, setModalVisible] = useState(false)
     const [pageData, setPageData] = useState<PageDataProps>({
         Gyms: [],
-        errors: [],
         startedWithError: false,
-        isLoadingInitialData: true
+        isLoadingInitialData: true,
+        showInviteUserModal: false
     })
 
     useEffect(() => {
         const source = axios.CancelToken.source();
 
         const fetchData = async () => {
-            var result = await handleGyms(userContext.user.id, source.token)
-
-            if (result.Success) {
-
-                setPageData(previous => ({
-                    ...previous,
-                    Gyms: result.Data.gyms,
-                    startedWithError: false
-                }));
-
-                return;
-            }
-
-            setPageData(previous => ({
-                ...previous,
-                startedWithError: true,
-                errors: result.Errors
-            }));
+            await handleGetAvailableGym(source.token);
         }
 
         fetchData()
@@ -68,7 +55,7 @@ const GymScreen = () => {
         var result = await handleCreateGym(model)
 
         if (result.ContainsError) {
-            setPageData(previous => ({ ...previous, errors: result.Errors }))
+            addError(result.Errors)
             setModalVisible(false);
             return;
         }
@@ -89,6 +76,47 @@ const GymScreen = () => {
 
     const handleModalGymCreation = () => {
         setModalVisible(true)
+    }
+
+    const handleGymInviteAndReloadPage = (inviteId: string) => {
+        setPageData(prev => ({
+            ...prev,
+            isLoadingInitialData: true
+        }));
+        
+        return handleAcceptGymInvitation(inviteId)
+            .then(response => {
+                return handleGetAvailableGym();
+            })
+            .finally(() => {
+                setPageData(prev => ({
+                    ...prev,
+                    isLoadingInitialData: false
+                }));
+            });
+    }
+
+    const handleGetAvailableGym = (token: CancelToken | undefined = undefined) => {
+        return handleGyms(userContext.user.id, token)
+            .then(result => {
+
+                if (result.Success) {
+        
+                    setPageData(previous => ({
+                        ...previous,
+                        Gyms: result.Data.gyms,
+                        startedWithError: false
+                    }));
+        
+                    return;
+                }
+        
+                addError(result.Errors)
+                setPageData(previous => ({
+                    ...previous,
+                    startedWithError: true
+                }));
+            });
     }
 
     if (pageData.isLoadingInitialData) {
@@ -113,17 +141,41 @@ const GymScreen = () => {
 
     console.debug(`showing: ${pageData.Gyms.map(e => e.id)}`)
 
+    const handleGymClick = (item: GymCardInfo) => {
+        if (item.isInvite)
+            handleGymInviteClick(item);
+    }
+
+    const handleGymInviteClick = (item: GymCardInfo) => {
+        return Alert.alert(
+            'Gym invitation',
+            `Are you sure you want to accept the gym invitation from ${item.name}?`,
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancelled'),
+                    style: 'cancel', 
+                },
+                {
+                    text: 'Accept',
+                    onPress: async () => await handleGymInviteAndReloadPage(item.inviteId),
+                },
+            ],
+            { cancelable: true }
+        );
+    }
+
     return (
         <SafeAreaView>
 
-            {pageData.isLoadingInitialData ? 
+            {pageData.isLoadingInitialData ?
                 <View>
-                    <ActivityIndicator/>
-                </View> : 
+                    <ActivityIndicator />
+                </View> :
                 <View>
                     <FlatList
                         data={pageData.Gyms}
-                        renderItem={(info) => <GymCardComponent item={info.item}></GymCardComponent>}
+                        renderItem={(info) => <GymCardComponent item={info.item} onClick={handleGymClick}></GymCardComponent>}
                         keyExtractor={(item) => item.id}>
 
                     </FlatList>
@@ -140,14 +192,40 @@ const GymScreen = () => {
                     </Pressable>)
                 : (<View></View>)/* Don't show nothing */}
 
+            {userContext.user.isInRole(ManageGymGroup)
+                ? (
+                    <Pressable
+                        style={commonStyles.PrimaryButton}
+                        onPress={() => setPageData(previous => ({
+                            ...previous,
+                            showInviteUserModal: true
+                        }))}>
+                        <Text style={commonStyles.PrimaryButtonText}>
+                            Invite new member
+                        </Text>
+                    </Pressable>)
+                : (<View></View>)/* Don't show nothing */}
+
+            <SimpleModal
+                onClose={() => setPageData(previous => ({
+                    ...previous,
+                    showInviteUserModal: false
+                }))}
+                children={<InviteUserComponent
+                    gymName={pageData.Gyms.filter(e => e.id == userContext.user.gymId).map(e => e.name)[0]}
+                    onSuccessfullyInvited={() => Promise.resolve(setPageData(previous => ({
+                        ...previous,
+                        showInviteUserModal: false
+                    })))
+                } />}
+                visible={pageData.showInviteUserModal}
+            />
+
             <CreateGymModalWithManageAnyGymRole
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
                 onSubmiting={handleGymCreation} />
 
-            {pageData.errors.map(error => (
-                <Text style={styles.footerErrorMessages}>{error}</Text>
-            ))}
 
         </SafeAreaView>
     );

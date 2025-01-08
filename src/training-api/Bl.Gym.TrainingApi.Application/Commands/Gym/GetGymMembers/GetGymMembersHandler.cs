@@ -1,4 +1,5 @@
 ﻿
+using Bl.Gym.TrainingApi.Application.Commands.Identity.CreateUser;
 using Bl.Gym.TrainingApi.Application.Providers;
 using Bl.Gym.TrainingApi.Application.Repositories;
 using Bl.Gym.TrainingApi.Application.Services;
@@ -48,6 +49,7 @@ public class GetGymMembersHandler
                  /*Name*/user.FirstName,
                  /*LastName*/user.LastName,
                  /*RoleName*/ role.Name))
+            .AsNoTracking()
             .ToArrayAsync(cancellationToken);
 
         return new(results);

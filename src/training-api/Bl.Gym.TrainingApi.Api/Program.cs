@@ -1,7 +1,11 @@
+using Bl.Gym.TrainingApi.Api.Options;
 using Bl.Gym.TrainingApi.Api.Policies;
 using Bl.Gym.TrainingApi.Api.Services;
 using Bl.Gym.TrainingApi.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,6 +50,7 @@ builder.Services.AddScoped<Bl.Gym.TrainingApi.Application.Providers.IIdentityPro
 
 builder.Services.AddInfrastructure(typeof(Program).Assembly);
 builder.Services.AddSingleton<TokenGeneratorService>();
+builder.Services.AddSingleton<InvitationTokenGenerator>();
 
 builder.Services.Configure<Bl.Gym.TrainingApi.Infrastructure.Options.PostgreSqlOption>(
     builder.Configuration.GetSection(Bl.Gym.TrainingApi.Infrastructure.Options.PostgreSqlOption.SECTION));
@@ -58,9 +63,10 @@ builder.Services
     {
         cfg.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
         cfg.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+
     })
     .AddJwtBearer(
-        Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme, 
+        Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme,
         cfg =>
         {
             cfg.RequireHttpsMetadata = false;
@@ -90,7 +96,34 @@ builder.Services
                 ValidateIssuer = false,
                 ValidateAudience = false,
             };
-        });
+        })
+    .AddJwtBearer(GymInvitationPolicy.AuthenticationScheme, cfg =>
+    {
+        cfg.RequireHttpsMetadata = false;
+        cfg.SaveToken = true;
+        cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+                System.Text.Encoding.ASCII.GetBytes(
+                    builder.Configuration.GetSection($"Jwt:{nameof(JwtOptions.KeyEmailInvitation)}").Value ?? string.Empty)),
+            ValidateLifetime = true,
+            ValidateIssuer = false,
+            ValidateAudience = false,
+        };
+        cfg.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var token = context.Request.Query[GymInvitationPolicy.QueryParameterName];
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+                return Task.CompletedTask;
+            }
+        };
+    });
+
 builder.Services.AddAuthorization(cfg =>
 {
     cfg.AddPolicy(UserGymPolicy.POLICY_NAME, builder => 

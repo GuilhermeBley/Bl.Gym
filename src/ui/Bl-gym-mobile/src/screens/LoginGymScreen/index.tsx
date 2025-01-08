@@ -6,6 +6,7 @@ import { getGyms, handleLogin, LoginResultStatus } from "./action";
 import { UserContext } from "../../contexts/UserContext";
 import axios from 'axios';
 import styles from "./styles";
+import MiddleFloatLoadingScreen from "../../components/MiddleFloatLoadingScreen";
 
 const LoginGymScreen = () => {
 
@@ -24,6 +25,9 @@ const LoginGymScreen = () => {
     const handleGymLogin = async (
         gymId: string
     ) => {
+
+        if (pageData.isLoadingLogin)
+            return;
 
         try{
             setPageData(prev => ({
@@ -94,6 +98,11 @@ const LoginGymScreen = () => {
 
     return (
         <SafeAreaView>
+
+            {pageData.isLoadingLogin 
+                ? <MiddleFloatLoadingScreen/>
+                : <View></View>}
+
             {pageData.isLoadingInitialData ? 
                 <View>
                     <ActivityIndicator/>
@@ -104,7 +113,8 @@ const LoginGymScreen = () => {
                         renderItem={(info) =>
                             <GymCardComponent
                                 item={info.item}
-                                onClick={(item) => handleGymLogin(item.id)}>
+                                onClick={(item) => handleGymLogin(item.id)}
+                                isLoading={pageData.isLoadingLogin}>
                             </GymCardComponent>}
                         keyExtractor={(item) => item.id}>
 

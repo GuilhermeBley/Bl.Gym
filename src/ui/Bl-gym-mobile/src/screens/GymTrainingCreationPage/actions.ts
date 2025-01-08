@@ -25,10 +25,15 @@ export const handleTrainingCreation = (
     });
 }
 
-export const getGymsAvailables = (
+export const getGymsAvailables = async (
     userId: string,
+    currentGymId: string,
     cancellationToken: CancelToken | undefined = undefined) => {
-    return handleGyms(userId, cancellationToken);
+    var gymResult = await handleGyms(userId, cancellationToken);
+    if (gymResult.Success)
+        gymResult.Data.gyms = gymResult.Data.gyms.filter(e => e.id == currentGymId);
+
+    return gymResult;
 }
 
 export const getGymMembers = (

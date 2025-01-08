@@ -132,7 +132,7 @@ const TrainingListScreen = ({ navigation }: any) => {
             />
 
             <Pressable
-                onPress={() => navigation.navigate(TRAINING_CREATION_SCREEN)}
+                onPress={() => navigation.navigate(TRAINING_CREATION_SCREEN, { refreshKey: Date.now() })}
                 style={commonStyles.PrimaryButton}>
                 <Text style={commonStyles.PrimaryButtonText}>
                     + Novo treino

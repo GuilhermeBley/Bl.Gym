@@ -9,6 +9,8 @@ export interface GymCardInfo {
     description: string,
     createdAt: Date,
     role: string,
+    inviteId: string,
+    isInvite: boolean
 };
 
 const gymRoleGroupTranslations: { [key: string]: string }[] = [
@@ -20,20 +22,26 @@ const gymRoleGroupTranslations: { [key: string]: string }[] = [
 type GymCardComponentProps = {
     item: GymCardInfo;
     onClick?: ((item: GymCardInfo) => void) | ((item: GymCardInfo) => Promise<void>) | undefined;
+    isLoading?: boolean
 };
 
 const GymCardComponent: React.FC<GymCardComponentProps> = ({
-    item, onClick
+    item, onClick, isLoading = false
 }) => {
     return (
         <View style={styles.card}>
-            <Pressable onPress={() => { if(onClick) return onClick(item) }}>
+            <Pressable
+                onPress={() => { if (onClick && !isLoading) return onClick(item) }}
+                disabled={isLoading}>
                 <View
                     style={styles.cardContent}>
                     <Text style={styles.cardTitle}>
                         {item.name}
                         <Text style={styles.cardText}>
                             ({translateGymRoleGroup(item.role)})
+                            {item.isInvite
+                                ? <Text style={{ color: "red" }}>(invite)</Text>
+                                : <View></View>}
                         </Text>
                     </Text>
                     <Text style={styles.cardText}>

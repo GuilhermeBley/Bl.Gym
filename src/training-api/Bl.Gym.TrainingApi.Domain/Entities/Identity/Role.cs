@@ -110,4 +110,16 @@ public class Role
     {
         return _claims.AsEnumerable().GetEnumerator();
     }
+
+    public static bool IsRoleRegistered(string roleName)
+    {
+        string[] availableRoles = [
+            nameof(Admin), 
+            nameof(GymGroupOwner),
+            nameof(Instructor),
+            nameof(Student),
+        ];
+
+        return availableRoles.Contains(roleName, StringComparer.OrdinalIgnoreCase);
+    }
 }

@@ -1,7 +1,8 @@
-﻿using Azure.Core;
+﻿using Bl.Gym.TrainingApi.Api.Extensions;
+using Bl.Gym.TrainingApi.Api.Model.Gym;
+using Bl.Gym.TrainingApi.Api.Policies;
 using Bl.Gym.TrainingApi.Api.Services;
 using MediatR;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -14,7 +15,7 @@ public class UserEndpoint
         bool isDevelopment)
     {
         builder.MapPost("user", async (
-            [FromBody]Application.Commands.Identity.CreateUser.CreateUserRequest request,
+            [FromBody] Application.Commands.Identity.CreateUser.CreateUserRequest request,
             IMediator mediator) =>
         {
             var response = await mediator.Send(request);
@@ -23,7 +24,7 @@ public class UserEndpoint
         });
 
         builder.MapPost("user/login", async (
-            [FromBody]Application.Commands.Identity.Login.LoginRequest request,
+            [FromBody] Application.Commands.Identity.Login.LoginRequest request,
             IMediator mediator,
             TokenGeneratorService tokenGenerator) =>
         {
@@ -46,7 +47,7 @@ public class UserEndpoint
         });
 
         builder.MapPost("user/login/gym", async (
-            [FromBody]Application.Commands.Identity.LoginToSpecificGym.LoginToSpecificGymRequest request,
+            [FromBody] Application.Commands.Identity.LoginToSpecificGym.LoginToSpecificGymRequest request,
             IMediator mediator,
             HttpContext context,
             TokenGeneratorService tokenGenerator) =>
@@ -86,7 +87,8 @@ public class UserEndpoint
         builder.MapPost("user/change-password/request", async (
             [FromBody] Application.Commands.Identity.RequestToChangePassword.RequestToChangePasswordRequest request,
             [FromServices] IMediator mediator
-        ) => {
+        ) =>
+        {
 
             await Task.CompletedTask;
         });
@@ -98,7 +100,8 @@ public class UserEndpoint
             var response = await mediator.Send(request);
 
             return Results.Ok();
-        }).RequireAuthorization(cfg => {
+        }).RequireAuthorization(cfg =>
+        {
             cfg.AddAuthenticationSchemes(Bl.Gym.TrainingApi.Api.Policies.ForgotPasswordPolicy.Scheme);
             cfg.RequireRole(Policies.ForgotPasswordPolicy.RequireRole.Value);
         });
@@ -122,6 +125,73 @@ public class UserEndpoint
                     response.Username,
                     Token = tokenResult
                 });
+        });
+
+        builder.MapPost("user/gym/{gymId}/invite", async (
+            Guid gymId,
+            [FromBody] InviteUserToGymRequestModel model,
+            [FromServices] HttpContext context,
+            [FromServices] IMediator mediator,
+            [FromServices] InvitationTokenGenerator tokenGenerator) =>
+        {
+            var response = await mediator.Send(
+                new Application.Commands.Identity.SendGymInvitationToUser.SendGymInvitationToUserRequest(
+                    Email: model.Email,
+                    GymId: gymId,
+                    Provider: (claims, expiresAt) => 
+                    {
+                        var token = tokenGenerator.Generate(claims, expiresAt);
+
+                        return new Uri(context.GetBaseUrl() + $"/user/gym/{gymId}/invite/accept?token=" + token);
+                    }));
+
+            return Results.Ok();
+        }).RequireAuthorization(cfg => {
+            cfg.RequireRole(Domain.Security.UserClaim.ManageGymGroup.Value);
+        });
+
+        builder.MapPost("user/gym/{gymId}/invite/accept", async (
+            Guid gymId,
+            HttpContext context,
+            [FromBody] AcceptUserInvitationLoggedModel model,
+            [FromServices] IMediator mediator,
+            [FromServices] InvitationTokenGenerator tokenGenerator,
+            CancellationToken cancellationToken) =>
+        {
+            var response = await mediator.Send(
+                new Application.Commands.Identity.AcceptGymInvitation.AcceptGymInvitationRequest(model.UserInvitationId),
+                cancellationToken);
+
+            if (response.Status == Application.Commands.Identity.AcceptGymInvitation.AcceptGymInvitationStatusResponse.Accepted)
+                return Results.Ok();
+
+            return Results.BadRequest();
+
+        }).RequireAuthorization(); // just use the common authentication for the user.
+
+        builder.MapGet("user/gym/{gymId}/invite/accept-by-email", async (
+            Guid gymId,
+            HttpContext context,
+            [FromServices] IMediator mediator,
+            [FromServices] InvitationTokenGenerator tokenGenerator,
+            CancellationToken cancellationToken) =>
+        {
+            var invitationId =
+                context.User.RequiredGymInvitationId();
+
+            var response = await mediator.Send(
+                new Application.Commands.Identity.AcceptGymInvitation.AcceptGymInvitationRequest(invitationId),
+                cancellationToken);
+
+            if (response.Status == Application.Commands.Identity.AcceptGymInvitation.AcceptGymInvitationStatusResponse.Accepted)
+                return Results.Ok();
+
+            return Results.BadRequest();
+
+        }).RequireAuthorization(cfg =>
+        {
+            cfg.AuthenticationSchemes = [GymInvitationPolicy.AuthenticationScheme];
+            cfg.RequireClaim(Domain.Security.UserClaim.DEFAULT_GYM_INVITATION_ID);
         });
 
         if (isDevelopment)

@@ -1,4 +1,6 @@
-﻿using Bl.Gym.TrainingApi.Infrastructure.Options;
+﻿using Bl.Gym.TrainingApi.Application.Services;
+using Bl.Gym.TrainingApi.Infrastructure.Options;
+using Bl.Gym.TrainingApi.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -35,6 +37,7 @@ public static class DiExtension
             .AddScoped<Application.Repositories.TrainingContext>(
                 provider => provider.GetRequiredService<Repositories.PostgreTrainingContext>())
             
-            .AddScoped<Application.Repositories.Training.IGetAllTrainingsByCurrentUserRepository, Repositories.Training.GetAllTrainingsByCurrentUserRepository>();
+            .AddScoped<Application.Repositories.Training.IGetAllTrainingsByCurrentUserRepository, Repositories.Training.GetAllTrainingsByCurrentUserRepository>()
+            .AddSingleton<IEmailService, MsOfficeEmailService>();
     }
 }

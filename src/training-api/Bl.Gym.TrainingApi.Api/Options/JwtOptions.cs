@@ -9,4 +9,8 @@ public class JwtOptions
     [Required]
     [MinLength(32)]
     public string Key { get; set; } = string.Empty;
+
+    [Required]
+    [MinLength(32)]
+    public string KeyEmailInvitation { get; set; } = string.Empty;
 }
