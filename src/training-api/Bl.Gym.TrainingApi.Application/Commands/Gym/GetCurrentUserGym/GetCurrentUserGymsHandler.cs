@@ -27,6 +27,8 @@ public class GetCurrentUserGymsHandler
         if (userId != request.UserId)
             throw CoreException.CreateByCode(CoreExceptionCode.Unauthorized);
 
+        var now = DateTime.UtcNow;
+
         var gyms = await
             (from gym in _trainingContext.GymGroups.AsNoTracking()
              join userRole in _trainingContext.UserTrainingRoles.AsNoTracking()
@@ -34,11 +36,10 @@ public class GetCurrentUserGymsHandler
              join role in _trainingContext.Roles.AsNoTracking()
                  on userRole.RoleId equals role.Id
              join invite in _trainingContext.UserGymInvitations.AsNoTracking()
-                on new { GymId = gym.Id, Email = userEmail } equals new { invite.GymId, Email = invite.UserEmail }
+                on new { GymId = gym.Id, Email = userEmail, Accepted = false } equals new { invite.GymId, Email = invite.UserEmail, invite.Accepted }
             into invites
             from inviteNotRequired in invites.DefaultIfEmpty()
-            where inviteNotRequired.Accepted == false
-            where inviteNotRequired.ExpiresAt > DateTime.UtcNow
+            where (inviteNotRequired.ExpiresAt > now || inviteNotRequired == null)
              select new GetCurrentUserGymResponse(
                  gym.Id,
                  gym.Name,
