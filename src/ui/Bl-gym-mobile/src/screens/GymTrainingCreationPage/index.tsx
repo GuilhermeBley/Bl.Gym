@@ -226,12 +226,12 @@ const GymTrainingCreationPage = () => {
         return;
       }
 
-      console.debug(`Users mapped: ${membersResult.Data.availableExercises}`);
+      console.debug(`Users mapped: ${membersResult.Data.students}`);
 
       setPageData(previous => ({
         ...previous,
         selectedGym: selectedGymId,
-        availableUsers: membersResult.Data
+        availableUsers: membersResult.Data.students ?? []
       }));
     }
 
