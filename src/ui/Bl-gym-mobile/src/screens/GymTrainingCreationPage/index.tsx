@@ -233,6 +233,8 @@ const GymTrainingCreationPage = () => {
         selectedGym: selectedGymId,
         availableUsers: membersResult.Data.students ?? []
       }));
+
+      initialValues.gymId = pageData.selectedGym ?? ""
     }
 
     console.debug('Requesting setMembersAsync and setTrainingsAsync')
