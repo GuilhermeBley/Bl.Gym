@@ -231,7 +231,8 @@ const GymTrainingCreationPage = () => {
       setPageData(previous => ({
         ...previous,
         selectedGym: selectedGymId,
-        availableUsers: membersResult.Data.students ?? []
+        availableUsers: membersResult.Data.students ?? [],
+        selectedStudent: membersResult.Data.students[0].userId
       }));
 
       initialValues.gymId = pageData.selectedGym ?? ""
@@ -291,7 +292,7 @@ const GymTrainingCreationPage = () => {
                 )}
                 editable={pageData.availableUsers.length > 0} />
 
-              {pageData.selectedStudent && pageData.selectedGym ?
+              {pageData.selectedStudent != undefined ?
                 <View>
 
                   <StyledInputFormik
