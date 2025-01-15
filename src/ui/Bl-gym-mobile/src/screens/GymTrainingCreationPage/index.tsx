@@ -1,6 +1,6 @@
 import { FieldArray, Formik, FormikErrors, FormikHelpers, FormikProps } from "formik";
 import React, { useContext, useEffect, useState } from "react";
-import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressable } from "react-native";
+import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressable, ScrollView } from "react-native";
 import * as yup from 'yup';
 import { styles } from "./styles";
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
@@ -92,7 +92,7 @@ const GymTrainingCreationPage = () => {
     const source = axios.CancelToken.source();
 
     handleInitialMembers(source.token);
-    
+
     return () => {
       source.cancel();
     }
@@ -102,7 +102,7 @@ const GymTrainingCreationPage = () => {
     const source = axios.CancelToken.source();
 
     handleInitialMembers(source.token);
-    
+
     return () => {
       source.cancel();
     }
@@ -120,12 +120,12 @@ const GymTrainingCreationPage = () => {
       if (!userContext.user.gymId) {
         return;
       }
-  
+
       var result = await getGymsAvailables(
         userContext.user.id,
         userContext.user.gymId,
         cancelToken);
-  
+
       if (result.Success) {
 
         setPageData(previous => ({
@@ -137,7 +137,7 @@ const GymTrainingCreationPage = () => {
 
       await handleGymSelect(userContext.user.gymId);
     }
-    finally{
+    finally {
       setPageData(previous => ({
         ...previous,
         isLoadingInitialData: false
@@ -155,7 +155,7 @@ const GymTrainingCreationPage = () => {
           name={`sections[${trainingIndex}].sets`}
           render={(arrayHelpers) => (
             <View>
-              {formikProps.values.sections[trainingIndex].sets.map((set, setIndex) => (
+              {(formikProps.values.sections[trainingIndex].sets ?? []).map((set, setIndex) => (
                 <View key={setIndex}>
 
                   <CreateOrEditSectionComponent
@@ -164,7 +164,7 @@ const GymTrainingCreationPage = () => {
                     formikProps={formikProps}
                     formikKeySection={`sections[${trainingIndex}].sets[${setIndex}].exerciseId`}
                     formikKeySet={`sections[${trainingIndex}].sets[${setIndex}].set`}
-                    trainingData={new Map(pageData.availableTrainings.map(item => [item.id, item.name]))} />
+                    trainingData={new Map(pageData.availableTrainings?.map(item => [item.id, item.name]) ?? [])} />
 
                 </View>
               ))}
@@ -232,7 +232,7 @@ const GymTrainingCreationPage = () => {
         ...previous,
         selectedGym: selectedGymId,
         availableUsers: membersResult.Data.students ?? [],
-        selectedStudent: membersResult.Data.students[0].userId
+        selectedStudent: membersResult.Data.students ? membersResult.Data.students[0].userId : undefined
       }));
 
       initialValues.gymId = pageData.selectedGym ?? ""
@@ -273,61 +273,62 @@ const GymTrainingCreationPage = () => {
         {formikProps => {
           return (
             <React.Fragment>
-              <StyledSelectInputFormik
-                formikKey={"gymId"}
-                formikProps={formikProps}
-                label={"Academia"}
-                options={pageData.availableGyms.map(e =>
-                  ({ label: e.name, value: e.id })
-                )}
-                autoFocus
-                enabled={false} /*Keep not editable, supports just new students to the current gym*/ />
+              <ScrollView>
+                <StyledSelectInputFormik
+                  formikKey={"gymId"}
+                  formikProps={formikProps}
+                  label={"Academia"}
+                  options={(pageData.availableGyms ?? []).map(e =>
+                    ({ label: e.name, value: e.id })
+                  )}
+                  autoFocus
+                  enabled={false} /*Keep not editable, supports just new students to the current gym*/ />
 
-              <StyledSelectInputFormik
-                formikKey={"studentId"}
-                formikProps={formikProps}
-                label={"Selecione o estudante"}
-                options={pageData.availableUsers.map(e =>
-                  ({ label: (e.name + ' ' + e.lastName), value: e.userId })
-                )}
-                editable={pageData.availableUsers.length > 0} />
+                <StyledSelectInputFormik
+                  formikKey={"studentId"}
+                  formikProps={formikProps}
+                  label={"Selecione o estudante"}
+                  options={(pageData.availableUsers ?? []).map(e =>
+                    ({ label: (e.name + ' ' + e.lastName), value: e.userId })
+                  )}
+                  editable={pageData.availableUsers.length > 0} />
 
-              {pageData.selectedStudent != undefined ?
-                <View>
+                {pageData.selectedStudent != undefined ?
+                  <View>
 
-                  <StyledInputFormik
-                    formikKey={"TrainingName"}
-                    formikProps={formikProps}
-                    label={"Nome do treino"}
-                  />
+                    <StyledInputFormik
+                      formikKey={"TrainingName"}
+                      formikProps={formikProps}
+                      label={"Nome do treino"}
+                    />
 
-                  {/* Trainings Sections List */}
-                  <FieldArray
-                    name="sections"
-                    render={(arrayHelpers) => (
-                      <View>
-                        {formikProps.values.sections.map((section, index) => (
-                          <View key={index}>
+                    {/* Trainings Sections List */}
+                    <FieldArray
+                      name="sections"
+                      render={(arrayHelpers) => (
+                        <View>
+                          {(formikProps.values.sections ?? []).map((section, index) => (
+                            <View key={index}>
 
-                            <SectionComponent
-                              formikProps={formikProps}
-                              trainingIndex={index}
-                              section={section} />
+                              <SectionComponent
+                                formikProps={formikProps}
+                                trainingIndex={index}
+                                section={section} />
 
-                          </View>
-                        ))}
-                        <Button
-                          title="Adicionar"
-                          onPress={() => arrayHelpers.push({ exerciseId: "", set: "" } as TrainingSetCreationModel)}
-                        />
-                      </View>
-                    )}
-                  />
-                </View> :
-                <View>
-                  <Text>Selecione o estudante para continuar o processo.</Text>
-                </View>}
-
+                            </View>
+                          ))}
+                          <Button
+                            title="Adicionar"
+                            onPress={() => arrayHelpers.push({ exerciseId: "", set: "" } as TrainingSetCreationModel)}
+                          />
+                        </View>
+                      )}
+                    />
+                  </View> :
+                  <View>
+                    <Text>Selecione o estudante para continuar o processo.</Text>
+                  </View>}
+              </ScrollView>
               <View style={styles.buttonContainer}>
                 {formikProps.isSubmitting ?
                   <ActivityIndicator /> :
