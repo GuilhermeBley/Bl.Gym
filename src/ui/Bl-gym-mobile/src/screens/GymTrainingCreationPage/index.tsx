@@ -21,6 +21,7 @@ import { UserContext } from "../../contexts/UserContext";
 import StyledInputFormik from "../../components/StyledInputFormik";
 import StyledSelectInputFormik from "../../components/StyledSelectInputFormik";
 import { useRoute } from "@react-navigation/native";
+import ColapseSectionComponent from "../../components/ColapseSectionComponent";
 
 interface PageDataModel {
   availableGyms: GetCurrentUserGymResponse[],
@@ -156,17 +157,21 @@ const GymTrainingCreationPage = () => {
           render={(arrayHelpers) => (
             <View>
               {(formikProps.values.sections[trainingIndex].sets ?? []).map((set, setIndex) => (
-                <View key={setIndex}>
-
-                  <CreateOrEditSectionComponent
-                    sectionName={training.muscularGroup}
-                    section={formikProps.values.sections[trainingIndex]}
-                    formikProps={formikProps}
-                    formikKeySection={`sections[${trainingIndex}].sets[${setIndex}].exerciseId`}
-                    formikKeySet={`sections[${trainingIndex}].sets[${setIndex}].set`}
-                    trainingData={new Map(pageData.availableTrainings?.map(item => [item.id, item.name]) ?? [])} />
-
-                </View>
+                  <ColapseSectionComponent
+                    body={
+                  
+                      <View key={setIndex}>
+    
+                      <CreateOrEditSectionComponent
+                        sectionName={training.muscularGroup}
+                        section={formikProps.values.sections[trainingIndex]}
+                        formikProps={formikProps}
+                        formikKeySection={`sections[${trainingIndex}].sets[${setIndex}].exerciseId`}
+                        formikKeySet={`sections[${trainingIndex}].sets[${setIndex}].set`}
+                        trainingData={new Map(pageData.availableTrainings?.map(item => [item.id, item.name]) ?? [])} />
+    
+                    </View>
+                  }/>
               ))}
               <Button
                 title="+ Exercício"

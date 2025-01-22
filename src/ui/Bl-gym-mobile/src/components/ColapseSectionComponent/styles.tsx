@@ -4,22 +4,20 @@ export const styles = StyleSheet.create({
     container: {
         padding: 20,
     },
-    section: {
+    button: {
+        backgroundColor: '#007BFF',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
         marginBottom: 10,
     },
-    header: {
-        backgroundColor: '#007BFF',
-        padding: 15,
-        borderRadius: 5,
-    },
-    headerText: {
+    buttonText: {
         color: '#FFF',
         fontWeight: 'bold',
-        fontSize: 16,
     },
-    body: {
+    collapsibleSection: {
         overflow: 'hidden',
         backgroundColor: '#F5F5F5',
-        paddingHorizontal: 10,
+        padding: 10,
     },
 });
