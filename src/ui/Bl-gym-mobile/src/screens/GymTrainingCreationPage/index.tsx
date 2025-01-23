@@ -1,6 +1,6 @@
 import { FieldArray, Formik, FormikErrors, FormikHelpers, FormikProps } from "formik";
 import React, { useContext, useEffect, useState } from "react";
-import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressable, ScrollView } from "react-native";
+import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressable, ScrollView, TouchableOpacity } from "react-native";
 import * as yup from 'yup';
 import { styles } from "./styles";
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
@@ -160,11 +160,11 @@ const GymTrainingCreationPage = () => {
           render={(arrayHelpers) => (
             <View>
               {(formikProps.values.sections[trainingIndex].sets ?? []).map((set, setIndex) => (
-                  <ColapseSectionComponent
-                    body={
-                  
-                      <View key={setIndex}>
-    
+                <ColapseSectionComponent
+                  body={
+
+                    <View key={setIndex}>
+
                       <CreateOrEditSectionComponent
                         sectionName={training.muscularGroup}
                         section={formikProps.values.sections[trainingIndex]}
@@ -172,9 +172,9 @@ const GymTrainingCreationPage = () => {
                         formikKeySection={`sections[${trainingIndex}].sets[${setIndex}].exerciseId`}
                         formikKeySet={`sections[${trainingIndex}].sets[${setIndex}].set`}
                         trainingData={new Map(pageData.availableTrainings?.map(item => [item.id, item.name]) ?? [])} />
-    
+
                     </View>
-                  }/>
+                  } />
               ))}
               <Button
                 title="+ Exercício"
@@ -316,15 +316,14 @@ const GymTrainingCreationPage = () => {
                       render={(arrayHelpers) => (
                         <View>
                           {(formikProps.values.sections ?? []).map((section, index) => (
-                            <View key={index}>
-
-                              <SectionComponent
-                                formikProps={formikProps}
-                                trainingIndex={index}
-                                section={section} />
-
+                            <View style={styles.rowSectionItem}>
+                              <Text style={[styles.textSectionItem, { textAlign: "left" }]}>{section.muscularGroup} - {section.sets.length} treino(s)</Text>
+                              <TouchableOpacity style={styles.editButtonSectionItem} onPress={() => setPageData(prev => ({...prev, currentEditableSection: section}))}>
+                                <Text style={styles.editText}>Editar</Text>
+                              </TouchableOpacity>
                             </View>
                           ))}
+
                           <Button
                             title="Adicionar"
                             onPress={() => {
@@ -358,17 +357,17 @@ const GymTrainingCreationPage = () => {
                 <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingGymCreationModel]?.toString()}</Text>
               </View>
 
-              {pageData.currentEditableSection ? 
-              <CustomModal
-                visible={pageData.currentEditableSection != undefined}
-                onClose={() => setPageData(prev => ({
-                  ...prev,
-                  currentEditableSection: undefined
-                }))}>
-                <SectionComponent formikProps={formikProps} section={pageData.currentEditableSection} trainingIndex={0}/>
-              </CustomModal>
-              : <View></View>}
-              
+              {pageData.currentEditableSection ?
+                <CustomModal
+                  visible={pageData.currentEditableSection != undefined}
+                  onClose={() => setPageData(prev => ({
+                    ...prev,
+                    currentEditableSection: undefined
+                  }))}>
+                  <SectionComponent formikProps={formikProps} section={pageData.currentEditableSection} trainingIndex={0} />
+                </CustomModal>
+                : <View></View>}
+
 
             </React.Fragment>
           );
