@@ -22,6 +22,7 @@ import StyledInputFormik from "../../components/StyledInputFormik";
 import StyledSelectInputFormik from "../../components/StyledSelectInputFormik";
 import { useRoute } from "@react-navigation/native";
 import ColapseSectionComponent from "../../components/ColapseSectionComponent";
+import CustomModal from "../../components/SimpleModal";
 
 interface PageDataModel {
   availableGyms: GetCurrentUserGymResponse[],
@@ -29,7 +30,8 @@ interface PageDataModel {
   selectedGym: string | undefined,
   selectedStudent: string | undefined,
   availableTrainings: GetAvailableExercisesItemResponse[],
-  isLoadingInitialData: boolean
+  isLoadingInitialData: boolean,
+  currentEditableSection: TrainingCreationModel | undefined
 }
 
 interface TrainingGymCreationModel {
@@ -81,7 +83,8 @@ const GymTrainingCreationPage = () => {
       selectedGym: undefined,
       selectedStudent: undefined,
       availableTrainings: [],
-      isLoadingInitialData: true
+      isLoadingInitialData: true,
+      currentEditableSection: undefined
     } as PageDataModel
   );
 
@@ -324,7 +327,16 @@ const GymTrainingCreationPage = () => {
                           ))}
                           <Button
                             title="Adicionar"
-                            onPress={() => arrayHelpers.push({ exerciseId: "", set: "" } as TrainingSetCreationModel)}
+                            onPress={() => {
+                              let section = { muscularGroup: '', sets: [] };
+
+                              arrayHelpers.push(section);
+
+                              setPageData(prev => ({
+                                ...prev,
+                                currentEditableSection: section
+                              }));
+                            }}
                           />
                         </View>
                       )}
@@ -345,6 +357,19 @@ const GymTrainingCreationPage = () => {
               <View>
                 <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingGymCreationModel]?.toString()}</Text>
               </View>
+
+              {pageData.currentEditableSection ? 
+              <CustomModal
+                visible={pageData.currentEditableSection != undefined}
+                onClose={() => setPageData(prev => ({
+                  ...prev,
+                  currentEditableSection: undefined
+                }))}>
+                <SectionComponent formikProps={formikProps} section={pageData.currentEditableSection} trainingIndex={0}/>
+              </CustomModal>
+              : <View></View>}
+              
+
             </React.Fragment>
           );
         }}
