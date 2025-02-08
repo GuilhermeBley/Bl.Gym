@@ -152,7 +152,7 @@ const GymTrainingCreationPage = () => {
   const SectionComponent: React.FC<SectionComponentProps> = ({ formikProps, trainingIndex, section: training }) => {
 
     return (
-      <View>
+      <View style={styles.scrollView}>
 
         {/* Trainings List */}
         <FieldArray
@@ -160,21 +160,18 @@ const GymTrainingCreationPage = () => {
           render={(arrayHelpers) => (
             <View>
               {(formikProps.values.sections[trainingIndex].sets ?? []).map((set, setIndex) => (
-                <ColapseSectionComponent
-                  body={
 
-                    <View key={setIndex}>
+                <View key={setIndex}>
 
-                      <CreateOrEditSectionComponent
-                        sectionName={training.muscularGroup}
-                        section={formikProps.values.sections[trainingIndex]}
-                        formikProps={formikProps}
-                        formikKeySection={`sections[${trainingIndex}].sets[${setIndex}].exerciseId`}
-                        formikKeySet={`sections[${trainingIndex}].sets[${setIndex}].set`}
-                        trainingData={new Map(pageData.availableTrainings?.map(item => [item.id, item.name]) ?? [])} />
+                  <CreateOrEditSectionComponent
+                    sectionName={training.muscularGroup}
+                    section={formikProps.values.sections[trainingIndex]}
+                    formikProps={formikProps}
+                    formikKeySection={`sections[${trainingIndex}].sets[${setIndex}].exerciseId`}
+                    formikKeySet={`sections[${trainingIndex}].sets[${setIndex}].set`}
+                    trainingData={new Map(pageData.availableTrainings?.map(item => [item.id, item.name]) ?? [])} />
 
-                    </View>
-                  } />
+                </View>
               ))}
               <Button
                 title="+ Exercício"
@@ -318,7 +315,7 @@ const GymTrainingCreationPage = () => {
                           {(formikProps.values.sections ?? []).map((section, index) => (
                             <View style={styles.rowSectionItem}>
                               <Text style={[styles.textSectionItem, { textAlign: "left" }]}>{section.muscularGroup} - {section.sets.length} treino(s)</Text>
-                              <TouchableOpacity style={styles.editButtonSectionItem} onPress={() => setPageData(prev => ({...prev, currentEditableSection: section}))}>
+                              <TouchableOpacity style={styles.editButtonSectionItem} onPress={() => setPageData(prev => ({ ...prev, currentEditableSection: section }))}>
                                 <Text style={styles.editText}>Editar</Text>
                               </TouchableOpacity>
                             </View>
@@ -364,7 +361,9 @@ const GymTrainingCreationPage = () => {
                     ...prev,
                     currentEditableSection: undefined
                   }))}>
-                  <SectionComponent formikProps={formikProps} section={pageData.currentEditableSection} trainingIndex={0} />
+                  <View style={styles.fixedSizeModal}>
+                    <SectionComponent formikProps={formikProps} section={pageData.currentEditableSection} trainingIndex={0} />
+                  </View>
                 </CustomModal>
                 : <View></View>}
 

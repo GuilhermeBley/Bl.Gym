@@ -49,4 +49,11 @@ export const styles = StyleSheet.create({
       color: '#fff',
       fontWeight: 'bold',
     },
+    fixedSizeModal: {
+      overflow: "hidden",
+    },
+    scrollView: {
+      flexGrow: 0,
+      maxHeight: 300, // Defines the scrollable height
+    },
 });
