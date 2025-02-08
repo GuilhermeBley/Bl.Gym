@@ -23,6 +23,7 @@ import StyledSelectInputFormik from "../../components/StyledSelectInputFormik";
 import { useRoute } from "@react-navigation/native";
 import ColapseSectionComponent from "../../components/ColapseSectionComponent";
 import CustomModal from "../../components/SimpleModal";
+import FixedSizeModal from "../../components/FixedSizeModal";
 
 interface PageDataModel {
   availableGyms: GetCurrentUserGymResponse[],
@@ -355,7 +356,7 @@ const GymTrainingCreationPage = () => {
               </View>
 
               {pageData.currentEditableSection ?
-                <CustomModal
+                <FixedSizeModal
                   visible={pageData.currentEditableSection != undefined}
                   onClose={() => setPageData(prev => ({
                     ...prev,
@@ -364,7 +365,7 @@ const GymTrainingCreationPage = () => {
                   <View style={styles.fixedSizeModal}>
                     <SectionComponent formikProps={formikProps} section={pageData.currentEditableSection} trainingIndex={0} />
                   </View>
-                </CustomModal>
+                </FixedSizeModal>
                 : <View></View>}
 
 

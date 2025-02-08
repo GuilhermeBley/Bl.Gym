@@ -50,10 +50,14 @@ export const styles = StyleSheet.create({
       fontWeight: 'bold',
     },
     fixedSizeModal: {
-      overflow: "hidden",
+      flex: 1,
+      width: 300, // Fixed width
+      height: 400, // Fixed height
+      backgroundColor: 'white',
+      borderRadius: 10,
+      padding: 20,
     },
     scrollView: {
-      flexGrow: 0,
-      maxHeight: 300, // Defines the scrollable height
+      flex: 1,
     },
 });
