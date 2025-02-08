@@ -23,4 +23,30 @@ export const styles = StyleSheet.create({
     inputContainer: {
       marginBottom: 12,
     },
+    rowSectionItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: 10,
+      marginVertical: 5,
+      borderWidth: 1,
+      borderColor: '#ccc',
+      borderRadius: 5,
+      backgroundColor: '#f9f9f9',
+    },
+    textSectionItem: {
+      flex: 1,
+      textAlign: 'center',
+      fontSize: 16,
+    },
+    editButtonSectionItem: {
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      backgroundColor: '#007BFF',
+      borderRadius: 5,
+    },
+    editText: {
+      color: '#fff',
+      fontWeight: 'bold',
+    },
 });

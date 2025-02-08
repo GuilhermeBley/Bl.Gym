@@ -47,11 +47,11 @@ export const getGymMembers = (
         { cancelToken: cancellationToken }
     ).then((response) => {
 
-        return TryGetResultFromResponse(response);
+        return TryGetResultFromResponse<GetGymMembersResponse>(response);
     })
     .catch((error) => {
         console.debug(error)
-        return TryGetResultFromResponse(error.response);
+        return TryGetResultFromResponse<GetGymMembersResponse>(error.response);
     });
 }
 
