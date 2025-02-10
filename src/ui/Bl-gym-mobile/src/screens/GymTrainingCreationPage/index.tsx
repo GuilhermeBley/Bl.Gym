@@ -32,7 +32,7 @@ interface PageDataModel {
   selectedStudent: string | undefined,
   availableTrainings: GetAvailableExercisesItemResponse[],
   isLoadingInitialData: boolean,
-  currentEditableSection: TrainingCreationModel | undefined
+  currentEditableSectionIndex: number | undefined
 }
 
 interface TrainingGymCreationModel {
@@ -85,7 +85,7 @@ const GymTrainingCreationPage = () => {
       selectedStudent: undefined,
       availableTrainings: [],
       isLoadingInitialData: true,
-      currentEditableSection: undefined
+      currentEditableSectionIndex: undefined
     } as PageDataModel
   );
 
@@ -152,6 +152,8 @@ const GymTrainingCreationPage = () => {
 
   const SectionComponent: React.FC<SectionComponentProps> = ({ formikProps, trainingIndex, section: training }) => {
 
+    console.debug(`openning info about traning ${training?.muscularGroup} at index ${trainingIndex}.`);
+
     return (
       <View style={styles.scrollView}>
 
@@ -160,7 +162,7 @@ const GymTrainingCreationPage = () => {
           name={`sections[${trainingIndex}].sets`}
           render={(arrayHelpers) => (
             <View>
-              {(formikProps.values.sections[trainingIndex].sets ?? []).map((set, setIndex) => (
+              {(formikProps.values.sections[trainingIndex]?.sets ?? []).map((set, setIndex) => (
 
                 <View key={setIndex}>
 
@@ -316,7 +318,7 @@ const GymTrainingCreationPage = () => {
                           {(formikProps.values.sections ?? []).map((section, index) => (
                             <View style={styles.rowSectionItem}>
                               <Text style={[styles.textSectionItem, { textAlign: "left" }]}>{section.muscularGroup} - {section.sets.length} treino(s)</Text>
-                              <TouchableOpacity style={styles.editButtonSectionItem} onPress={() => setPageData(prev => ({ ...prev, currentEditableSection: section }))}>
+                              <TouchableOpacity style={styles.editButtonSectionItem} onPress={() => setPageData(prev => ({ ...prev, currentEditableSectionIndex: index }))}>
                                 <Text style={styles.editText}>Editar</Text>
                               </TouchableOpacity>
                             </View>
@@ -331,7 +333,7 @@ const GymTrainingCreationPage = () => {
 
                               setPageData(prev => ({
                                 ...prev,
-                                currentEditableSection: section
+                                currentEditableSection: initialValues.sections.length - 1
                               }));
                             }}
                           />
@@ -355,15 +357,18 @@ const GymTrainingCreationPage = () => {
                 <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingGymCreationModel]?.toString()}</Text>
               </View>
 
-              {pageData.currentEditableSection ?
+              {pageData.currentEditableSectionIndex ?
                 <FixedSizeModal
-                  visible={pageData.currentEditableSection != undefined}
+                  visible={pageData.currentEditableSectionIndex != undefined}
                   onClose={() => setPageData(prev => ({
                     ...prev,
-                    currentEditableSection: undefined
+                    currentEditableSectionIndex: undefined
                   }))}>
                   <View style={styles.fixedSizeModal}>
-                    <SectionComponent formikProps={formikProps} section={pageData.currentEditableSection} trainingIndex={0} />
+                    <SectionComponent 
+                      formikProps={formikProps} 
+                      section={initialValues.sections[pageData.currentEditableSectionIndex]} 
+                      trainingIndex={pageData.currentEditableSectionIndex} />
                   </View>
                 </FixedSizeModal>
                 : <View></View>}
