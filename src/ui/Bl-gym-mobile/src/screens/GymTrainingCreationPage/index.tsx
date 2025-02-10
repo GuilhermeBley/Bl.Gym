@@ -1,6 +1,6 @@
 import { FieldArray, Formik, FormikErrors, FormikHelpers, FormikProps } from "formik";
 import React, { useContext, useEffect, useState } from "react";
-import { SafeAreaView, TextInput, View, Text, ActivityIndicator, Button, Pressable, ScrollView, TouchableOpacity } from "react-native";
+import { SafeAreaView, Alert, View, Text, ActivityIndicator, Button, Pressable, ScrollView, TouchableOpacity } from "react-native";
 import * as yup from 'yup';
 import { styles } from "./styles";
 import { GetCurrentUserGymResponse } from "../GymScreen/action";
@@ -46,6 +46,10 @@ interface SectionComponentProps {
   formikProps: FormikProps<TrainingGymCreationModel>;
   trainingIndex: number,
   section: TrainingCreationModel
+}
+
+interface HandleCancelProps {
+  formikProps: FormikProps<TrainingGymCreationModel>;
 }
 
 const validationSchema = yup.object().shape({
@@ -149,6 +153,30 @@ const GymTrainingCreationPage = () => {
       }));
     }
   }
+
+  const CancelButton: React.FC<HandleCancelProps> = ({ formikProps }) => {
+    const handleCancel = (): void => {
+      Alert.alert(
+        "Começar novamente os treinos", 
+        "Deseja começar novamente os treinos?", 
+        [
+          { text: "Não", style: "cancel" },
+          { text: "Sim", onPress: () => {
+            formikProps.values.sections = [];
+            setPageData(prev => ({...prev, currentEditableSectionIndex: undefined }));
+          }, 
+          style: "destructive" }
+        ]
+      );
+      
+    };
+  
+    return (
+      <View style={styles.container}>
+        <Button title="Começar novamente" onPress={handleCancel} color="red" />
+      </View>
+    );
+  };
 
   const SectionComponent: React.FC<SectionComponentProps> = ({ formikProps, trainingIndex, section: training }) => {
 
@@ -331,12 +359,18 @@ const GymTrainingCreationPage = () => {
 
                               arrayHelpers.push(section);
 
+                              console.debug(`New section added, current quantity ${formikProps.values.sections.length}.`);
+
                               setPageData(prev => ({
                                 ...prev,
-                                currentEditableSection: initialValues.sections.length - 1
+                                currentEditableSection: formikProps.values.sections.length - 1
                               }));
                             }}
                           />
+
+                            {formikProps.values.sections.length > 0 
+                            ? <CancelButton formikProps={formikProps}/>
+                            : <View></View>}
                         </View>
                       )}
                     />
@@ -367,7 +401,7 @@ const GymTrainingCreationPage = () => {
                   <View style={styles.fixedSizeModal}>
                     <SectionComponent 
                       formikProps={formikProps} 
-                      section={initialValues.sections[pageData.currentEditableSectionIndex]} 
+                      section={formikProps.values.sections[pageData.currentEditableSectionIndex]} 
                       trainingIndex={pageData.currentEditableSectionIndex} />
                   </View>
                 </FixedSizeModal>
