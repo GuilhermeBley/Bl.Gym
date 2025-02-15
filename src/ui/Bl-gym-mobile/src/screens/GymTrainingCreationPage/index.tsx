@@ -21,9 +21,10 @@ import { UserContext } from "../../contexts/UserContext";
 import StyledInputFormik from "../../components/StyledInputFormik";
 import StyledSelectInputFormik from "../../components/StyledSelectInputFormik";
 import { useRoute } from "@react-navigation/native";
-import ColapseSectionComponent from "../../components/ColapseSectionComponent";
-import CustomModal from "../../components/SimpleModal";
 import FixedSizeModal from "../../components/FixedSizeModal";
+
+const availableSectionsDefaultName = "ABCDEFGHIJKLMNOPQRSTUV"
+const maxSections = availableSectionsDefaultName.length
 
 interface PageDataModel {
   availableGyms: GetCurrentUserGymResponse[],
@@ -344,8 +345,8 @@ const GymTrainingCreationPage = () => {
                       render={(arrayHelpers) => (
                         <View>
                           {(formikProps.values.sections ?? []).map((section, index) => (
-                            <View style={styles.rowSectionItem}>
-                              <Text style={[styles.textSectionItem, { textAlign: "left" }]}>{section.muscularGroup} - {section.sets.length} treino(s)</Text>
+                            <View key={index} style={styles.rowSectionItem}>
+                              <Text style={[styles.textSectionItem, { textAlign: "left" }]}>{section.muscularGroup}   ({section.sets.length})</Text>
                               <TouchableOpacity style={styles.editButtonSectionItem} onPress={() => setPageData(prev => ({ ...prev, currentEditableSectionIndex: index }))}>
                                 <Text style={styles.editText}>Editar</Text>
                               </TouchableOpacity>
@@ -355,7 +356,14 @@ const GymTrainingCreationPage = () => {
                           <Button
                             title="Adicionar"
                             onPress={() => {
-                              let section = { muscularGroup: '', sets: [] };
+
+                              if (formikProps.values.sections.length > maxSections){
+                                formikProps.setErrors({ sections: 'Quantidade máxima de seções atingidas.' });
+                                return
+                              }
+
+                              var currentIndex = formikProps.values.sections.length
+                              let section = { muscularGroup: `Treino ${availableSectionsDefaultName[currentIndex]}`, sets: [] };
 
                               arrayHelpers.push(section);
 
@@ -391,7 +399,7 @@ const GymTrainingCreationPage = () => {
                 <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingGymCreationModel]?.toString()}</Text>
               </View>
 
-              {pageData.currentEditableSectionIndex ?
+              {pageData.currentEditableSectionIndex != undefined ?
                 <FixedSizeModal
                   visible={pageData.currentEditableSectionIndex != undefined}
                   onClose={() => setPageData(prev => ({
