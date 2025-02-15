@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import colors from "../../styles/colors";
 
 export const styles = StyleSheet.create({
     container: {
@@ -42,7 +43,13 @@ export const styles = StyleSheet.create({
     editButtonSectionItem: {
       paddingVertical: 5,
       paddingHorizontal: 10,
-      backgroundColor: '#007BFF',
+      backgroundColor: colors.primary,
+      borderRadius: 5,
+    },
+    removeButtonSectionItem: {
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      backgroundColor: colors.danger,
       borderRadius: 5,
     },
     editText: {

@@ -1,47 +1,70 @@
-import { TrainingCreationModel } from "../../../screens/GymTrainingCreationPage/actions";
-import { View, Text } from 'react-native';
-import { FormikProps } from 'formik';
+import { View, Text, Button } from 'react-native';
+import { FormikProps, FieldArray } from 'formik';
 import FilteredInputSelect from '../../FilteredInputSelect';
 import StyledInputFormik from '../../StyledInputFormik';
 
+export interface TrainingDataToEditSectionModel {
+    sections: TrainingCreationModel[]
+}
+
+interface TrainingCreationModel{
+    muscularGroup: string,
+    sets: TrainingSetCreationModel[]
+}
+
+interface TrainingSetCreationModel{
+    set: string,
+    exerciseId: string
+}
+
 interface CreateOrEditSectionComponentProps {
-    sectionName: string,
+    trainingIndex: number,
     section: TrainingCreationModel | undefined,
-    formikProps: FormikProps<any>,
+    formikProps: FormikProps<TrainingDataToEditSectionModel>,
     trainingData?: Map<string, string>,
-    formikKeySet: string,
-    formikKeySection: string,
     onLoadingMoreTrainingData?: () => Promise<any>
 }
 
 const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> = ({
-    sectionName,
+    trainingIndex,
     section,    
     formikProps,
     trainingData = new Map<string, string>(),
-    formikKeySet,
-    formikKeySection,
     onLoadingMoreTrainingData = () => { }
 }) => {
     section = section ?? ({ muscularGroup: '', sets: [] });
 
     return (
-        <View>
-            <Text>{sectionName}</Text>
-            
-            <StyledInputFormik
-                formikKey={formikKeySet}
-                formikProps={formikProps} 
-                label={"Coloque as repetições"}/>
+        <FieldArray
+          name={`sections[${trainingIndex}].sets`}
+          render={(arrayHelpers) => (
+            <View>
+              {(formikProps.values.sections[trainingIndex]?.sets ?? []).map((set, setIndex) => (
 
-            <FilteredInputSelect
-                data={trainingData}
-                formikKey={formikKeySection}
-                formikProps={formikProps}
-                label="Adicione um treino"
-                placeHolder="Digite um treino..."
-            />
-        </View>
+                <View key={setIndex}>
+                    <View>
+                        <StyledInputFormik
+                            formikKey={`sections[${trainingIndex}].sets[${setIndex}].set`}
+                            formikProps={formikProps} 
+                            label={"Coloque as repetições"}/>
+
+                        <FilteredInputSelect
+                            data={trainingData}
+                            formikKey={`sections[${trainingIndex}].sets[${setIndex}].exerciseId`}
+                            formikProps={formikProps}
+                            label="Adicione um treino"
+                            placeHolder="Digite um treino..."
+                        />
+                    </View>
+                </View>
+              ))}
+              <Button
+                title="+ Exercício"
+                onPress={() => arrayHelpers.push({ exerciseId: "", set: "" } as TrainingSetCreationModel)}
+              />
+            </View>
+          )}
+        />
     )
 }
 

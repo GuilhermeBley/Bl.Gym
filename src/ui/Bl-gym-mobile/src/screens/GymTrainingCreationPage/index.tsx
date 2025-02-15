@@ -15,7 +15,7 @@ import {
   TrainingSetCreationModel
 } from "./actions";
 import commonStyles from "../../styles/commonStyles";
-import CreateOrEditSectionComponent from "../../components/gym/CreateOrEditSectionComponent";
+import CreateOrEditSectionComponent, { TrainingDataToEditSectionModel } from "../../components/gym/CreateOrEditSectionComponent";
 import axios, { CancelToken } from "axios";
 import { UserContext } from "../../contexts/UserContext";
 import StyledInputFormik from "../../components/StyledInputFormik";
@@ -43,14 +43,16 @@ interface TrainingGymCreationModel {
   sections: TrainingCreationModel[]
 }
 
+type TrainingCreationgAndDataToEditSection = TrainingDataToEditSectionModel & TrainingGymCreationModel;
+
 interface SectionComponentProps {
-  formikProps: FormikProps<TrainingGymCreationModel>;
+  formikProps: FormikProps<TrainingCreationgAndDataToEditSection>;
   trainingIndex: number,
   section: TrainingCreationModel
 }
 
 interface HandleCancelProps {
-  formikProps: FormikProps<TrainingGymCreationModel>;
+  formikProps: FormikProps<TrainingCreationgAndDataToEditSection>;
 }
 
 const validationSchema = yup.object().shape({
@@ -75,7 +77,7 @@ const validationSchema = yup.object().shape({
 const GymTrainingCreationPage = () => {
   const responseErrorsKey = "api-errors"
 
-  const initialValues: TrainingGymCreationModel = {
+  const initialValues: TrainingCreationgAndDataToEditSection = {
     gymId: "",
     trainingStudentId: "",
     studentName: "",
@@ -186,33 +188,12 @@ const GymTrainingCreationPage = () => {
     return (
       <View style={styles.scrollView}>
 
-        {/* Trainings List */}
-        <FieldArray
-          name={`sections[${trainingIndex}].sets`}
-          render={(arrayHelpers) => (
-            <View>
-              {(formikProps.values.sections[trainingIndex]?.sets ?? []).map((set, setIndex) => (
-
-                <View key={setIndex}>
-
-                  <CreateOrEditSectionComponent
-                    sectionName={training.muscularGroup}
-                    section={formikProps.values.sections[trainingIndex]}
-                    formikProps={formikProps}
-                    formikKeySection={`sections[${trainingIndex}].sets[${setIndex}].exerciseId`}
-                    formikKeySet={`sections[${trainingIndex}].sets[${setIndex}].set`}
-                    trainingData={new Map(pageData.availableTrainings?.map(item => [item.id, item.name]) ?? [])} />
-
-                </View>
-              ))}
-              <Button
-                title="+ Exercício"
-                onPress={() => arrayHelpers.push({ exerciseId: "", set: "" } as TrainingSetCreationModel)}
-              />
-            </View>
-          )}
-        />
-
+        
+        <CreateOrEditSectionComponent
+          section={formikProps.values.sections[trainingIndex]}
+          formikProps={formikProps}
+          trainingIndex={trainingIndex}
+          trainingData={new Map(pageData.availableTrainings?.map(item => [item.id, item.name]) ?? [])} />
 
       </View>
     )
@@ -281,7 +262,7 @@ const GymTrainingCreationPage = () => {
 
   const handleSubmit = async (
     formikHelper: FormikHelpers<any>,
-    data: TrainingGymCreationModel
+    data: TrainingCreationgAndDataToEditSection
   ) => {
     var result = await handleTrainingCreation(
       data.trainingStudentId,
@@ -396,7 +377,7 @@ const GymTrainingCreationPage = () => {
               </View>
 
               <View>
-                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingGymCreationModel]?.toString()}</Text>
+                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof TrainingCreationgAndDataToEditSection]?.toString()}</Text>
               </View>
 
               {pageData.currentEditableSectionIndex != undefined ?
