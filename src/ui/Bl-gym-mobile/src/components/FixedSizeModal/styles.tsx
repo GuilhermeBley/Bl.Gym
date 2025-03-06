@@ -8,8 +8,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
-        width: 300, // Fixed width
-        height: 400, // Fixed height
+        width: "95%", // Fixed width
+        height: "90%", // Fixed height
         backgroundColor: 'white',
         borderRadius: 10,
         padding: 20,

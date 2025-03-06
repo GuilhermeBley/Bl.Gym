@@ -57,12 +57,8 @@ export const styles = StyleSheet.create({
       fontWeight: 'bold',
     },
     fixedSizeModal: {
-      flex: 1,
-      width: 300, // Fixed width
-      height: 400, // Fixed height
-      backgroundColor: 'white',
-      borderRadius: 10,
-      padding: 20,
+      width: '100%',
+      height: '20%',
     },
     scrollView: {
       flex: 1,
