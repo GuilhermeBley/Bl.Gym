@@ -2,10 +2,8 @@ import { View, Text, Button } from 'react-native';
 import { FormikProps, FieldArray } from 'formik';
 import FilteredInputSelect from '../../FilteredInputSelect';
 import StyledInputFormik from '../../StyledInputFormik';
-
-interface TrainingDataToEditSectionModel {
-    sections: TrainingCreationModel[]
-}
+import Divider from '../../Divider';
+import colors from '../../../styles/colors';
 
 interface TrainingCreationModel{
     muscularGroup: string,
@@ -45,7 +43,7 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
               {(sections[trainingIndex]?.sets ?? []).map((set, setIndex) => (
 
                 <View key={setIndex}>
-                    <View>
+                    <View style={{backgroundColor: colors.light}}>
                         <StyledInputFormik
                             formikKey={`sections[${trainingIndex}].sets[${setIndex}].set`}
                             formikProps={formikProps} 
@@ -59,6 +57,8 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
                             placeHolder="Digite um treino..."
                         />
                     </View>
+
+                    <Divider></Divider>
                 </View>
               ))}
               <Button

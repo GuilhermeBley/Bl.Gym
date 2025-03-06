@@ -387,7 +387,7 @@ const GymTrainingCreationPage = () => {
                     ...prev,
                     currentEditableSectionIndex: undefined
                   }))}>
-                  <View style={styles.fixedSizeModal}>
+                  <View>
                     <SectionComponent 
                       formikProps={formikProps} 
                       section={formikProps.values.sections[pageData.currentEditableSectionIndex]} 

@@ -56,10 +56,6 @@ export const styles = StyleSheet.create({
       color: '#fff',
       fontWeight: 'bold',
     },
-    fixedSizeModal: {
-      width: '100%',
-      height: '20%',
-    },
     scrollView: {
       flex: 1,
     },
