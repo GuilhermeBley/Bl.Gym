@@ -3,7 +3,7 @@ import { FormikProps, FieldArray } from 'formik';
 import FilteredInputSelect from '../../FilteredInputSelect';
 import StyledInputFormik from '../../StyledInputFormik';
 
-export interface TrainingDataToEditSectionModel {
+interface TrainingDataToEditSectionModel {
     sections: TrainingCreationModel[]
 }
 
@@ -20,7 +20,7 @@ interface TrainingSetCreationModel{
 interface CreateOrEditSectionComponentProps {
     trainingIndex: number,
     section: TrainingCreationModel | undefined,
-    formikProps: FormikProps<TrainingDataToEditSectionModel>,
+    formikProps: FormikProps<any>,
     trainingData?: Map<string, string>,
     onLoadingMoreTrainingData?: () => Promise<any>
 }
@@ -32,6 +32,9 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
     trainingData = new Map<string, string>(),
     onLoadingMoreTrainingData = () => { }
 }) => {
+
+    let sections = formikProps.values.sections as TrainingCreationModel[] ?? [];
+
     section = section ?? ({ muscularGroup: '', sets: [] });
 
     return (
@@ -39,7 +42,7 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
           name={`sections[${trainingIndex}].sets`}
           render={(arrayHelpers) => (
             <View>
-              {(formikProps.values.sections[trainingIndex]?.sets ?? []).map((set, setIndex) => (
+              {(sections[trainingIndex]?.sets ?? []).map((set, setIndex) => (
 
                 <View key={setIndex}>
                     <View>

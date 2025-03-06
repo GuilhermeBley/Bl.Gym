@@ -15,7 +15,7 @@ import {
   TrainingSetCreationModel
 } from "./actions";
 import commonStyles from "../../styles/commonStyles";
-import CreateOrEditSectionComponent, { TrainingDataToEditSectionModel } from "../../components/gym/CreateOrEditSectionComponent";
+import CreateOrEditSectionComponent from "../../components/gym/CreateOrEditSectionComponent";
 import axios, { CancelToken } from "axios";
 import { UserContext } from "../../contexts/UserContext";
 import StyledInputFormik from "../../components/StyledInputFormik";
@@ -43,7 +43,7 @@ interface TrainingGymCreationModel {
   sections: TrainingCreationModel[]
 }
 
-type TrainingCreationgAndDataToEditSection = TrainingDataToEditSectionModel & TrainingGymCreationModel;
+type TrainingCreationgAndDataToEditSection = TrainingGymCreationModel;
 
 interface SectionComponentProps {
   formikProps: FormikProps<TrainingCreationgAndDataToEditSection>;
