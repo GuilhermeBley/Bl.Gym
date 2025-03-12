@@ -5,6 +5,7 @@ import StyledInputFormik from '../../StyledInputFormik';
 import Divider from '../../Divider';
 import colors from '../../../styles/colors';
 import FixedSizeModal from '../../FixedSizeModal';
+import styles from './styles';
 
 interface TrainingCreationModel {
   muscularGroup: string,
