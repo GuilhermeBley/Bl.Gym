@@ -6,6 +6,12 @@ import Divider from '../../Divider';
 import colors from '../../../styles/colors';
 import FixedSizeModal from '../../FixedSizeModal';
 import styles from './styles';
+import { useState } from 'react';
+
+interface TrainingInfo {
+  id: string
+  name: string
+}
 
 interface TrainingCreationModel {
   muscularGroup: string,
@@ -25,6 +31,12 @@ interface CreateOrEditSectionComponentProps {
   onLoadingMoreTrainingData?: () => Promise<any>
 }
 
+interface PageData {
+  filter: string | undefined,
+  selectedItem: TrainingInfo | undefined,
+  availableTrainings: TrainingInfo[]
+}
+
 const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> = ({
   trainingIndex,
   section,
@@ -32,6 +44,19 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
   trainingData = new Map<string, string>(),
   onLoadingMoreTrainingData = () => { }
 }) => {
+
+  const [pageData, setPageData] = useState<PageData>({
+    availableTrainings: [],
+    filter: undefined,
+    selectedItem: undefined
+  });
+
+  const filteredData =
+    pageData.selectedItem
+    ? pageData.availableTrainings
+    : pageData.availableTrainings.filter(item =>
+      item.name.toLowerCase().includes((pageData.selectedItem?.name + '').toLowerCase())
+    );
 
   let sections = formikProps.values.sections as TrainingCreationModel[] ?? [];
 
@@ -49,7 +74,7 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
             onChangeText={setFilter}
           />
           <FlatList
-            data={filteredData}
+            data={pageData.filteredData}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity
