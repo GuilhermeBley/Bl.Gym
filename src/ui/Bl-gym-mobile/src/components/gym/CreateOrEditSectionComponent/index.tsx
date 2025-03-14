@@ -1,4 +1,4 @@
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { FormikProps, FieldArray } from 'formik';
 import FilteredInputSelect from '../../FilteredInputSelect';
 import StyledInputFormik from '../../StyledInputFormik';
@@ -58,6 +58,10 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
       item.name.toLowerCase().includes((pageData.selectedItem?.name + '').toLowerCase())
     );
 
+  const handleExerciseSelected = () => {
+
+  }
+
   let sections = formikProps.values.sections as TrainingCreationModel[] ?? [];
 
   section = section ?? ({ muscularGroup: '', sets: [] });
@@ -70,19 +74,25 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
           <TextInput
             style={styles.input}
             placeholder="Filter items..."
-            value={filter}
-            onChangeText={setFilter}
+            value={pageData.filter}
+            onChangeText={text => setPageData(prev => ({
+              ...prev,
+              filter: text
+            }))}
           />
           <FlatList
-            data={pageData.filteredData}
+            data={filteredData}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={[
                   styles.item,
-                  selectedItem?.id === item.id && styles.selectedItem,
+                  pageData.selectedItem?.id === item.id && styles.selectedItem,
                 ]}
-                onPress={() => setSelectedItem(item)}
+                onPress={() => setPageData(prev => ({
+                  ...prev,
+                  selectedItem: item
+                }))}
               >
                 <Text>{item.name}</Text>
               </TouchableOpacity>
@@ -90,8 +100,8 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
           />
           <Button
             title="Select"
-            onPress={handleSelect}
-            disabled={!selectedItem}
+            onPress={handleExerciseSelected}
+            disabled={!pageData.selectedItem}
           />
         </View>
       </FixedSizeModal>
