@@ -157,6 +157,10 @@ const GymTrainingCreationPage = () => {
     }
   }
 
+  const handleInitialAvailableTrainings = async (cancelToken: CancelToken | undefined = undefined) =>  {
+    // TODO : Get trainings and set `pageData.availableTrainings`
+  }
+
   const CancelButton: React.FC<HandleCancelProps> = ({ formikProps }) => {
     const handleCancel = (): void => {
       Alert.alert(

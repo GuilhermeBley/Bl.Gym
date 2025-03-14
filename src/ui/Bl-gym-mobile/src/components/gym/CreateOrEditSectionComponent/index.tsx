@@ -28,7 +28,6 @@ interface CreateOrEditSectionComponentProps {
   section: TrainingCreationModel | undefined,
   formikProps: FormikProps<any>,
   trainingData?: Map<string, string>,
-  onLoadingMoreTrainingData?: () => Promise<any>
 }
 
 interface PageData {
@@ -43,7 +42,6 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
   section,
   formikProps,
   trainingData = new Map<string, string>(),
-  onLoadingMoreTrainingData = () => { }
 }) => {
 
   const [componentData, setComponentData] = useState<PageData>({
