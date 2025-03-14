@@ -34,7 +34,8 @@ interface CreateOrEditSectionComponentProps {
 interface PageData {
   filter: string | undefined,
   selectedItem: TrainingInfo | undefined,
-  availableTrainings: TrainingInfo[]
+  availableTrainings: TrainingInfo[],
+  isModalOpen: boolean,
 }
 
 const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> = ({
@@ -45,17 +46,18 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
   onLoadingMoreTrainingData = () => { }
 }) => {
 
-  const [pageData, setPageData] = useState<PageData>({
-    availableTrainings: [],
+  const [componentData, setComponentData] = useState<PageData>({
+    availableTrainings: trainingData.entries().map(e => ({ id: e[0], name: e[1]})).toArray(),
     filter: undefined,
-    selectedItem: undefined
+    selectedItem: undefined,
+    isModalOpen: false
   });
 
   const filteredData =
-    pageData.selectedItem
-    ? pageData.availableTrainings
-    : pageData.availableTrainings.filter(item =>
-      item.name.toLowerCase().includes((pageData.selectedItem?.name + '').toLowerCase())
+    componentData.selectedItem
+    ? componentData.availableTrainings
+    : componentData.availableTrainings.filter(item =>
+      item.name.toLowerCase().includes((componentData.selectedItem?.name + '').toLowerCase())
     );
 
   const handleExerciseSelected = () => {
@@ -74,8 +76,8 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
           <TextInput
             style={styles.input}
             placeholder="Filter items..."
-            value={pageData.filter}
-            onChangeText={text => setPageData(prev => ({
+            value={componentData.filter}
+            onChangeText={text => setComponentData(prev => ({
               ...prev,
               filter: text
             }))}
@@ -87,9 +89,9 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
               <TouchableOpacity
                 style={[
                   styles.item,
-                  pageData.selectedItem?.id === item.id && styles.selectedItem,
+                  componentData.selectedItem?.id === item.id && styles.selectedItem,
                 ]}
-                onPress={() => setPageData(prev => ({
+                onPress={() => setComponentData(prev => ({
                   ...prev,
                   selectedItem: item
                 }))}
@@ -101,7 +103,7 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
           <Button
             title="Select"
             onPress={handleExerciseSelected}
-            disabled={!pageData.selectedItem}
+            disabled={!componentData.selectedItem}
           />
         </View>
       </FixedSizeModal>
