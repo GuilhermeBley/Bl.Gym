@@ -64,6 +64,12 @@ const CreateOrEditSectionComponent: React.FC<CreateOrEditSectionComponentProps> 
 
   }
 
+  if (trainingData.size == 0) return (
+    <View>
+      <Text style={{textAlign: "center", backgroundColor: colors.warning}}>Nenhum treino encontrado.</Text>
+    </View>
+  );
+
   let sections = formikProps.values.sections as TrainingCreationModel[] ?? [];
 
   section = section ?? ({ muscularGroup: '', sets: [] });
