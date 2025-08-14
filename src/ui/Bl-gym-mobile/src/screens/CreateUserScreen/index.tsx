@@ -115,7 +115,7 @@ const CreateUserScreen = ({ navigator }: any) => {
               <StyledInputFormik
                 formikKey={"phoneNumber"}
                 formikProps={formikProps}
-                label={"phoneNumber"}
+                label={"Celular"}
                 secureTextEntry />
 
               <View style={styles.buttonContainer}>
