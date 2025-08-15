@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Button, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { UserContext } from "../../contexts/UserContext";
 import { useContext } from "react";
 import styles from "./styles";
@@ -9,6 +9,14 @@ import * as yup from 'yup';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CREATE_USER_SCREEN, HOME_SCREEN } from "../../routes/RoutesConstant";
 import axios from "axios"
+import {
+  TextInput as PaperTextInput,
+  Button as PaperButton,
+  Text,
+  Divider,
+  HelperText,
+  useTheme
+} from 'react-native-paper';
 
 interface StyledInputProps {
   formikKey: string,
@@ -31,18 +39,18 @@ const validationSchema = yup.object().shape({
 });
 
 const LoginScreen = ({ navigation }: any) => {
-
+const theme = useTheme();
   const [buttonErrorMessage, setButtonErrorMessage] = useState("");
   const { login, user } = useContext(UserContext);
   const [pageData, setPageData] = useState({
     isRunningFirstLoading: false
-  } as PageData)
+  } as PageData);
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const handleLoginAndNavigate = async (
     loginInput: string,
     passwordInput: string
   ) => {
-
     let response = await handleLogin(loginInput, passwordInput);
 
     if (response.Status === LoginResultStatus.InvalidLoginOrPassword) {
@@ -58,34 +66,36 @@ const LoginScreen = ({ navigation }: any) => {
   }
 
   const StyledInput: React.FC<StyledInputProps> = ({ formikKey, formikProps, label, ...rest }) => {
-    const inputStyles = styles.input;
-
     const error = formikProps.touched[formikKey] && formikProps.errors[formikKey];
     const errorMessage = typeof error === 'string' ? error : '';
 
-    if (errorMessage.length > 0) {
-      inputStyles.borderColor = "red"
-    }
-
     return (
       <View style={styles.inputContainer}>
-        <Text>{label}</Text>
-        <TextInput
-          style={inputStyles}
+        <PaperTextInput
+          mode="outlined"
+          label={label}
           value={formikProps.values[formikKey]}
           onChangeText={formikProps.handleChange(formikKey)}
           onBlur={formikProps.handleBlur(formikKey)}
+          error={!!error}
+          style={styles.input}
           {...rest}
-        >
-
-        </TextInput>
-        <Text style={{ color: 'red' }}>{errorMessage}</Text>
+          right={
+            formikKey === 'password' ? 
+            <PaperTextInput.Icon 
+              icon={secureTextEntry ? "eye-off" : "eye"} 
+              onPress={() => setSecureTextEntry(!secureTextEntry)}
+            /> : undefined
+          }
+        />
+        {error && <HelperText type="error" visible={!!error}>
+          {errorMessage}
+        </HelperText>}
       </View>
     );
   }
 
   useEffect(() => {
-
     let cts = axios.CancelToken.source();
 
     let timeout = setTimeout(() => {
@@ -93,7 +103,6 @@ const LoginScreen = ({ navigation }: any) => {
     }, 1000 * 60);
 
     let fetchInitialData = async () => {
-
       setPageData(previous => ({
         ...previous,
         isRunningFirstLoading: true
@@ -131,12 +140,11 @@ const LoginScreen = ({ navigation }: any) => {
 
   console.debug("LoginScreen");
 
-  if (pageData.isRunningFirstLoading)
-  {
+  if (pageData.isRunningFirstLoading) {
     return (
       <SafeAreaView style={styles.container}>
         <View>
-          <ActivityIndicator></ActivityIndicator>
+          <ActivityIndicator animating={true} />
         </View>
       </SafeAreaView>
     );
@@ -154,7 +162,6 @@ const LoginScreen = ({ navigation }: any) => {
             .finally(() => actions.setSubmitting(false))}
         validationSchema={validationSchema}
       >
-
         {formikProps => (
           <React.Fragment>
             <StyledInput
@@ -169,26 +176,37 @@ const LoginScreen = ({ navigation }: any) => {
               formikKey={"password"}
               formikProps={formikProps}
               label={"Senha"}
-              secureTextEntry
+              secureTextEntry={secureTextEntry}
             />
 
             <View style={styles.buttonContainer}>
               {formikProps.isSubmitting ?
-                <ActivityIndicator /> :
-                <Button onPress={() => formikProps.handleSubmit()} title="Entrar" />}
+                <ActivityIndicator animating={true} /> :
+                <PaperButton 
+                  mode="contained" 
+                  onPress={() => formikProps.handleSubmit()}
+                >
+                  Entrar
+                </PaperButton>}
 
               <View style={styles.separatorContainer}>
-                <View style={styles.line} />
+                <Divider style={styles.line} />
                 <Text style={styles.separatorText}>ou</Text>
-                <View style={styles.line} />
+                <Divider style={styles.line} />
               </View>
 
-              <Button
-                title="Criar uma conta"
-                onPress={() => navigation.navigate(CREATE_USER_SCREEN)} />
-              <Text style={{ color: "red", width: "auto" }}>
-                {buttonErrorMessage}
-              </Text>
+              <PaperButton 
+                mode="outlined" 
+                onPress={() => navigation.navigate(CREATE_USER_SCREEN)}
+              >
+                Criar uma conta
+              </PaperButton>
+              
+              {buttonErrorMessage && (
+                <Text style={{ color: theme.colors.error, marginTop: 10 }}>
+                  {buttonErrorMessage}
+                </Text>
+              )}
             </View>
           </React.Fragment>
         )}
