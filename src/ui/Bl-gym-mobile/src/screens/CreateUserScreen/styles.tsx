@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
       flex: 1,
       justifyContent: 'center',
@@ -11,16 +11,24 @@ export const styles = StyleSheet.create({
       marginBottom: 20,
       textAlign: 'center',
     },
-    input: {
-      height: 40,
-      borderColor: 'gray',
-      borderWidth: 1,
-      paddingHorizontal: 8,
-    },
     buttonContainer: {
       marginTop: 20
     },
     inputContainer: {
       marginBottom: 12,
     },
+    input: {
+      marginBottom: 5,
+      backgroundColor: 'transparent', // For better theming
+    },
+    button: {
+      marginVertical: 10,
+      paddingVertical: 5,
+    },
+    errorText: {
+      marginTop: 10,
+      textAlign: 'center',
+    },
 });
+
+export default styles;

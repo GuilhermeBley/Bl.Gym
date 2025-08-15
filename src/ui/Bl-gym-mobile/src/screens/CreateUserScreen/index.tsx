@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, SafeAreaView, ActivityIndicator } from 'react-native';
-import styles from '../LoginScreen/styles';
+import { View, SafeAreaView, ActivityIndicator } from 'react-native';
+import styles from './styles';
 import { handleCreateUser } from './action';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { LOGIN_SCREEN } from '../../routes/RoutesConstant';
-import StyledInputFormik from '../../components/StyledInputFormik';
+import {
+  TextInput as PaperTextInput,
+  Button as PaperButton,
+  Text,
+  HelperText,
+  useTheme
+} from 'react-native-paper';
 
 interface UserCreateModel {
   firstName: string,
@@ -40,9 +46,57 @@ const validationSchema = yup.object().shape({
   phoneNumber: yup.number().notRequired(),
 });
 
-const CreateUserScreen = ({ navigator }: any) => {
+interface StyledInputProps {
+  formikKey: string,
+  formikProps: FormikProps<any>;
+  label: string;
+  [key: string]: any;
+}
 
-  const responseErrorsKey = "api-errors"
+const StyledInputFormik: React.FC<StyledInputProps> = ({ 
+  formikKey, 
+  formikProps, 
+  label, 
+  ...rest 
+}) => {
+  const theme = useTheme();
+  const [secureTextEntry, setSecureTextEntry] = useState(
+    rest.secureTextEntry || false
+  );
+  
+  const error = formikProps.touched[formikKey] && formikProps.errors[formikKey];
+  const errorMessage = typeof error === 'string' ? error : '';
+
+  return (
+    <View style={styles.inputContainer}>
+      <PaperTextInput
+        mode="outlined"
+        label={label}
+        value={formikProps.values[formikKey]}
+        onChangeText={formikProps.handleChange(formikKey)}
+        onBlur={formikProps.handleBlur(formikKey)}
+        error={!!error}
+        style={styles.input}
+        secureTextEntry={secureTextEntry}
+        {...rest}
+        right={
+          rest.secureTextEntry ? 
+          <PaperTextInput.Icon 
+            icon={secureTextEntry ? "eye-off" : "eye"} 
+            onPress={() => setSecureTextEntry(!secureTextEntry)}
+          /> : undefined
+        }
+      />
+      {error && <HelperText type="error" visible={!!error}>
+        {errorMessage}
+      </HelperText>}
+    </View>
+  );
+};
+
+const CreateUserScreen = ({ navigator }: any) => {
+  const theme = useTheme();
+  const responseErrorsKey = "api-errors";
 
   const initialValues: UserCreateModel = {
     firstName: "",
@@ -54,7 +108,14 @@ const CreateUserScreen = ({ navigator }: any) => {
   };
 
   const handleSubmit = async (formikHelper: FormikHelpers<UserCreateModel>, data: UserCreateModel) => {
-    var result = await handleCreateUser(data.firstName, data.lastName, data.email, data.password, data.phoneNumber?.toString() ?? null)
+    var result = await handleCreateUser(
+      data.firstName, 
+      data.lastName, 
+      data.email, 
+      data.password, 
+      data.phoneNumber?.toString() ?? null
+    );
+    
     console.debug(result);
 
     if (result.Success) {
@@ -62,8 +123,9 @@ const CreateUserScreen = ({ navigator }: any) => {
       return;
     }
 
-    if (result.Errors.length > 0)
-      formikHelper.setFieldError(responseErrorsKey, result.Errors[0])
+    if (result.Errors.length > 0) {
+      formikHelper.setFieldError(responseErrorsKey, result.Errors[0]);
+    }
   };
 
   return (
@@ -71,65 +133,76 @@ const CreateUserScreen = ({ navigator }: any) => {
       <Formik
         initialValues={initialValues}
         onSubmit={(values, actions) => {
-          console.debug("handling user creation...")
-
+          console.debug("handling user creation...");
           return handleSubmit(actions, values)
-              .finally(() => actions.setSubmitting(false));
-        }
-        }
+            .finally(() => actions.setSubmitting(false));
+        }}
         validationSchema={validationSchema}
       >
+        {formikProps => (
+          <React.Fragment>
+            <StyledInputFormik
+              formikKey={"firstName"}
+              formikProps={formikProps}
+              label={"Primeiro nome"}
+              autoFocus
+            />
 
-        {formikProps => {
-          return (
-            <React.Fragment>
-              <StyledInputFormik
-                formikKey={"firstName"}
-                formikProps={formikProps}
-                label={"Primeiro nome"}
-                autoFocus />
+            <StyledInputFormik
+              formikKey={"lastName"}
+              formikProps={formikProps}
+              label={"Sobrenome"}
+            />
 
-              <StyledInputFormik
-                formikKey={"lastName"}
-                formikProps={formikProps}
-                label={"Sobrenome"} />
+            <StyledInputFormik
+              formikKey={"email"}
+              formikProps={formikProps}
+              label={"E-mail"}
+              keyboardType="email-address"
+            />
 
-              <StyledInputFormik
-                formikKey={"email"}
-                formikProps={formikProps}
-                label={"E-mail"}
-                keyboardType="email-address" />
+            <StyledInputFormik
+              formikKey={"password"}
+              formikProps={formikProps}
+              label={"Senha"}
+              secureTextEntry
+            />
 
-              <StyledInputFormik
-                formikKey={"password"}
-                formikProps={formikProps}
-                label={"Senha"}
-                secureTextEntry />
+            <StyledInputFormik
+              formikKey={"confirmPassword"}
+              formikProps={formikProps}
+              label={"Confirme a senha"}
+              secureTextEntry
+            />
 
-              <StyledInputFormik
-                formikKey={"confirmPassword"}
-                formikProps={formikProps}
-                label={"Confirme a senha"}
-                secureTextEntry />
+            <StyledInputFormik
+              formikKey={"phoneNumber"}
+              formikProps={formikProps}
+              label={"Celular"}
+              keyboardType="phone-pad"
+            />
 
-              <StyledInputFormik
-                formikKey={"phoneNumber"}
-                formikProps={formikProps}
-                label={"Celular"}
-                secureTextEntry />
+            <View style={styles.buttonContainer}>
+              {formikProps.isSubmitting ? (
+                <ActivityIndicator animating={true} />
+              ) : (
+                <PaperButton
+                  mode="contained"
+                  onPress={() => formikProps.handleSubmit()}
+                  style={styles.button}
+                >
+                  Criar usuário
+                </PaperButton>
+              )}
+            </View>
 
-              <View style={styles.buttonContainer}>
-                {formikProps.isSubmitting ?
-                  <ActivityIndicator /> :
-                  <Button onPress={() => formikProps.handleSubmit()} title="Criar usuário" />}
-              </View>
-
-              <View>
-                <Text style={{ color: 'red' }}>{formikProps.errors[responseErrorsKey as keyof UserCreateModel]}</Text>
-              </View>
-            </React.Fragment>
-          );
-        }}
+            {formikProps.errors[responseErrorsKey as keyof UserCreateModel] && (
+              <Text style={{ color: theme.colors.error, marginTop: 10 }}>
+                {formikProps.errors[responseErrorsKey as keyof UserCreateModel]}
+              </Text>
+            )}
+          </React.Fragment>
+        )}
       </Formik>
     </SafeAreaView>
   );
