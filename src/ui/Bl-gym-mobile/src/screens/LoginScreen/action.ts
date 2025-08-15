@@ -63,7 +63,7 @@ export const handleLogin = async (
                 }
             })
             .catch((error: AxiosError) => {
-                console.debug(error);
+                console.debug(`Failed to do the login. \nStatusCode:${error.status}\nError: ${error.message}`);
                 return {
                     Status: LoginResultStatus.InvalidLoginOrPassword,
                     Token: null,
