@@ -44,6 +44,17 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 builder.Services.AddScoped<Bl.Gym.TrainingApi.Api.Providers.ContextIdentityProvider>();
 builder.Services.AddScoped<Bl.Gym.TrainingApi.Application.Providers.IIdentityProvider>(
     provider => provider.GetRequiredService<Bl.Gym.TrainingApi.Api.Providers.ContextIdentityProvider>());
@@ -135,6 +146,8 @@ builder.Services.AddAuthorization(cfg =>
 });
 
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 app.UseSwagger();
 app.UseSwaggerUI();
