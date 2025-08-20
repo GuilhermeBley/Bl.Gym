@@ -22,8 +22,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 5000
+EXPOSE 5010
 #ENV ASPNETCORE_URLS=http://+:8080
 #ENV ASPNETCORE_ENVIRONMENT=Production
 ENTRYPOINT ["dotnet", "Bl.Gym.TrainingApi.Api.dll"]
