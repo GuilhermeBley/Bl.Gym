@@ -3,7 +3,7 @@ version: '3.8'
 services:
   webapp:
     build:
-      context: .\training-api\Bl.Gym.TrainingApi.Api
+      context: .
       dockerfile: Dockerfile
     ports:
       - "5000:5010"
